@@ -37,6 +37,7 @@ const Signup = () => {
         <div className="auth-card">
           <div className="auth-header">
             <h2>Create Account</h2>
+            <p className="auth-subtitle">Join us to start your productivity journey</p>
           </div>
           
           {error && <div className="auth-error">{error}</div>}
@@ -85,11 +86,8 @@ const Signup = () => {
               Already have an account?{' '}
               <Link to="/login" className="auth-link">
                 Login
-              </Link>
-            </p>
-            <Link to="/" className="auth-link back-link">
-              Back to Home
-            </Link>
+                </Link>
+              </p>
           </div>
         </div>
       </div>

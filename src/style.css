@@ -925,6 +925,7 @@ input[type="submit"].btn {
   font-weight: 600;
   transition: all 0.3s ease;
   font-size: 1.1rem;
+  margin-right: 2rem;
 }
 
 .auth-link:hover {
@@ -937,6 +938,7 @@ input[type="submit"].btn {
   margin-top: 0.75rem;
   font-size: 1rem;
   color: rgba(255, 255, 255, 0.8);
+  margin-right: 0;
 }
 
 /* Footer Styles for Auth Pages */
