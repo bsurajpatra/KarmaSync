@@ -1,0 +1,42 @@
+{
+  "name": "mern-fitness-app",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": "8.12.0"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.26",
+    "@fortawesome/free-solid-svg-icons": "^5.12.0",
+    "@fortawesome/react-fontawesome": "^0.1.8",
+    "axios": "^0.19.2",
+    "bootstrap": "^4.4.1",
+    "pretty-ms": "^5.1.0",
+    "react": "^16.12.0",
+    "react-datepicker": "^2.11.0",
+    "react-dom": "^16.12.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.3.0"
+  },
+  "scripts": {
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
+    "build": "export NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
