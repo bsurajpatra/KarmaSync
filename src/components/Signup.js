@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useHistory, Link } from 'react-router-dom';
 import config from '../config';
+import Footer from './Footer';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -28,59 +29,71 @@ const Signup = () => {
   };
 
   return (
-    <div className="container-ot">
-      <div className="container-sc">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h3 className="mb-0">Sign Up</h3>
-          <Link to="/" className="btn btn-outline-primary">
-            Back to Home
-          </Link>
-        </div>
-        {error && <div className="alert alert-danger">{error}</div>}
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Username: </label>
-            <input
-              type="text"
-              required
-              className="form-control"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
+    <div className="auth-container">
+      <div className="auth-logo-section">
+        <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
+      </div>
+      <div className="auth-content">
+        <div className="auth-card">
+          <div className="auth-header">
+            <h2>Create Account</h2>
           </div>
-          <div className="form-group">
-            <label>Email: </label>
-            <input
-              type="email"
-              required
-              className="form-control"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <label>Password: </label>
-            <input
-              type="password"
-              required
-              className="form-control"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-          <div className="form-group">
-            <input type="submit" value="Sign Up" className="btn btn-primary" />
-          </div>
-        </form>
-        <div className="text-center mt-3">
-          <p className="mb-0">
-            Already have an account?{' '}
-            <Link to="/login" className="text-primary">
-              Login
+          
+          {error && <div className="auth-error">{error}</div>}
+          
+          <form onSubmit={handleSubmit} className="auth-form">
+            <div className="form-group">
+              <input
+                type="text"
+                required
+                className="auth-input"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group">
+              <input
+                type="email"
+                required
+                className="auth-input"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            
+            <div className="form-group">
+              <input
+                type="password"
+                required
+                className="auth-input"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            
+            <button type="submit" className="auth-button">
+              Sign Up
+            </button>
+          </form>
+          
+          <div className="auth-footer">
+            <p>
+              Already have an account?{' '}
+              <Link to="/login" className="auth-link">
+                Login
+              </Link>
+            </p>
+            <Link to="/" className="auth-link back-link">
+              Back to Home
             </Link>
-          </p>
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
