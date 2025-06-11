@@ -107,7 +107,7 @@ const Projects = () => {
       <div className="projects-header">
         <div className="projects-header-content">
           <div className="projects-header-left">
-            <h1>My Projects</h1>
+        <h1>My Projects</h1>
           </div>
           <div className="projects-header-actions">
             <button 
@@ -116,17 +116,17 @@ const Projects = () => {
             >
               <i className="fas fa-arrow-left"></i> Back to Dashboard
             </button>
-            <button 
-              className="btn btn-primary"
-              onClick={() => {
-                console.log('Opening new project form');
-                setShowForm(true);
-                setEditingProject(null);
-                setFormData({ title: '', description: '' });
-              }}
-            >
-              Create New Project
-            </button>
+        <button 
+          className="btn btn-primary"
+          onClick={() => {
+            console.log('Opening new project form');
+            setShowForm(true);
+            setEditingProject(null);
+            setFormData({ title: '', description: '' });
+          }}
+        >
+          Create New Project
+        </button>
           </div>
         </div>
       </div>
@@ -190,24 +190,24 @@ const Projects = () => {
           </div>
         ) : (
           projects.map(project => (
-            <div key={project._id} className="project-card">
-              <h3>{project.title}</h3>
-              <p>{project.description}</p>
-              <div className="project-actions">
-                <button 
-                  className="btn btn-secondary"
-                  onClick={() => handleEdit(project)}
-                >
-                  Edit
-                </button>
-                <button 
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(project._id)}
-                >
-                  Delete
-                </button>
-              </div>
+          <div key={project._id} className="project-card">
+            <h3>{project.title}</h3>
+            <p>{project.description}</p>
+            <div className="project-actions">
+              <button 
+                className="btn btn-secondary"
+                onClick={() => handleEdit(project)}
+              >
+                Edit
+              </button>
+              <button 
+                className="btn btn-danger"
+                onClick={() => handleDelete(project._id)}
+              >
+                Delete
+              </button>
             </div>
+          </div>
           ))
         )}
       </div>

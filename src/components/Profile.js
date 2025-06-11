@@ -163,8 +163,8 @@ const Profile = () => {
         <div className="profile-header">
           <div className="profile-header-content">
             <div className="profile-header-left">
-              <h1>Profile Settings</h1>
-              <p className="profile-subtitle">Manage your account information</p>
+          <h1>Profile Settings</h1>
+          <p className="profile-subtitle">Manage your account information</p>
             </div>
             <button 
               className="back-to-dashboard-button"
