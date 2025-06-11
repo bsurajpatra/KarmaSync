@@ -1,57 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import config from '../config';
 import Footer from './Footer';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 const ResetPassword = () => {
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    password: '',
+    confirmPassword: ''
+  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { token } = useParams();
-  const history = useHistory();
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    // Log the token when component mounts
-    console.log('Reset token from URL:', token);
-  }, [token]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess(false);
-    setLoading(true);
 
-    if (password !== confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
-      setLoading(false);
       return;
     }
 
     try {
-      console.log('Sending reset request to:', `${config.API_URL}/api/auth/reset-password`);
-      console.log('Request payload:', { token, password });
-      
       const response = await axios.post(`${config.API_URL}/api/auth/reset-password`, {
         token,
-        password
+        password: formData.password
       });
-      
-      console.log('Reset response:', response.data);
+
+      console.log('Reset password response:', response.data);
       setSuccess(true);
+      
+      // Redirect to login after 3 seconds
       setTimeout(() => {
-        history.push('/login');
+        navigate('/login', { 
+          state: { 
+            message: 'Password reset successful! Please login with your new password.' 
+          }
+        });
       }, 3000);
     } catch (error) {
       console.error('Reset password error:', error);
-      console.error('Error response:', error.response?.data);
-      console.error('Error status:', error.response?.status);
-      setError(error.response?.data?.message || 'Failed to reset password. Please try again.');
-    } finally {
-      setLoading(false);
+      setError(error.response?.data?.message || 'Error resetting password');
     }
   };
 
@@ -70,47 +73,64 @@ const ResetPassword = () => {
           {error && <div className="auth-error">{error}</div>}
           {success && (
             <div className="auth-success">
-              Password has been reset successfully. Redirecting to login...
+              Password reset successful! Redirecting to login...
             </div>
           )}
           
           <form onSubmit={handleSubmit} className="auth-form">
-            <div className="form-group">
+            <div className="form-group password-group">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
                 required
                 className="auth-input"
-                placeholder="New password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                minLength="6"
+                placeholder="New Password"
+                value={formData.password}
+                onChange={handleChange}
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
             
-            <div className="form-group">
+            <div className="form-group password-group">
               <input
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
                 required
                 className="auth-input"
-                placeholder="Confirm new password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                minLength="6"
+                placeholder="Confirm New Password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
             
             <button 
               type="submit" 
               className="auth-button"
-              disabled={loading}
+              disabled={success}
             >
-              {loading ? 'Resetting...' : 'Reset Password'}
+              Reset Password
             </button>
           </form>
           
           <div className="auth-footer">
             <Link to="/login" className="auth-link">
               Back to Login
+            </Link>
+            <Link to="/" className="auth-link back-link">
+              Back to Home
             </Link>
           </div>
         </div>

@@ -1,6 +1,7 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Switch, Redirect } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import TasksList from "./components/tasks-list.component";
 import EditTask from "./components/edit-task.component";
@@ -14,55 +15,64 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from "./components/ResetPassword";
 
 // Protected Route component
-const ProtectedRoute = ({ children, ...rest }) => {
+const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
-  return (
-    <Route
-      {...rest}
-      render={({ location }) =>
-        token ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/login",
-              state: { from: location }
-            }}
-          />
-        )
-      }
-    />
-  );
+  return token ? children : <Navigate to="/login" replace />;
 };
 
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Switch>
-          <Route path="/" exact component={LandingPage} />
-          <Route path="/login" component={Login} />
-          <Route path="/signup" component={Signup} />
-          <Route path="/forgot-password" component={ForgotPassword} />
-          <Route path="/reset-password/:token" component={ResetPassword} />
-          <ProtectedRoute path="/dashboard" exact>
-            <Dashboard />
-          </ProtectedRoute>
-          <ProtectedRoute path="/tasks" exact>
-            <TasksList />
-          </ProtectedRoute>
-          <ProtectedRoute path="/edit/:id">
-            <EditTask />
-          </ProtectedRoute>
-          <ProtectedRoute path="/create">
-            <CreateTask />
-          </ProtectedRoute>
-          <ProtectedRoute path="/project">
-            <CreateProject />
-          </ProtectedRoute>
-          <Redirect to="/dashboard" />
-        </Switch>
-      </Router>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route 
+            path="/dashboard" 
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/tasks" 
+            element={
+              <ProtectedRoute>
+                <TasksList />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/edit/:id" 
+            element={
+              <ProtectedRoute>
+                <EditTask />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/create" 
+            element={
+              <ProtectedRoute>
+                <CreateTask />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/project" 
+            element={
+              <ProtectedRoute>
+                <CreateProject />
+              </ProtectedRoute>
+            } 
+          />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
   );
 }

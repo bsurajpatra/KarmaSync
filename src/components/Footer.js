@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className="dashboard-footer-main">
       <div className="footer-content">
         <p>Made with <FontAwesomeIcon icon={faHeart} className="heart-icon" /> by KarmaSync Team</p>
-        <p>© ${new Date().getFullYear()} KarmaSync. Licensed under the MIT License.</p>
+        <p>© {new Date().getFullYear()} KarmaSync. Licensed under the MIT License.</p>
       </div>
     </footer>
   );

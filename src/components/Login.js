@@ -1,28 +1,60 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
-import { useHistory, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import config from '../config';
 import Footer from './Footer';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
   const { login } = useAuth();
-  const history = useHistory();
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
+
     try {
-      const response = await axios.post(`${config.API_URL}/api/auth/login`, {
-        email,
-        password
-      });
-      login(response.data.user, response.data.token);
-      history.push('/dashboard');
+      console.log('Attempting login with:', { email: formData.email });
+      const response = await axios.post(`${config.API_URL}/api/auth/login`, formData);
+      console.log('Login response:', response.data);
+      
+      if (!response.data.token || !response.data.user) {
+        throw new Error('Invalid response from server');
+      }
+      
+      // Use the login function from AuthContext with both user data and token
+      await login(response.data.user, response.data.token);
+      console.log('Login successful, redirecting to dashboard');
+      
+      // Redirect to dashboard
+      navigate('/dashboard');
     } catch (error) {
-      setError(error.response?.data?.message || 'An error occurred');
+      console.error('Login error:', error);
+      console.error('Error details:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      setError(error.response?.data?.message || 'An error occurred during login');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,27 +76,40 @@ const Login = () => {
             <div className="form-group">
               <input
                 type="email"
+                name="email"
                 required
                 className="auth-input"
                 placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={handleChange}
               />
             </div>
             
-            <div className="form-group">
+            <div className="form-group password-group">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
                 required
                 className="auth-input"
                 placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleChange}
               />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
             </div>
             
-            <button type="submit" className="auth-button">
-              Sign In
+            <button 
+              type="submit" 
+              className="auth-button"
+              disabled={loading}
+            >
+              {loading ? 'Signing In...' : 'Sign In'}
             </button>
           </form>
           

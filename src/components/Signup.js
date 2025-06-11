@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useHistory, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import config from '../config';
 import Footer from './Footer';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -15,9 +15,10 @@ const Signup = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,15 +37,18 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     // Validation
     if (!validateUsername(formData.username)) {
       setError('Username must be 3-20 characters and can only contain letters, numbers, underscores, and hyphens');
+      setLoading(false);
       return;
     }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
       return;
     }
 
@@ -65,13 +69,21 @@ const Signup = () => {
       
       console.log('Signup response:', response.data);
       setSuccess(true);
+      
+      // Show success message for 2 seconds then redirect to login
       setTimeout(() => {
-        history.push('/login');
-      }, 3000);
+        navigate('/login', { 
+          state: { 
+            message: 'Account created successfully! Please login to continue.'
+          }
+        });
+      }, 2000);
     } catch (error) {
       console.error('Signup error:', error);
       console.error('Error response:', error.response?.data);
       setError(error.response?.data?.message || 'An error occurred');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -90,7 +102,7 @@ const Signup = () => {
           {error && <div className="auth-error">{error}</div>}
           {success && (
             <div className="auth-success">
-              Signup successful! Redirecting to login...
+              Account created successfully! Redirecting to login...
             </div>
           )}
           
@@ -170,8 +182,12 @@ const Signup = () => {
               </button>
             </div>
             
-            <button type="submit" className="auth-button">
-              Sign Up
+            <button 
+              type="submit" 
+              className="auth-button"
+              disabled={loading}
+            >
+              {loading ? 'Signing Up...' : 'Sign Up'}
             </button>
           </form>
           
