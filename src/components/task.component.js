@@ -16,8 +16,8 @@ const Task = props => {
           <FontAwesomeIcon className="checkButton" icon={faEdit} size="2x" />
         </Link>
         &ensp;
-        <a
-          href="#"
+        <button
+          className="btn btn-link"
           onClick={() => {
             props.deleteTask(props.task._id);
           }}
@@ -27,7 +27,7 @@ const Task = props => {
             icon={faTrashAlt}
             size="2x"
           />
-        </a>
+        </button>
       </td>
     </tr>
   );

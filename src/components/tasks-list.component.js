@@ -1,79 +1,63 @@
-import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import TimerBar from "./timerbar.component";
 import Task from "./task.component";
 import axios from "axios";
 import config from '../config';
 
-class TasksList extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { tasks: [] };
-  }
+const TasksList = () => {
+  const [tasks, setTasks] = useState([]);
 
-  componentDidMount() {
-    axios
-      .get(`${config.API_URL}/tasks/`)
-      .then(res => {
-        this.setState({ tasks: res.data });
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
+  useEffect(() => {
+    fetchTasks();
+  }, []);
 
-  deleteTask = id => {
-    axios
-      .delete(`${config.API_URL}/tasks/` + id)
-      .then(res => console.log(res.data));
-
-    this.setState({
-      tasks: this.state.tasks.filter(el => el._id !== id)
-    });
+  const fetchTasks = async () => {
+    try {
+      const res = await axios.get(`${config.API_URL}/tasks/`);
+      setTasks(res.data);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  taskList() {
-    return this.state.tasks.map(currentTask => {
-      return (
-        <Task
-          task={currentTask}
-          deleteTask={this.deleteTask}
-          key={currentTask._id}
-        />
-      );
-    });
-  }
-
-  rerenderCallback = () => {
-    axios
-      .get(`${config.API_URL}/tasks/`)
-      .then(res => {
-        this.setState({ tasks: res.data });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  const deleteTask = async (id) => {
+    try {
+      await axios.delete(`${config.API_URL}/tasks/` + id);
+      setTasks(tasks.filter(el => el._id !== id));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
-  render() {
-    return (
-      <div>
-        <TimerBar rerenderCallback={this.rerenderCallback.bind(this)} />
-        <table className="table">
-          <thead className="thead-light">
-            <tr>
-              <th>Project</th>
-              <th>Task</th>
-              <th>Duration</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{this.taskList()}</tbody>
-        </table>
-      </div>
-    );
-  }
-}
+  const rerenderCallback = () => {
+    fetchTasks();
+  };
+
+  return (
+    <div>
+      <TimerBar rerenderCallback={rerenderCallback} />
+      <table className="table">
+        <thead className="thead-light">
+          <tr>
+            <th>Project</th>
+            <th>Task</th>
+            <th>Duration</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {tasks.map(currentTask => (
+            <Task
+              task={currentTask}
+              deleteTask={deleteTask}
+              key={currentTask._id}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 export default TasksList;

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useAuth } from '../context/AuthContext';
 import { useHistory, Link } from 'react-router-dom';
 import config from '../config';
 import Footer from './Footer';
@@ -18,7 +17,6 @@ const Signup = () => {
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const { login } = useAuth();
   const history = useHistory();
 
   const handleChange = (e) => {
@@ -51,18 +49,16 @@ const Signup = () => {
     }
 
     try {
-      const response = await axios.post(`${config.API_URL}/api/auth/signup`, {
+      await axios.post(`${config.API_URL}/api/auth/signup`, {
         fullName: formData.fullName,
         username: formData.username,
         email: formData.email,
         password: formData.password
       });
-      
       setSuccess(true);
-      // Redirect to login after 4 seconds
       setTimeout(() => {
         history.push('/login');
-      }, 4000);
+      }, 3000);
     } catch (error) {
       setError(error.response?.data?.message || 'An error occurred');
     }

@@ -10,6 +10,8 @@ import Login from "./components/Login";
 import Signup from "./components/Signup";
 import LandingPage from "./components/LandingPage";
 import Dashboard from "./components/Dashboard";
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from "./components/ResetPassword";
 
 // Protected Route component
 const ProtectedRoute = ({ children, ...rest }) => {
@@ -41,7 +43,8 @@ function App() {
           <Route path="/" exact component={LandingPage} />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
-          <Route path="/forgot-password" component={Login} />
+          <Route path="/forgot-password" component={ForgotPassword} />
+          <Route path="/reset-password/:token" component={ResetPassword} />
           <ProtectedRoute path="/dashboard" exact>
             <Dashboard />
           </ProtectedRoute>

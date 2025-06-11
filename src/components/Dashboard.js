@@ -7,9 +7,7 @@ import {
   faPlus, 
   faProjectDiagram, 
   faChartLine,
-  faSignOutAlt,
-  faGithub,
-  faHeart
+  faSignOutAlt
 } from '@fortawesome/free-solid-svg-icons';
 import Footer from './Footer';
 
