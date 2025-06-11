@@ -8,6 +8,7 @@ const Projects = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [showTypeModal, setShowTypeModal] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -51,6 +52,7 @@ const Projects = () => {
         console.log('Project updated successfully');
       } else {
         console.log('Creating new project');
+        console.log('Form data being sent:', formData);
         const response = await createProject(formData);
         console.log('Project created successfully:', response);
       }
@@ -60,12 +62,10 @@ const Projects = () => {
       fetchProjects();
     } catch (err) {
       console.error('Error in handleSubmit:', err);
-      console.error('Error details:', {
-        message: err.message,
-        response: err.response?.data,
-        status: err.response?.status
-      });
-      setError(editingProject ? 'Failed to update project' : 'Failed to create project');
+      console.error('Error response:', err.response?.data);
+      console.error('Error status:', err.response?.status);
+      console.error('Full error object:', JSON.stringify(err, null, 2));
+      setError(err.response?.data?.message || 'Failed to create project');
     }
   };
 
@@ -93,6 +93,16 @@ const Projects = () => {
     }
   };
 
+  const handleProjectTypeSelect = (type) => {
+    if (type === 'personal') {
+      navigate('/create-personal-project');
+    } else {
+      // For now, we'll just show a message that collaborative projects are coming soon
+      alert('Collaborative projects feature coming soon!');
+    }
+    setShowTypeModal(false);
+  };
+
   if (loading) return <div className="loading">Loading projects...</div>;
 
   return (
@@ -107,7 +117,7 @@ const Projects = () => {
       <div className="projects-header">
         <div className="projects-header-content">
           <div className="projects-header-left">
-        <h1>My Projects</h1>
+            <h1>My Projects</h1>
           </div>
           <div className="projects-header-actions">
             <button 
@@ -116,66 +126,37 @@ const Projects = () => {
             >
               <i className="fas fa-arrow-left"></i> Back to Dashboard
             </button>
-        <button 
-          className="btn btn-primary"
-          onClick={() => {
-            console.log('Opening new project form');
-            setShowForm(true);
-            setEditingProject(null);
-            setFormData({ title: '', description: '' });
-          }}
-        >
-          Create New Project
-        </button>
+            <button 
+              className="btn btn-primary"
+              onClick={() => setShowTypeModal(true)}
+            >
+              Create New Project
+            </button>
           </div>
         </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
-      {showForm && (
-        <div className="project-form-container">
-          <form onSubmit={handleSubmit} className="project-form">
-            <h2>{editingProject ? 'Edit Project' : 'Create New Project'}</h2>
-            <div className="form-group">
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                required
-              />
+      {showTypeModal && (
+        <div className="project-type-modal">
+          <h2>Select Project Type</h2>
+          <div className="project-type-options">
+            <div 
+              className="project-type-option"
+              onClick={() => handleProjectTypeSelect('personal')}
+            >
+              <h3>Personal Project</h3>
+              <p>Create a project that you'll manage on your own</p>
             </div>
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                rows="4"
-              />
+            <div 
+              className="project-type-option disabled"
+              onClick={() => handleProjectTypeSelect('collaborative')}
+            >
+              <h3>Collaborative Project</h3>
+              <p>Create a project and invite team members (Coming Soon)</p>
             </div>
-            <div className="form-actions">
-              <button type="submit" className="btn btn-primary">
-                {editingProject ? 'Update Project' : 'Create Project'}
-              </button>
-              <button 
-                type="button" 
-                className="btn btn-secondary"
-                onClick={() => {
-                  console.log('Canceling form');
-                  setShowForm(false);
-                  setEditingProject(null);
-                  setFormData({ title: '', description: '' });
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
       )}
 
@@ -190,24 +171,30 @@ const Projects = () => {
           </div>
         ) : (
           projects.map(project => (
-          <div key={project._id} className="project-card">
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
-            <div className="project-actions">
-              <button 
-                className="btn btn-secondary"
-                onClick={() => handleEdit(project)}
-              >
-                Edit
-              </button>
-              <button 
-                className="btn btn-danger"
-                onClick={() => handleDelete(project._id)}
-              >
-                Delete
-              </button>
+            <div key={project._id} className="project-card">
+              <h3>{project.title}</h3>
+              <p>{project.description}</p>
+              <div className="project-actions">
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => navigate(`/project/${project._id}/overview`)}
+                >
+                  View
+                </button>
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => handleEdit(project)}
+                >
+                  Edit
+                </button>
+                <button 
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(project._id)}
+                >
+                  Delete
+                </button>
+              </div>
             </div>
-          </div>
           ))
         )}
       </div>

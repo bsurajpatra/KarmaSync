@@ -3,10 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { AuthProvider, useAuth } from "./context/AuthContext";
-import TasksList from "./components/tasks-list.component";
-import EditTask from "./components/edit-task.component";
-import CreateTask from "./components/create-task.component";
-import CreateProject from "./components/create-project.component";
+
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import LandingPage from "./components/LandingPage";
@@ -15,6 +12,9 @@ import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from "./components/ResetPassword";
 import Projects from './components/Projects';
 import Profile from './components/Profile';
+import CreatePersonalProject from './components/CreatePersonalProject';
+import ProjectOverview from './components/ProjectOverview';
+import KanbanBoard from './components/KanbanBoard';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -57,34 +57,26 @@ function App() {
             }
           />
           <Route
-            path="/tasks"
+            path="/create-personal-project"
             element={
               <ProtectedRoute>
-                <TasksList />
+                <CreatePersonalProject />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/edit/:id"
+            path="/project/:id/overview"
             element={
               <ProtectedRoute>
-                <EditTask />
+                <ProjectOverview />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/create"
+            path="/project/:id/kanban"
             element={
               <ProtectedRoute>
-                <CreateTask />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/create-project"
-            element={
-              <ProtectedRoute>
-                <CreateProject />
+                <KanbanBoard />
               </ProtectedRoute>
             }
           />

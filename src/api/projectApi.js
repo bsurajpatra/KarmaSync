@@ -42,14 +42,23 @@ export const getProjectById = async (id) => {
 export const createProject = async (projectData) => {
   try {
     console.log('Making POST request to /api/projects with data:', projectData);
+    const headers = getAuthHeader();
+    console.log('Request headers:', headers);
+
     const response = await axios.post(`${config.API_URL}/api/projects`, projectData, {
-      headers: getAuthHeader()
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json'
+      }
     });
     console.log('POST /api/projects response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error in createProject:', error.response || error);
-    throw error;
+    if (error.response?.data) {
+      throw error.response.data;
+    }
+    throw { message: 'Error creating project' };
   }
 };
 

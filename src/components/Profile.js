@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getCurrentUser, updateProfile, deleteAccount } from '../api/authApi';
-import axios from 'axios';
 
 // DeleteAccountModal Component
 const DeleteAccountModal = ({ isOpen, onClose, onConfirm }) => {
