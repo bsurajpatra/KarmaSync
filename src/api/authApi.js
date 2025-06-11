@@ -41,7 +41,7 @@ export const login = async (credentials) => {
 // Signup user
 export const signup = async (userData) => {
   try {
-    const response = await axios.post('/api/auth/register', userData);
+    const response = await axios.post('/api/auth/signup', userData);
     const { token, user } = response.data;
     setAuthToken(token);
     return { user };
@@ -85,27 +85,35 @@ export const forgotPassword = async (email) => {
     const response = await axios.post('/api/auth/forgot-password', { email });
     return response.data;
   } catch (error) {
-    throw error;
+    throw error.response?.data || { message: 'Error processing forgot password request' };
   }
 };
 
 // Reset password
-export const resetPassword = async (token, newPassword) => {
+export const resetPassword = async (token, password) => {
   try {
-    const response = await axios.post('/api/auth/reset-password', {
-      token,
-      newPassword
-    });
+    const response = await axios.post(`/api/auth/reset-password/${token}`, { password });
     return response.data;
   } catch (error) {
-    throw error;
+    throw error.response?.data || { message: 'Error resetting password' };
   }
 };
 
 // Update user profile
 export const updateProfile = async (profileData) => {
   try {
-    const response = await axios.put('/api/auth/profile', profileData);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No auth token found');
+    }
+
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    };
+
+    const response = await axios.put('/api/auth/profile', profileData, config);
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error updating profile' };
@@ -115,7 +123,19 @@ export const updateProfile = async (profileData) => {
 // Delete user account
 export const deleteAccount = async () => {
   try {
-    const response = await axios.delete('/api/auth/profile');
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('No auth token found');
+    }
+
+    const config = {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    };
+
+    const response = await axios.delete('/api/auth/delete-account', config);
+    setAuthToken(null); // Clear token after account deletion
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error deleting account' };

@@ -4,6 +4,61 @@ import { useAuth } from '../context/AuthContext';
 import { getCurrentUser, updateProfile, deleteAccount } from '../api/authApi';
 import axios from 'axios';
 
+// DeleteAccountModal Component
+const DeleteAccountModal = ({ isOpen, onClose, onConfirm }) => {
+  const [deleteText, setDeleteText] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (deleteText === 'DELETE') {
+      setError('');
+      onConfirm();
+    } else {
+      setError('Please type "DELETE" to confirm');
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>Delete Account</h2>
+          <button className="modal-close" onClick={onClose}>&times;</button>
+        </div>
+        <div className="modal-body">
+          <p className="modal-warning">
+            Are you sure you want to delete your account? This action cannot be undone and you will lose all your data.
+          </p>
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Type "DELETE" to confirm:</label>
+              <input
+                type="text"
+                value={deleteText}
+                onChange={(e) => setDeleteText(e.target.value)}
+                className="form-control"
+                placeholder='Type "DELETE"'
+              />
+            </div>
+            {error && <div className="error-message">{error}</div>}
+            <div className="modal-actions">
+              <button type="button" className="cancel-button" onClick={onClose}>
+                Cancel
+              </button>
+              <button type="submit" className="delete-button">
+                Delete Account
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Profile = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -23,6 +78,12 @@ const Profile = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState({
+    current: false,
+    new: false,
+    confirm: false
+  });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   useEffect(() => {
     console.log('Profile component mounted');
@@ -57,6 +118,8 @@ const Profile = () => {
       ...prev,
       [name]: value
     }));
+    // Clear any previous errors when user starts typing
+    setError('');
   };
 
   const handlePasswordChange = (e) => {
@@ -65,6 +128,15 @@ const Profile = () => {
       ...prev,
       [name]: value
     }));
+    // Clear any previous errors when user starts typing
+    setError('');
+  };
+
+  const togglePasswordVisibility = (field) => {
+    setShowPassword(prev => ({
+      ...prev,
+      [field]: !prev[field]
+    }));
   };
 
   const handleUpdateProfile = async (e) => {
@@ -72,6 +144,24 @@ const Profile = () => {
     console.log('Updating profile with data:', formData);
     setError('');
     setSuccess('');
+
+    // Validate form data
+    if (!formData.fullName.trim()) {
+      setError('Full name is required');
+      return;
+    }
+    if (!formData.username.trim()) {
+      setError('Username is required');
+      return;
+    }
+    if (!formData.email.trim()) {
+      setError('Email is required');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
 
     try {
       const response = await updateProfile({
@@ -91,7 +181,15 @@ const Profile = () => {
         response: error.response?.data,
         status: error.response?.status
       });
-      setError(error.message || 'Failed to update profile');
+      
+      // Handle specific error cases
+      if (error.response?.data?.message?.includes('username')) {
+        setError('Username is already taken');
+      } else if (error.response?.data?.message?.includes('email')) {
+        setError('Email is already registered');
+      } else {
+        setError(error.message || 'Failed to update profile');
+      }
     }
   };
 
@@ -100,16 +198,25 @@ const Profile = () => {
     setError('');
     setSuccess('');
 
-    try {
-      if (passwordData.newPassword !== passwordData.confirmPassword) {
-        setError('New passwords do not match');
-        return;
-      }
-      if (!passwordData.currentPassword) {
-        setError('Current password is required');
-        return;
-      }
+    // Validate password data
+    if (!passwordData.currentPassword) {
+      setError('Current password is required');
+      return;
+    }
+    if (!passwordData.newPassword) {
+      setError('New password is required');
+      return;
+    }
+    if (passwordData.newPassword.length < 6) {
+      setError('New password must be at least 6 characters long');
+      return;
+    }
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setError('New passwords do not match');
+      return;
+    }
 
+    try {
       const response = await updateProfile({
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
@@ -125,27 +232,47 @@ const Profile = () => {
       });
     } catch (error) {
       console.error('Password update error:', error);
-      setError(error.message || 'Failed to update password');
+      if (error.response?.data?.message?.includes('current password')) {
+        setError('Current password is incorrect');
+      } else {
+        setError(error.message || 'Failed to update password');
+      }
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-      try {
-        console.log('Deleting account...');
-        await deleteAccount();
-        console.log('Account deleted successfully');
-        await logout();
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setError('');
+      await deleteAccount();
+      
+      // Show success message in a custom popup
+      const successModal = document.createElement('div');
+      successModal.className = 'modal-overlay';
+      successModal.innerHTML = `
+        <div class="modal-content success-modal">
+          <div class="modal-header">
+            <h2>Account Deleted</h2>
+          </div>
+          <div class="modal-body">
+            <p>Your account has been successfully deleted. You will be redirected to the home page.</p>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(successModal);
+      
+      // Wait for 2 seconds before redirecting
+      setTimeout(() => {
+        document.body.removeChild(successModal);
+        logout();
         navigate('/');
-      } catch (error) {
-        console.error('Account deletion error:', error);
-        console.error('Error details:', {
-          message: error.message,
-          response: error.response?.data,
-          status: error.response?.status
-        });
-        setError(error.message || 'Failed to delete account');
-      }
+      }, 2000);
+    } catch (error) {
+      setError(error.message || 'Failed to delete account. Please try again.');
+      setShowDeleteModal(false);
     }
   };
 
@@ -163,8 +290,8 @@ const Profile = () => {
         <div className="profile-header">
           <div className="profile-header-content">
             <div className="profile-header-left">
-          <h1>Profile Settings</h1>
-          <p className="profile-subtitle">Manage your account information</p>
+              <h1>Profile Settings</h1>
+              <p className="profile-subtitle">Manage your account information</p>
             </div>
             <button 
               className="back-to-dashboard-button"
@@ -251,7 +378,14 @@ const Profile = () => {
                 <button 
                   type="button" 
                   className="cancel-button"
-                  onClick={() => setEditMode(false)}
+                  onClick={() => {
+                    setEditMode(false);
+                    setFormData({
+                      fullName: userData.fullName,
+                      username: userData.username,
+                      email: userData.email
+                    });
+                  }}
                 >
                   Cancel
                 </button>
@@ -263,40 +397,67 @@ const Profile = () => {
             <div className="password-form-container">
               <h3>Change Password</h3>
               <form onSubmit={handleUpdatePassword} className="password-form">
-                <div className="form-group">
+                <div className="form-group password-group">
                   <label htmlFor="currentPassword">Current Password</label>
-                  <input
-                    type="password"
-                    id="currentPassword"
-                    name="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={handlePasswordChange}
-                    required
-                  />
+                  <div className="password-input-group">
+                    <input
+                      type={showPassword.current ? "text" : "password"}
+                      id="currentPassword"
+                      name="currentPassword"
+                      value={passwordData.currentPassword}
+                      onChange={handlePasswordChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => togglePasswordVisibility('current')}
+                    >
+                      {showPassword.current ? "Hide" : "Show"}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group password-group">
                   <label htmlFor="newPassword">New Password</label>
-                  <input
-                    type="password"
-                    id="newPassword"
-                    name="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordChange}
-                    required
-                  />
+                  <div className="password-input-group">
+                    <input
+                      type={showPassword.new ? "text" : "password"}
+                      id="newPassword"
+                      name="newPassword"
+                      value={passwordData.newPassword}
+                      onChange={handlePasswordChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => togglePasswordVisibility('new')}
+                    >
+                      {showPassword.new ? "Hide" : "Show"}
+                    </button>
+                  </div>
                 </div>
 
-                <div className="form-group">
+                <div className="form-group password-group">
                   <label htmlFor="confirmPassword">Confirm New Password</label>
-                  <input
-                    type="password"
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordChange}
-                    required
-                  />
+                  <div className="password-input-group">
+                    <input
+                      type={showPassword.confirm ? "text" : "password"}
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      value={passwordData.confirmPassword}
+                      onChange={handlePasswordChange}
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="password-toggle"
+                      onClick={() => togglePasswordVisibility('confirm')}
+                    >
+                      {showPassword.confirm ? "Hide" : "Show"}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="form-actions">
@@ -313,6 +474,11 @@ const Profile = () => {
                         newPassword: '',
                         confirmPassword: ''
                       });
+                      setShowPassword({
+                        current: false,
+                        new: false,
+                        confirm: false
+                      });
                     }}
                   >
                     Cancel
@@ -324,6 +490,9 @@ const Profile = () => {
 
           <div className="danger-zone">
             <h3>Danger Zone</h3>
+            <p className="danger-text">
+              Once you delete your account, there is no going back. Please be certain.
+            </p>
             <button 
               className="delete-button"
               onClick={handleDeleteAccount}
@@ -332,6 +501,13 @@ const Profile = () => {
             </button>
           </div>
         </div>
+
+        {/* Delete Account Modal */}
+        <DeleteAccountModal
+          isOpen={showDeleteModal}
+          onClose={() => setShowDeleteModal(false)}
+          onConfirm={handleConfirmDelete}
+        />
       </div>
     </div>
   );
