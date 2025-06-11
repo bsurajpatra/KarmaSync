@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { getProjects, createProject, updateProject, deleteProject } from '../api/projectApi';
-import Footer from './Footer';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -95,7 +94,14 @@ const Projects = () => {
   if (loading) return <div className="loading">Loading projects...</div>;
 
   return (
-    <div className="projects-container">
+    <div className="projects-container" style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection: 'column',
+      position: 'relative',
+      paddingBottom: '0',
+      overflow: 'hidden'
+    }}>
       <div className="projects-header">
         <h1>My Projects</h1>
         <button 
@@ -159,7 +165,11 @@ const Projects = () => {
         </div>
       )}
 
-      <div className="projects-grid">
+      <div className="projects-grid" style={{ 
+        flex: 1,
+        overflowY: 'auto',
+        paddingRight: '1rem'
+      }}>
         {projects.map(project => (
           <div key={project._id} className="project-card">
             <h3>{project.title}</h3>
@@ -181,7 +191,6 @@ const Projects = () => {
           </div>
         ))}
       </div>
-      <Footer />
     </div>
   );
 };

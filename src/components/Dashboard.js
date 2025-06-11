@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import Footer from './Footer';
+import { getCurrentUser } from '../api/authApi';
 
 const Dashboard = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        await getCurrentUser();
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -16,12 +32,32 @@ const Dashboard = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="dashboard-wrapper" style={{ 
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+      }}>
+        <div className="loading">Loading your dashboard...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard-wrapper">
       <div className="dashboard-content">
         <div className="dashboard-header">
-          <h1>Welcome to Your Dashboard</h1>
-          <p className="dashboard-subtitle">Manage your productivity and projects</p>
+          <div className="header-content">
+            <h1>Welcome to KarmaSync</h1>
+            <p className="dashboard-subtitle">Manage your productivity and projects</p>
+          </div>
+          <button className="logout-button" onClick={handleLogout}>
+            <i className="fas fa-sign-out-alt"></i>
+            Logout
+          </button>
         </div>
 
         <div className="feature-grid">
@@ -33,18 +69,17 @@ const Dashboard = () => {
             <p>Manage your projects and track their progress</p>
           </Link>
 
-          <div className="feature-card" onClick={handleLogout}>
+          <Link to="/profile" className="feature-card">
             <div className="feature-icon">
-              <i className="fas fa-sign-out-alt fa-2x"></i>
+              <i className="fas fa-user-cog fa-2x"></i>
             </div>
-            <h3>Logout</h3>
-            <p>Sign out of your account</p>
-          </div>
+            <h3>Profile</h3>
+            <p>Manage your account settings and preferences</p>
+          </Link>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

@@ -16,7 +16,7 @@ const TasksList = () => {
       const res = await axios.get(`${config.API_URL}/tasks/`);
       setTasks(res.data);
     } catch (err) {
-      console.log(err);
+        console.log(err);
     }
   };
 
@@ -33,19 +33,19 @@ const TasksList = () => {
     fetchTasks();
   };
 
-  return (
-    <div>
+    return (
+      <div>
       <TimerBar rerenderCallback={rerenderCallback} />
-      <table className="table">
-        <thead className="thead-light">
-          <tr>
-            <th>Project</th>
-            <th>Task</th>
-            <th>Duration</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
+        <table className="table">
+          <thead className="thead-light">
+            <tr>
+              <th>Project</th>
+              <th>Task</th>
+              <th>Duration</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
         <tbody>
           {tasks.map(currentTask => (
             <Task
@@ -55,9 +55,9 @@ const TasksList = () => {
             />
           ))}
         </tbody>
-      </table>
-    </div>
-  );
+        </table>
+      </div>
+    );
 };
 
 export default TasksList;

@@ -26,9 +26,7 @@ const LandingPage = () => {
         <div className="about-content">
           <h2>About KarmaSync</h2>
           <p>
-            KarmaSync is a powerful productivity tool designed to help you track your daily activities,
-            manage your time effectively, and build better habits. With intuitive features and a
-            user-friendly interface, KarmaSync makes it easy to stay organized and achieve your goals.
+          Karma Sync is a modern, lightweight project management tool built for teams and individuals to stay organized, productive, and in sync. Whether you're working solo or managing a group project, Karma Sync helps you plan tasks, track progress, and collaborate effectively — all in one streamlined dashboard.
           </p>
         </div>
       </section>

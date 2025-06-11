@@ -14,6 +14,7 @@ import Dashboard from "./components/Dashboard";
 import ForgotPassword from './components/ForgotPassword';
 import ResetPassword from "./components/ResetPassword";
 import Projects from './components/Projects';
+import Profile from './components/Profile';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -45,6 +46,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Projects />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               } 
             />
