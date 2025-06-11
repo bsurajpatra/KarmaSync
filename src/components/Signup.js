@@ -49,17 +49,28 @@ const Signup = () => {
     }
 
     try {
-      await axios.post(`${config.API_URL}/api/auth/signup`, {
+      console.log('Sending signup request to:', `${config.API_URL}/api/auth/signup`);
+      console.log('Signup data:', {
+        fullName: formData.fullName,
+        username: formData.username,
+        email: formData.email
+      });
+      
+      const response = await axios.post(`${config.API_URL}/api/auth/signup`, {
         fullName: formData.fullName,
         username: formData.username,
         email: formData.email,
         password: formData.password
       });
+      
+      console.log('Signup response:', response.data);
       setSuccess(true);
       setTimeout(() => {
         history.push('/login');
       }, 3000);
     } catch (error) {
+      console.error('Signup error:', error);
+      console.error('Error response:', error.response?.data);
       setError(error.response?.data?.message || 'An error occurred');
     }
   };
