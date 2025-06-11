@@ -1141,11 +1141,28 @@ input[type="submit"].btn {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  padding: 1.5rem;
+  padding: 1.5rem 2rem;
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.projects-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.projects-header-left {
+  flex: 1;
+}
+
+.projects-header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
 }
 
 .projects-header h1 {
@@ -1379,6 +1396,40 @@ input[type="submit"].btn {
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
+.profile-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-header-left {
+  flex: 1;
+}
+
+.back-to-dashboard-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-to-dashboard-button:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+.back-to-dashboard-button i {
+  font-size: 1rem;
+}
+
 .profile-header h1 {
   color: #ffffff;
   font-size: 2.5rem;
@@ -1577,5 +1628,170 @@ input[type="submit"].btn {
 
   .form-actions {
     flex-direction: column;
+  }
+
+  .profile-header-content {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .profile-header-left {
+    width: 100%;
+  }
+
+  .back-to-dashboard-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Password Change Form Styles */
+.password-form-container {
+  background: white;
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  margin-top: 2rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.password-form-container h3 {
+  color: var(--text-color);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+.password-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.password-form .form-group {
+  margin-bottom: 0;
+}
+
+.password-form .form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.password-form .form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e0e0e0;
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  font-size: 1rem;
+}
+
+.password-form .form-group input:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 0.2rem rgba(253, 185, 155, 0.25);
+  outline: none;
+}
+
+.password-form .form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.password-form .form-actions button {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+
+.password-form .form-actions .save-button {
+  background: var(--primary-gradient);
+  color: white;
+}
+
+.password-form .form-actions .save-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.password-form .form-actions .cancel-button {
+  background: #f8f9fa;
+  color: var(--text-color);
+  border: 1px solid #e0e0e0;
+}
+
+.password-form .form-actions .cancel-button:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.change-password-button {
+  background: var(--primary-gradient);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--border-radius);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.change-password-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  opacity: 0.95;
+}
+
+@media (max-width: 768px) {
+  .password-form-container {
+    padding: 1.5rem;
+  }
+
+  .password-form .form-actions {
+    flex-direction: column;
+  }
+
+  .password-form .form-actions button {
+    width: 100%;
+  }
+}
+
+/* No Projects Message Styles */
+.no-projects-message {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 2rem;
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 500px;
+  width: 100%;
+}
+
+.no-projects-message h3 {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .no-projects-message {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .no-projects-message h3 {
+    font-size: 1.3rem;
   }
 }

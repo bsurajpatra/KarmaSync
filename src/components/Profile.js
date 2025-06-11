@@ -10,8 +10,13 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [editMode, setEditMode] = useState(false);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
+    username: '',
+    email: ''
+  });
+  const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
@@ -31,7 +36,7 @@ const Profile = () => {
       const user = await getCurrentUser();
       console.log('User data received:', user);
       setUserData(user);
-      setFormData(prev => ({ ...prev, fullName: user.fullName }));
+      setFormData(prev => ({ ...prev, fullName: user.fullName, username: user.username, email: user.email }));
     } catch (error) {
       console.error('Error fetching user data:', error);
       console.error('Error details:', {
@@ -54,6 +59,14 @@ const Profile = () => {
     }));
   };
 
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     console.log('Updating profile with data:', formData);
@@ -61,32 +74,15 @@ const Profile = () => {
     setSuccess('');
 
     try {
-      if (formData.newPassword) {
-        if (formData.newPassword !== formData.confirmPassword) {
-          setError('New passwords do not match');
-          return;
-        }
-        if (!formData.currentPassword) {
-          setError('Current password is required to set a new password');
-          return;
-        }
-      }
-
       const response = await updateProfile({
         fullName: formData.fullName,
-        currentPassword: formData.currentPassword,
-        newPassword: formData.newPassword
+        username: formData.username,
+        email: formData.email
       });
       console.log('Profile update response:', response);
 
       setSuccess('Profile updated successfully');
       setEditMode(false);
-      setFormData(prev => ({
-        ...prev,
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: ''
-      }));
       fetchUserData();
     } catch (error) {
       console.error('Profile update error:', error);
@@ -96,6 +92,40 @@ const Profile = () => {
         status: error.response?.status
       });
       setError(error.message || 'Failed to update profile');
+    }
+  };
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    try {
+      if (passwordData.newPassword !== passwordData.confirmPassword) {
+        setError('New passwords do not match');
+        return;
+      }
+      if (!passwordData.currentPassword) {
+        setError('Current password is required');
+        return;
+      }
+
+      const response = await updateProfile({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      });
+      console.log('Password update response:', response);
+
+      setSuccess('Password updated successfully');
+      setShowPasswordForm(false);
+      setPasswordData({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      });
+    } catch (error) {
+      console.error('Password update error:', error);
+      setError(error.message || 'Failed to update password');
     }
   };
 
@@ -131,8 +161,18 @@ const Profile = () => {
     <div className="profile-wrapper">
       <div className="profile-content">
         <div className="profile-header">
-          <h1>Profile Settings</h1>
-          <p className="profile-subtitle">Manage your account information</p>
+          <div className="profile-header-content">
+            <div className="profile-header-left">
+              <h1>Profile Settings</h1>
+              <p className="profile-subtitle">Manage your account information</p>
+            </div>
+            <button 
+              className="back-to-dashboard-button"
+              onClick={() => navigate('/dashboard')}
+            >
+              <i className="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+          </div>
         </div>
 
         {error && <div className="error-message">{error}</div>}
@@ -159,6 +199,12 @@ const Profile = () => {
               >
                 Edit Profile
               </button>
+              <button 
+                className="change-password-button"
+                onClick={() => setShowPasswordForm(true)}
+              >
+                Change Password
+              </button>
             </div>
           ) : (
             <form onSubmit={handleUpdateProfile} className="profile-form">
@@ -175,38 +221,26 @@ const Profile = () => {
               </div>
 
               <div className="form-group">
-                <label htmlFor="currentPassword">Current Password</label>
+                <label htmlFor="username">Username</label>
                 <input
-                  type="password"
-                  id="currentPassword"
-                  name="currentPassword"
-                  value={formData.currentPassword}
+                  type="text"
+                  id="username"
+                  name="username"
+                  value={formData.username}
                   onChange={handleInputChange}
-                  placeholder="Enter to verify changes"
+                  required
                 />
               </div>
 
               <div className="form-group">
-                <label htmlFor="newPassword">New Password</label>
+                <label htmlFor="email">Email</label>
                 <input
-                  type="password"
-                  id="newPassword"
-                  name="newPassword"
-                  value={formData.newPassword}
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="Leave blank to keep current"
-                />
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="confirmPassword">Confirm New Password</label>
-                <input
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  placeholder="Confirm new password"
+                  required
                 />
               </div>
 
@@ -217,20 +251,75 @@ const Profile = () => {
                 <button 
                   type="button" 
                   className="cancel-button"
-                  onClick={() => {
-                    setEditMode(false);
-                    setFormData(prev => ({
-                      ...prev,
-                      currentPassword: '',
-                      newPassword: '',
-                      confirmPassword: ''
-                    }));
-                  }}
+                  onClick={() => setEditMode(false)}
                 >
                   Cancel
                 </button>
               </div>
             </form>
+          )}
+
+          {showPasswordForm && (
+            <div className="password-form-container">
+              <h3>Change Password</h3>
+              <form onSubmit={handleUpdatePassword} className="password-form">
+                <div className="form-group">
+                  <label htmlFor="currentPassword">Current Password</label>
+                  <input
+                    type="password"
+                    id="currentPassword"
+                    name="currentPassword"
+                    value={passwordData.currentPassword}
+                    onChange={handlePasswordChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="newPassword">New Password</label>
+                  <input
+                    type="password"
+                    id="newPassword"
+                    name="newPassword"
+                    value={passwordData.newPassword}
+                    onChange={handlePasswordChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="confirmPassword">Confirm New Password</label>
+                  <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    value={passwordData.confirmPassword}
+                    onChange={handlePasswordChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button type="submit" className="save-button">
+                    Update Password
+                  </button>
+                  <button 
+                    type="button" 
+                    className="cancel-button"
+                    onClick={() => {
+                      setShowPasswordForm(false);
+                      setPasswordData({
+                        currentPassword: '',
+                        newPassword: '',
+                        confirmPassword: ''
+                      });
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           )}
 
           <div className="danger-zone">

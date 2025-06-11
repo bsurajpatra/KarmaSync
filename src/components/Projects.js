@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getProjects, createProject, updateProject, deleteProject } from '../api/projectApi';
 
 const Projects = () => {
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -103,18 +105,30 @@ const Projects = () => {
       overflow: 'hidden'
     }}>
       <div className="projects-header">
-        <h1>My Projects</h1>
-        <button 
-          className="btn btn-primary"
-          onClick={() => {
-            console.log('Opening new project form');
-            setShowForm(true);
-            setEditingProject(null);
-            setFormData({ title: '', description: '' });
-          }}
-        >
-          Create New Project
-        </button>
+        <div className="projects-header-content">
+          <div className="projects-header-left">
+            <h1>My Projects</h1>
+          </div>
+          <div className="projects-header-actions">
+            <button 
+              className="back-to-dashboard-button"
+              onClick={() => navigate('/dashboard')}
+            >
+              <i className="fas fa-arrow-left"></i> Back to Dashboard
+            </button>
+            <button 
+              className="btn btn-primary"
+              onClick={() => {
+                console.log('Opening new project form');
+                setShowForm(true);
+                setEditingProject(null);
+                setFormData({ title: '', description: '' });
+              }}
+            >
+              Create New Project
+            </button>
+          </div>
+        </div>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -170,26 +184,32 @@ const Projects = () => {
         overflowY: 'auto',
         paddingRight: '1rem'
       }}>
-        {projects.map(project => (
-          <div key={project._id} className="project-card">
-            <h3>{project.title}</h3>
-            <p>{project.description}</p>
-            <div className="project-actions">
-              <button 
-                className="btn btn-secondary"
-                onClick={() => handleEdit(project)}
-              >
-                Edit
-              </button>
-              <button 
-                className="btn btn-danger"
-                onClick={() => handleDelete(project._id)}
-              >
-                Delete
-              </button>
-            </div>
+        {projects.length === 0 ? (
+          <div className="no-projects-message">
+            <h3>No Projects Found</h3>
           </div>
-        ))}
+        ) : (
+          projects.map(project => (
+            <div key={project._id} className="project-card">
+              <h3>{project.title}</h3>
+              <p>{project.description}</p>
+              <div className="project-actions">
+                <button 
+                  className="btn btn-secondary"
+                  onClick={() => handleEdit(project)}
+                >
+                  Edit
+                </button>
+                <button 
+                  className="btn btn-danger"
+                  onClick={() => handleDelete(project._id)}
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );
