@@ -58,7 +58,6 @@ const KanbanBoard = () => {
         }
       };
 
-      // Add custom boards from project if they exist
       if (projectData.customBoards) {
         projectData.customBoards.forEach(board => {
           groupedTasks[board.id] = {
@@ -165,7 +164,6 @@ const KanbanBoard = () => {
         }));
       }
     } else if (name === 'customType') {
-      // Validate custom type: only allow alphanumeric characters, hyphens, and underscores
       const validatedValue = value.replace(/[^a-zA-Z0-9-_]/g, '');
       setIssueFormData(prev => ({
         ...prev,
@@ -333,9 +331,7 @@ const KanbanBoard = () => {
                               <span className={`task-type ${issue.type}`}>
                                 {issue.type}
                               </span>
-                              <span className="task-assignee">
-                                {issue.assignee.fullName}
-                              </span>
+                              
                             </div>
                           </div>
                         )}

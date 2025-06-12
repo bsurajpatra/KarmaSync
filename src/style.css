@@ -1287,495 +1287,42 @@ input[type="submit"].btn {
 
 .project-meta {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-top: 1.5rem;
-}
-
-.project-date {
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 0.9rem;
-}
-
-.project-type-badge {
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-transform: capitalize;
-  margin-left: 1rem;
-}
-
-.project-type-badge.personal {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-  color: white;
-}
-
-.project-type-badge.collaborative {
-  background: linear-gradient(135deg, #2196F3, #1976D2);
-  color: white;
-}
-
-.status-badge {
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-transform: capitalize;
-}
-
-.status-badge.active {
-  background: linear-gradient(135deg, #4CAF50, #45a049);
-  color: white;
-}
-
-.status-badge.completed {
-  background: linear-gradient(135deg, #9C27B0, #7B1FA2);
-  color: white;
-}
-
-.status-badge.archived {
-  background: linear-gradient(135deg, #9E9E9E, #757575);
-  color: white;
-}
-
-.project-actions {
-  display: flex;
-  gap: 0.75rem;
-}
-
-.project-actions button {
-  flex: 1;
-  padding: 0.6rem 1rem;
-  font-size: 0.9rem;
-}
-
-.error-message {
-  background: rgba(255, 59, 48, 0.1);
-  color: #ff3b30;
-  padding: 1rem;
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-  text-align: center;
-  font-weight: 500;
-}
-
-/* User Info Styles */
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 15px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
-}
-
-.user-info:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
-}
-
-.user-avatar {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #754ea7 0%, #a770ef 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  color: #ffffff;
-  text-transform: uppercase;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-
-.user-avatar:hover {
-  transform: scale(1.05);
-}
-
-.user-details {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.user-name {
-  color: #ffffff;
-  font-size: 1.1rem;
-  font-weight: 600;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.user-email {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 0.9rem;
-}
-
-.loading {
-  color: #ffffff;
-  font-size: 1.2rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 0.6; }
-  50% { opacity: 1; }
-  100% { opacity: 0.6; }
-}
-
-/* Profile Styles */
-.profile-wrapper {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
-}
-
-.profile-content {
-  flex: 1;
-  padding: 2rem;
-  max-width: 800px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.profile-header {
-  margin-bottom: 2rem;
-  padding: 1.5rem 2rem;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.profile-header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.profile-header-left {
-  flex: 1;
-}
-
-.back-to-dashboard-button {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.back-to-dashboard-button:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
-}
-
-.back-to-dashboard-button i {
-  font-size: 1rem;
-}
-
-.profile-header h1 {
-  color: #ffffff;
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.profile-subtitle {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1.2rem;
-  margin: 0.5rem 0 0 0;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.profile-card {
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  padding: 2rem;
-}
-
-.profile-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.info-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.info-group label {
+  gap: 1rem;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.9rem;
 }
 
-.info-group p {
-  color: #ffffff;
-  font-size: 1.1rem;
-  margin: 0;
-}
-
-.profile-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.form-group label {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 1rem;
-}
-
-.form-group input {
-  padding: 0.75rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
+.task-count-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
   background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-.form-group input:focus {
-  outline: none;
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.form-group input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.edit-button,
-.save-button,
-.cancel-button {
-  padding: 0.75rem 1.5rem;
-  border-radius: 12px;
-  font-size: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  font-size: 0.9rem;
   font-weight: 500;
-  cursor: pointer;
+  color: #ffffff;
   transition: all 0.3s ease;
+  margin-left: 1rem;
 }
 
-.edit-button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-}
-
-.save-button {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  color: #ffffff;
-  flex: 1;
-}
-
-.cancel-button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  flex: 1;
-}
-
-.edit-button:hover,
-.save-button:hover,
-.cancel-button:hover {
+.task-count-badge:hover {
   background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Danger Zone Styles */
-.danger-zone {
-  background: rgba(220, 53, 69, 0.05) !important;
-  border: 1px solid rgba(220, 53, 69, 0.2) !important;
-  margin-top: 2rem;
-}
-
-.danger-zone h2 {
-  color: #dc3545;
-  font-size: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.danger-zone-content {
-  padding: 1rem;
-}
-
-.danger-action {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-  background: rgba(220, 53, 69, 0.08);
-  border-radius: 8px;
-}
-
-.danger-action-info h3 {
-  color: #dc3545;
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-}
-
-.danger-action-info p {
-  color: #6c757d;
-  font-size: 0.9rem;
-  margin: 0;
-}
-
-/* Delete Confirmation Modal Styles */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(5px);
-}
-
-.modal-content {
-  background: white;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  position: relative;
-  animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modal-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #dee2e6;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h2 {
-  margin: 0;
-  color: #dc3545;
-  font-size: 1.5rem;
-}
-
-.modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  color: #6c757d;
-  cursor: pointer;
-  padding: 0.5rem;
-  transition: color 0.2s;
-}
-
-.modal-close:hover {
-  color: #dc3545;
-}
-
-.modal-body {
-  padding: 1.5rem;
-}
-
-.modal-body p {
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  color: #343a40;
-}
-
-.warning-text {
-  color: #dc3545 !important;
-  font-weight: 500;
-}
-
-.project-to-delete {
-  background: #f8f9fa;
-  padding: 1rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-}
-
-.project-to-delete strong {
-  color: #343a40;
-  margin-right: 0.5rem;
-}
-
-.modal-actions {
-  padding: 1rem 1.5rem;
-  background: #f8f9fa;
-  border-top: 1px solid #dee2e6;
-  display: flex;
-  justify-content: flex-end;
-  gap: 1rem;
-  border-radius: 0 0 12px 12px;
-}
-
-.modal-actions button {
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 0.9rem;
-}
-
-/* Responsive Styles */
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .danger-action {
+  .project-meta {
     flex-direction: column;
-    gap: 1rem;
-    text-align: center;
+    align-items: flex-start;
+    gap: 0.5rem;
   }
-
-  .danger-action-info {
-    margin-bottom: 1rem;
-  }
-
-  .modal-content {
-    width: 95%;
-    margin: 1rem;
+  
+  .task-count-badge {
+    margin-left: 0;
   }
 }
 
@@ -2197,5 +1744,32 @@ input[type="submit"].btn {
   .board-item {
     width: 100%;
     min-width: auto;
+  }
+}
+
+/* Task Count Badge Styles */
+.task-count-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #ffffff;
+  transition: all 0.3s ease;
+  margin-left: 1rem;
+}
+
+.task-count-badge:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .task-count-badge {
+    margin-left: 0;
   }
 }

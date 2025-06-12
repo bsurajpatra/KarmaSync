@@ -1,5 +1,6 @@
 import axios from 'axios';
 import config from '../config';
+import { API_BASE_URL } from '../config';
 
 // Get auth token from localStorage
 const getAuthHeader = () => {
@@ -112,6 +113,27 @@ export const addTaskComment = async (taskId, comment) => {
     return response.data;
   } catch (error) {
     console.error('Error in addTaskComment:', error.response || error);
+    throw error;
+  }
+};
+
+export const getTasksByProject = async (projectId) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/projects/${projectId}/tasks`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch project tasks');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching project tasks:', error);
     throw error;
   }
 }; 

@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProjectById, updateProject, deleteProject } from '../api/projectApi';
+import { getTasks } from '../api/taskApi';
 
 const ProjectOverview = () => {
   const navigate = useNavigate();
@@ -15,12 +16,9 @@ const ProjectOverview = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [taskCount, setTaskCount] = useState(0);
 
-  useEffect(() => {
-    fetchProject();
-  }, [id]);
-
-  const fetchProject = async () => {
+  const fetchProject = useCallback(async () => {
     try {
       console.log('Fetching project details:', id);
       const data = await getProjectById(id);
@@ -36,7 +34,23 @@ const ProjectOverview = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  const fetchTaskCount = useCallback(async () => {
+    try {
+      console.log('Fetching tasks for project:', id);
+      const tasks = await getTasks(id);
+      console.log('Tasks received:', tasks);
+      setTaskCount(tasks.length);
+    } catch (err) {
+      console.error('Error fetching task count:', err);
+    }
+  }, [id]);
+
+  useEffect(() => {
+    fetchProject();
+    fetchTaskCount();
+  }, [fetchProject, fetchTaskCount]);
 
   const handleGithubSubmit = async (e) => {
     e.preventDefault();
@@ -178,6 +192,9 @@ const ProjectOverview = () => {
                 month: 'long',
                 day: 'numeric'
               })}
+              <span className="task-count-badge">
+                {taskCount} {taskCount === 1 ? 'Issue' : 'Issues'}
+              </span>
             </p>
           </div>
           <div className="projects-header-actions">
