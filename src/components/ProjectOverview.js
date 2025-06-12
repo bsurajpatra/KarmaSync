@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProjectById } from '../api/projectApi';
+import { getProjectById, updateProject } from '../api/projectApi';
 
 const ProjectOverview = () => {
   const navigate = useNavigate();
@@ -8,6 +8,8 @@ const ProjectOverview = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [editingGithub, setEditingGithub] = useState(false);
+  const [githubLink, setGithubLink] = useState('');
 
   useEffect(() => {
     fetchProject();
@@ -19,12 +21,26 @@ const ProjectOverview = () => {
       const data = await getProjectById(id);
       console.log('Project details:', data);
       setProject(data);
+      setGithubLink(data.githubLink || '');
       setError('');
     } catch (err) {
       console.error('Error fetching project:', err);
       setError(err.message || 'Failed to fetch project details');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGithubSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updatedProject = await updateProject(id, { githubLink });
+      setProject(updatedProject);
+      setEditingGithub(false);
+      setError('');
+    } catch (err) {
+      console.error('Error updating GitHub link:', err);
+      setError(err.message || 'Failed to update GitHub link');
     }
   };
 
@@ -71,19 +87,64 @@ const ProjectOverview = () => {
           <p>{project.description || 'No description provided'}</p>
         </div>
 
-        {project.githubLink && (
-          <div className="project-overview-section">
-            <h2>GitHub Repository</h2>
-            <a 
-              href={project.githubLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="github-link"
-            >
-              <i className="fab fa-github"></i> {project.githubLink.replace('https://github.com/', '')}
-            </a>
-          </div>
-        )}
+        <div className="project-overview-section">
+          <h2>GitHub Repository</h2>
+          {editingGithub ? (
+            <form onSubmit={handleGithubSubmit} className="github-form">
+              <input
+                type="url"
+                value={githubLink}
+                onChange={(e) => setGithubLink(e.target.value)}
+                placeholder="https://github.com/username/repository"
+                pattern="https://github.com/.*"
+                className="github-input"
+                required
+              />
+              <div className="github-form-actions">
+                <button type="submit" className="btn btn-primary">
+                  Save
+                </button>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setEditingGithub(false);
+                    setGithubLink(project.githubLink || '');
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : project.githubLink ? (
+            <div className="github-display">
+              <a 
+                href={project.githubLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="github-link"
+              >
+                <i className="fab fa-github"></i> {project.githubLink.replace('https://github.com/', '')}
+              </a>
+              <button 
+                className="btn btn-secondary btn-edit-github"
+                onClick={() => setEditingGithub(true)}
+              >
+                <i className="fas fa-edit"></i> Edit
+              </button>
+            </div>
+          ) : (
+            <div className="github-display">
+              <p className="no-github">No GitHub repository linked</p>
+              <button 
+                className="btn btn-primary"
+                onClick={() => setEditingGithub(true)}
+              >
+                <i className="fab fa-github"></i> Add GitHub Repository
+              </button>
+            </div>
+          )}
+        </div>
 
         <div className="project-overview-section">
           <h2>Project Type</h2>

@@ -69,13 +69,19 @@ export const updateProject = async (id, projectData) => {
   try {
     console.log('Making PUT request to /api/projects/' + id + ' with data:', projectData);
     const response = await axios.put(`${BASE_URL}/${id}`, projectData, {
-      headers: getAuthHeader()
+      headers: {
+        ...getAuthHeader(),
+        'Content-Type': 'application/json'
+      }
     });
     console.log('PUT /api/projects/' + id + ' response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error in updateProject:', error.response || error);
-    throw error;
+    if (error.response?.data) {
+      throw error.response.data;
+    }
+    throw { message: 'Error updating project' };
   }
 };
 
