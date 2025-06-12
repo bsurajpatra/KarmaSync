@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProjectById, updateProject } from '../api/projectApi';
+import { getProjectById, updateProject, deleteProject } from '../api/projectApi';
 
 const ProjectOverview = () => {
   const navigate = useNavigate();
@@ -14,6 +14,7 @@ const ProjectOverview = () => {
   const [editingDescription, setEditingDescription] = useState(false);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     fetchProject();
@@ -76,6 +77,53 @@ const ProjectOverview = () => {
     }
   };
 
+  const handleDeleteProject = async () => {
+    try {
+      await deleteProject(id);
+      navigate('/projects');
+    } catch (err) {
+      console.error('Error deleting project:', err);
+      setError(err.message || 'Failed to delete project');
+    }
+  };
+
+  const DeleteConfirmationModal = () => (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>Delete Project</h2>
+          <button 
+            className="modal-close"
+            onClick={() => setShowDeleteConfirm(false)}
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <p>Are you sure you want to delete this project?</p>
+          <p className="warning-text">This action cannot be undone. All project data, including tasks and boards, will be permanently deleted.</p>
+          <div className="project-to-delete">
+            <strong>Project to delete:</strong> {project?.title}
+          </div>
+        </div>
+        <div className="modal-actions">
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowDeleteConfirm(false)}
+          >
+            Cancel
+          </button>
+          <button 
+            className="btn btn-danger"
+            onClick={handleDeleteProject}
+          >
+            Delete Project
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   if (loading) return <div className="loading">Loading project details...</div>;
 
   if (error) return <div className="error-message">{error}</div>;
@@ -84,6 +132,8 @@ const ProjectOverview = () => {
 
   return (
     <div className="projects-container">
+      {showDeleteConfirm && <DeleteConfirmationModal />}
+      
       <div className="projects-header">
         <div className="projects-header-content">
           <div className="projects-header-left">
@@ -264,6 +314,24 @@ const ProjectOverview = () => {
               {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
             </span>
           </p>
+        </div>
+
+        <div className="project-overview-section danger-zone">
+          <h2>Danger Zone</h2>
+          <div className="danger-zone-content">
+            <div className="danger-action">
+              <div className="danger-action-info">
+                <h3>Delete this project</h3>
+                <p>Once you delete a project, there is no going back. Please be certain.</p>
+              </div>
+              <button 
+                className="btn btn-danger"
+                onClick={() => setShowDeleteConfirm(true)}
+              >
+                Delete Project
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
