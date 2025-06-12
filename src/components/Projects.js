@@ -174,7 +174,7 @@ const Projects = () => {
             <div 
               key={project._id} 
               className="project-card"
-              onClick={() => navigate(`/project/${project._id}/overview`)}
+                  onClick={() => navigate(`/project/${project._id}/overview`)}
               style={{ cursor: 'pointer' }}
             >
               <div className="project-card-header">

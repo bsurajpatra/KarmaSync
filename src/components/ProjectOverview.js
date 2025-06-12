@@ -10,6 +10,10 @@ const ProjectOverview = () => {
   const [error, setError] = useState('');
   const [editingGithub, setEditingGithub] = useState(false);
   const [githubLink, setGithubLink] = useState('');
+  const [editingTitle, setEditingTitle] = useState(false);
+  const [editingDescription, setEditingDescription] = useState(false);
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     fetchProject();
@@ -22,6 +26,8 @@ const ProjectOverview = () => {
       console.log('Project details:', data);
       setProject(data);
       setGithubLink(data.githubLink || '');
+      setTitle(data.title || '');
+      setDescription(data.description || '');
       setError('');
     } catch (err) {
       console.error('Error fetching project:', err);
@@ -44,6 +50,32 @@ const ProjectOverview = () => {
     }
   };
 
+  const handleTitleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updatedProject = await updateProject(id, { title });
+      setProject(updatedProject);
+      setEditingTitle(false);
+      setError('');
+    } catch (err) {
+      console.error('Error updating title:', err);
+      setError(err.message || 'Failed to update title');
+    }
+  };
+
+  const handleDescriptionSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const updatedProject = await updateProject(id, { description });
+      setProject(updatedProject);
+      setEditingDescription(false);
+      setError('');
+    } catch (err) {
+      console.error('Error updating description:', err);
+      setError(err.message || 'Failed to update description');
+    }
+  };
+
   if (loading) return <div className="loading">Loading project details...</div>;
 
   if (error) return <div className="error-message">{error}</div>;
@@ -55,7 +87,41 @@ const ProjectOverview = () => {
       <div className="projects-header">
         <div className="projects-header-content">
           <div className="projects-header-left">
-            <h1>{project.title}</h1>
+            {editingTitle ? (
+              <form onSubmit={handleTitleSubmit} className="edit-form">
+                <input
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Project Title"
+                  className="edit-input"
+                  required
+                />
+                <div className="form-actions">
+                  <button type="submit" className="btn btn-primary">Save</button>
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setEditingTitle(false);
+                      setTitle(project.title);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div className="title-display">
+                <h1>{project.title}</h1>
+                <button 
+                  className="btn btn-danger"
+                  onClick={() => setEditingTitle(true)}
+                >
+                  Edit
+                </button>
+              </div>
+            )}
             <p className="project-meta">
               Created on {new Date(project.createdAt).toLocaleDateString('en-US', {
                 year: 'numeric',
@@ -83,8 +149,44 @@ const ProjectOverview = () => {
 
       <div className="project-overview-container">
         <div className="project-overview-section">
-          <h2>Description</h2>
-          <p>{project.description || 'No description provided'}</p>
+          <div className="section-header">
+            <h2>Description</h2>
+            {!editingDescription && (
+              <button 
+                className="btn btn-danger"
+                onClick={() => setEditingDescription(true)}
+              >
+                Edit
+              </button>
+            )}
+          </div>
+          {editingDescription ? (
+            <form onSubmit={handleDescriptionSubmit} className="edit-form">
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Project Description"
+                className="edit-textarea"
+                rows="4"
+                required
+              />
+              <div className="form-actions">
+                <button type="submit" className="btn btn-primary">Save</button>
+                <button 
+                  type="button" 
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    setEditingDescription(false);
+                    setDescription(project.description || '');
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <p>{project.description || 'No description provided'}</p>
+          )}
         </div>
 
         <div className="project-overview-section">
@@ -168,4 +270,4 @@ const ProjectOverview = () => {
   );
 };
 
-export default ProjectOverview; 
+export default ProjectOverview;
