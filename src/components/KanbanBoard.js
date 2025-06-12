@@ -25,7 +25,9 @@ const KanbanBoard = () => {
     type: 'tech',
     status: 'todo',
     deadline: '',
+    customType: ''
   });
+  const [showCustomType, setShowCustomType] = useState(false);
 
   useEffect(() => {
     fetchProjectAndTasks();
@@ -146,10 +148,34 @@ const KanbanBoard = () => {
 
   const handleIssueFormChange = (e) => {
     const { name, value } = e.target;
-    setIssueFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    if (name === 'type') {
+      if (value === 'custom') {
+        setShowCustomType(true);
+        setIssueFormData(prev => ({
+          ...prev,
+          [name]: prev.customType || ''
+        }));
+      } else {
+        setShowCustomType(false);
+        setIssueFormData(prev => ({
+          ...prev,
+          [name]: value,
+          customType: ''
+        }));
+      }
+    } else if (name === 'customType') {
+      setIssueFormData(prev => ({
+        ...prev,
+        type: value,
+        customType: value
+      }));
+    } else {
+      setIssueFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleIssueFormSubmit = async (e) => {
@@ -169,12 +195,14 @@ const KanbanBoard = () => {
       }));
 
       setShowAddIssueModal(false);
+      setShowCustomType(false);
       setIssueFormData({
         title: '',
         description: '',
         type: 'tech',
         status: 'todo',
         deadline: '',
+        customType: ''
       });
     } catch (err) {
       console.error('Error creating issue:', err);
@@ -327,7 +355,18 @@ const KanbanBoard = () => {
               <h2>Add New Issue</h2>
               <button 
                 className="modal-close"
-                onClick={() => setShowAddIssueModal(false)}
+                onClick={() => {
+                  setShowAddIssueModal(false);
+                  setShowCustomType(false);
+                  setIssueFormData({
+                    title: '',
+                    description: '',
+                    type: 'tech',
+                    status: 'todo',
+                    deadline: '',
+                    customType: ''
+                  });
+                }}
               >
                 &times;
               </button>
@@ -344,6 +383,7 @@ const KanbanBoard = () => {
                     onChange={handleIssueFormChange}
                     required
                     className="form-control"
+                    placeholder="Enter issue title"
                   />
                 </div>
 
@@ -356,6 +396,7 @@ const KanbanBoard = () => {
                     onChange={handleIssueFormChange}
                     className="form-control"
                     rows="3"
+                    placeholder="Enter issue description"
                   />
                 </div>
 
@@ -364,7 +405,7 @@ const KanbanBoard = () => {
                   <select
                     id="type"
                     name="type"
-                    value={issueFormData.type}
+                    value={showCustomType ? 'custom' : issueFormData.type}
                     onChange={handleIssueFormChange}
                     className="form-control"
                   >
@@ -373,7 +414,19 @@ const KanbanBoard = () => {
                     <option value="bug">Bug</option>
                     <option value="feature">Feature</option>
                     <option value="documentation">Documentation</option>
+                    <option value="custom">Custom Type</option>
                   </select>
+                  {showCustomType && (
+                    <input
+                      type="text"
+                      name="customType"
+                      value={issueFormData.customType}
+                      onChange={handleIssueFormChange}
+                      className="form-control custom-type-input"
+                      placeholder="Enter custom issue type"
+                      required
+                    />
+                  )}
                 </div>
 
                 <div className="form-group">
@@ -412,7 +465,18 @@ const KanbanBoard = () => {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={() => setShowAddIssueModal(false)}
+                    onClick={() => {
+                      setShowAddIssueModal(false);
+                      setShowCustomType(false);
+                      setIssueFormData({
+                        title: '',
+                        description: '',
+                        type: 'tech',
+                        status: 'todo',
+                        deadline: '',
+                        customType: ''
+                      });
+                    }}
                   >
                     Cancel
                   </button>
