@@ -1252,32 +1252,91 @@ input[type="submit"].btn {
 .project-card {
   background: rgba(255, 255, 255, 0.08);
   backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 20px;
   padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
   transition: all 0.3s ease;
 }
 
 .project-card:hover {
   transform: translateY(-5px);
   background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.project-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .project-card h3 {
   color: #ffffff;
   font-size: 1.4rem;
-  font-weight: 600;
-  margin: 0 0 0.75rem 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 0;
+  flex: 1;
 }
 
 .project-card p {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 1rem;
   line-height: 1.5;
-  margin: 0 0 1.25rem 0;
+  margin: 0;
+}
+
+.project-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.project-date {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.9rem;
+}
+
+.project-type-badge {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-left: 1rem;
+}
+
+.project-type-badge.personal {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.project-type-badge.collaborative {
+  background: linear-gradient(135deg, #2196F3, #1976D2);
+  color: white;
+}
+
+.status-badge {
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.status-badge.active {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+  color: white;
+}
+
+.status-badge.completed {
+  background: linear-gradient(135deg, #9C27B0, #7B1FA2);
+  color: white;
+}
+
+.status-badge.archived {
+  background: linear-gradient(135deg, #9E9E9E, #757575);
+  color: white;
 }
 
 .project-actions {

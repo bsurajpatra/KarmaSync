@@ -171,29 +171,19 @@ const Projects = () => {
           </div>
         ) : (
           projects.map(project => (
-            <div key={project._id} className="project-card">
-              <h3>{project.title}</h3>
-              <p>{project.description}</p>
-              <div className="project-actions">
-                <button 
-                  className="btn btn-secondary"
-                  onClick={() => navigate(`/project/${project._id}/overview`)}
-                >
-                  View
-                </button>
-                <button 
-                  className="btn btn-secondary"
-                  onClick={() => handleEdit(project)}
-                >
-                  Edit
-                </button>
-                <button 
-                  className="btn btn-danger"
-                  onClick={() => handleDelete(project._id)}
-                >
-                  Delete
-                </button>
+            <div 
+              key={project._id} 
+              className="project-card"
+              onClick={() => navigate(`/project/${project._id}/overview`)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="project-card-header">
+                <h3>{project.title}</h3>
+                <span className={`project-type-badge ${project.projectType}`}>
+                  {project.projectType.charAt(0).toUpperCase() + project.projectType.slice(1)}
+                </span>
               </div>
+              <p>{project.description}</p>
             </div>
           ))
         )}
