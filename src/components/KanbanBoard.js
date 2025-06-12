@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { getProjectById } from '../api/projectApi';
-import { getTasks, updateTaskStatus } from '../api/taskApi';
+import { getProjectById, addCustomBoard, deleteCustomBoard } from '../api/projectApi';
+import { getTasks, updateTaskStatus, createTask } from '../api/taskApi';
+import BoardManager from './BoardManager';
 
 const KanbanBoard = () => {
   const navigate = useNavigate();
   const { id: projectId } = useParams();
   const [project, setProject] = useState(null);
-  const [tasks, setTasks] = useState({
-    todo: [],
-    doing: [],
-    done: []
+  const [boards, setBoards] = useState({
+    todo: { name: 'To Do', items: [] },
+    doing: { name: 'Doing', items: [] },
+    done: { name: 'Done', items: [] }
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [selectedTask, setSelectedTask] = useState(null);
+  const [selectedIssue, setSelectedIssue] = useState(null);
+  const [showAddIssueModal, setShowAddIssueModal] = useState(false);
+  const [showBoardManager, setShowBoardManager] = useState(false);
+  const [issueFormData, setIssueFormData] = useState({
+    title: '',
+    description: '',
+    type: 'tech',
+    status: 'todo',
+    deadline: '',
+  });
 
   useEffect(() => {
     fetchProjectAndTasks();
@@ -32,12 +42,31 @@ const KanbanBoard = () => {
       
       // Group tasks by status
       const groupedTasks = {
-        todo: tasksData.filter(task => task.status === 'todo'),
-        doing: tasksData.filter(task => task.status === 'doing'),
-        done: tasksData.filter(task => task.status === 'done')
+        todo: { 
+          name: 'To Do',
+          items: tasksData.filter(task => task.status === 'todo')
+        },
+        doing: { 
+          name: 'Doing',
+          items: tasksData.filter(task => task.status === 'doing')
+        },
+        done: { 
+          name: 'Done',
+          items: tasksData.filter(task => task.status === 'done')
+        }
       };
+
+      // Add custom boards from project if they exist
+      if (projectData.customBoards) {
+        projectData.customBoards.forEach(board => {
+          groupedTasks[board.id] = {
+            name: board.name,
+            items: tasksData.filter(task => task.status === board.id)
+          };
+        });
+      }
       
-      setTasks(groupedTasks);
+      setBoards(groupedTasks);
       setError('');
     } catch (err) {
       console.error('Error fetching data:', err);
@@ -54,28 +83,37 @@ const KanbanBoard = () => {
     
     if (source.droppableId === destination.droppableId) {
       // Reorder within the same column
-      const column = tasks[source.droppableId];
+      const column = boards[source.droppableId].items;
       const newColumn = Array.from(column);
       const [removed] = newColumn.splice(source.index, 1);
       newColumn.splice(destination.index, 0, removed);
 
-      setTasks({
-        ...tasks,
-        [source.droppableId]: newColumn
+      setBoards({
+        ...boards,
+        [source.droppableId]: {
+          ...boards[source.droppableId],
+          items: newColumn
+        }
       });
     } else {
       // Move between columns
-      const sourceColumn = tasks[source.droppableId];
-      const destColumn = tasks[destination.droppableId];
+      const sourceColumn = boards[source.droppableId].items;
+      const destColumn = boards[destination.droppableId].items;
       const newSourceColumn = Array.from(sourceColumn);
       const newDestColumn = Array.from(destColumn);
       const [moved] = newSourceColumn.splice(source.index, 1);
       newDestColumn.splice(destination.index, 0, moved);
 
-      setTasks({
-        ...tasks,
-        [source.droppableId]: newSourceColumn,
-        [destination.droppableId]: newDestColumn
+      setBoards({
+        ...boards,
+        [source.droppableId]: {
+          ...boards[source.droppableId],
+          items: newSourceColumn
+        },
+        [destination.droppableId]: {
+          ...boards[destination.droppableId],
+          items: newDestColumn
+        }
       });
 
       try {
@@ -83,17 +121,108 @@ const KanbanBoard = () => {
       } catch (err) {
         console.error('Error updating task status:', err);
         // Revert the change if the API call fails
-        setTasks({
-          ...tasks,
-          [source.droppableId]: sourceColumn,
-          [destination.droppableId]: destColumn
+        setBoards({
+          ...boards,
+          [source.droppableId]: {
+            ...boards[source.droppableId],
+            items: sourceColumn
+          },
+          [destination.droppableId]: {
+            ...boards[destination.droppableId],
+            items: destColumn
+          }
         });
       }
     }
   };
 
-  const handleTaskClick = (task) => {
-    setSelectedTask(task);
+  const handleIssueClick = (issue) => {
+    setSelectedIssue(issue);
+  };
+
+  const handleAddIssue = () => {
+    setShowAddIssueModal(true);
+  };
+
+  const handleIssueFormChange = (e) => {
+    const { name, value } = e.target;
+    setIssueFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleIssueFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const newIssue = await createTask({
+        ...issueFormData,
+        projectId
+      });
+
+      setBoards(prev => ({
+        ...prev,
+        [newIssue.status]: {
+          ...prev[newIssue.status],
+          items: [...prev[newIssue.status].items, newIssue]
+        }
+      }));
+
+      setShowAddIssueModal(false);
+      setIssueFormData({
+        title: '',
+        description: '',
+        type: 'tech',
+        status: 'todo',
+        deadline: '',
+      });
+    } catch (err) {
+      console.error('Error creating issue:', err);
+      setError('Failed to create issue');
+    }
+  };
+
+  const handleBoardAdd = async (newBoard) => {
+    try {
+      const savedBoard = await addCustomBoard(projectId, newBoard);
+      setBoards(prev => ({
+        ...prev,
+        [savedBoard.id]: {
+          name: savedBoard.name,
+          items: []
+        }
+      }));
+      setShowBoardManager(false);
+    } catch (err) {
+      console.error('Error adding board:', err);
+      setError('Failed to add new board');
+    }
+  };
+
+  const handleBoardDelete = async (boardId) => {
+    try {
+      await deleteCustomBoard(projectId, boardId);
+      const { [boardId]: deletedBoard, ...remainingBoards } = boards;
+      
+      // Move all issues from deleted board to 'todo'
+      const movedIssues = deletedBoard.items.map(async (issue) => {
+        await updateTaskStatus(issue._id, 'todo');
+        return { ...issue, status: 'todo' };
+      });
+      
+      await Promise.all(movedIssues);
+      
+      setBoards({
+        ...remainingBoards,
+        todo: {
+          ...remainingBoards.todo,
+          items: [...remainingBoards.todo.items, ...deletedBoard.items]
+        }
+      });
+    } catch (err) {
+      console.error('Error deleting board:', err);
+      setError('Failed to delete board');
+    }
   };
 
   if (loading) return <div className="loading">Loading board...</div>;
@@ -117,22 +246,36 @@ const KanbanBoard = () => {
               <i className="fas fa-arrow-left"></i> Back to Overview
             </button>
             <button 
-              className="btn btn-primary"
-              onClick={() => {/* TODO: Implement add task */}}
+              className="btn btn-secondary"
+              onClick={() => setShowBoardManager(!showBoardManager)}
             >
-              Add Task
+              Manage Boards
+            </button>
+            <button 
+              className="btn btn-primary"
+              onClick={handleAddIssue}
+            >
+              Add Issue
             </button>
           </div>
         </div>
       </div>
 
+      {showBoardManager && (
+        <BoardManager
+          boards={boards}
+          onBoardAdd={handleBoardAdd}
+          onBoardDelete={handleBoardDelete}
+        />
+      )}
+
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="kanban-board">
-          {Object.entries(tasks).map(([status, items]) => (
+          {Object.entries(boards).map(([status, board]) => (
             <div key={status} className="kanban-column">
               <h2 className="column-title">
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-                <span className="task-count">{items.length}</span>
+                {board.name}
+                <span className="task-count">{board.items.length}</span>
               </h2>
               <Droppable droppableId={status}>
                 {(provided, snapshot) => (
@@ -141,10 +284,10 @@ const KanbanBoard = () => {
                     {...provided.droppableProps}
                     className={`task-list ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}
                   >
-                    {items.map((task, index) => (
+                    {board.items.map((issue, index) => (
                       <Draggable
-                        key={task._id}
-                        draggableId={task._id}
+                        key={issue._id}
+                        draggableId={issue._id}
                         index={index}
                       >
                         {(provided, snapshot) => (
@@ -153,15 +296,15 @@ const KanbanBoard = () => {
                             {...provided.draggableProps}
                             {...provided.dragHandleProps}
                             className={`task-card ${snapshot.isDragging ? 'dragging' : ''}`}
-                            onClick={() => handleTaskClick(task)}
+                            onClick={() => handleIssueClick(issue)}
                           >
-                            <h3>{task.title}</h3>
+                            <h3>{issue.title}</h3>
                             <div className="task-meta">
-                              <span className={`task-type ${task.type}`}>
-                                {task.type}
+                              <span className={`task-type ${issue.type}`}>
+                                {issue.type}
                               </span>
                               <span className="task-assignee">
-                                {task.assignee.fullName}
+                                {issue.assignee.fullName}
                               </span>
                             </div>
                           </div>
@@ -177,9 +320,112 @@ const KanbanBoard = () => {
         </div>
       </DragDropContext>
 
-      {selectedTask && (
+      {showAddIssueModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Add New Issue</h2>
+              <button 
+                className="modal-close"
+                onClick={() => setShowAddIssueModal(false)}
+              >
+                &times;
+              </button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handleIssueFormSubmit} className="issue-form">
+                <div className="form-group">
+                  <label htmlFor="title">Title</label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={issueFormData.title}
+                    onChange={handleIssueFormChange}
+                    required
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="description">Description</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={issueFormData.description}
+                    onChange={handleIssueFormChange}
+                    className="form-control"
+                    rows="3"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="type">Type</label>
+                  <select
+                    id="type"
+                    name="type"
+                    value={issueFormData.type}
+                    onChange={handleIssueFormChange}
+                    className="form-control"
+                  >
+                    <option value="tech">Technical</option>
+                    <option value="review">Review</option>
+                    <option value="bug">Bug</option>
+                    <option value="feature">Feature</option>
+                    <option value="documentation">Documentation</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="status">Status</label>
+                  <select
+                    id="status"
+                    name="status"
+                    value={issueFormData.status}
+                    onChange={handleIssueFormChange}
+                    className="form-control"
+                  >
+                    {Object.entries(boards).map(([key, board]) => (
+                      <option key={key} value={key}>
+                        {board.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="deadline">Deadline</label>
+                  <input
+                    type="date"
+                    id="deadline"
+                    name="deadline"
+                    value={issueFormData.deadline}
+                    onChange={handleIssueFormChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="modal-actions">
+                  <button type="submit" className="btn btn-primary">
+                    Create Issue
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setShowAddIssueModal(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {selectedIssue && (
         <div className="task-modal">
-          {/* TODO: Implement task details modal */}
+          {/* TODO: Implement issue details modal */}
         </div>
       )}
     </div>

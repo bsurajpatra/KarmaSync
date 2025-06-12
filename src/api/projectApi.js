@@ -8,11 +8,13 @@ const getAuthHeader = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
+const BASE_URL = `${config.API_URL}/api/projects`;
+
 // Get all projects
 export const getProjects = async () => {
   try {
     console.log('Making GET request to /api/projects');
-    const response = await axios.get(`${config.API_URL}/api/projects`, {
+    const response = await axios.get(BASE_URL, {
       headers: getAuthHeader()
     });
     console.log('GET /api/projects response:', response.data);
@@ -27,7 +29,7 @@ export const getProjects = async () => {
 export const getProjectById = async (id) => {
   try {
     console.log('Making GET request to /api/projects/' + id);
-    const response = await axios.get(`${config.API_URL}/api/projects/${id}`, {
+    const response = await axios.get(`${BASE_URL}/${id}`, {
       headers: getAuthHeader()
     });
     console.log('GET /api/projects/' + id + ' response:', response.data);
@@ -45,7 +47,7 @@ export const createProject = async (projectData) => {
     const headers = getAuthHeader();
     console.log('Request headers:', headers);
 
-    const response = await axios.post(`${config.API_URL}/api/projects`, projectData, {
+    const response = await axios.post(BASE_URL, projectData, {
       headers: {
         ...headers,
         'Content-Type': 'application/json'
@@ -66,7 +68,7 @@ export const createProject = async (projectData) => {
 export const updateProject = async (id, projectData) => {
   try {
     console.log('Making PUT request to /api/projects/' + id + ' with data:', projectData);
-    const response = await axios.put(`${config.API_URL}/api/projects/${id}`, projectData, {
+    const response = await axios.put(`${BASE_URL}/${id}`, projectData, {
       headers: getAuthHeader()
     });
     console.log('PUT /api/projects/' + id + ' response:', response.data);
@@ -81,7 +83,7 @@ export const updateProject = async (id, projectData) => {
 export const deleteProject = async (id) => {
   try {
     console.log('Making DELETE request to /api/projects/' + id);
-    const response = await axios.delete(`${config.API_URL}/api/projects/${id}`, {
+    const response = await axios.delete(`${BASE_URL}/${id}`, {
       headers: getAuthHeader()
     });
     console.log('DELETE /api/projects/' + id + ' response:', response.data);
@@ -90,4 +92,20 @@ export const deleteProject = async (id) => {
     console.error('Error in deleteProject:', error.response || error);
     throw error;
   }
+};
+
+// Custom board management
+export const addCustomBoard = async (projectId, boardData) => {
+  const response = await axios.post(`${BASE_URL}/${projectId}/boards`, boardData);
+  return response.data;
+};
+
+export const updateCustomBoard = async (projectId, boardId, boardData) => {
+  const response = await axios.put(`${BASE_URL}/${projectId}/boards/${boardId}`, boardData);
+  return response.data;
+};
+
+export const deleteCustomBoard = async (projectId, boardId) => {
+  const response = await axios.delete(`${BASE_URL}/${projectId}/boards/${boardId}`);
+  return response.data;
 }; 
