@@ -165,10 +165,12 @@ const KanbanBoard = () => {
         }));
       }
     } else if (name === 'customType') {
+      // Validate custom type: only allow alphanumeric characters, hyphens, and underscores
+      const validatedValue = value.replace(/[^a-zA-Z0-9-_]/g, '');
       setIssueFormData(prev => ({
         ...prev,
-        type: value,
-        customType: value
+        type: validatedValue,
+        customType: validatedValue
       }));
     } else {
       setIssueFormData(prev => ({
