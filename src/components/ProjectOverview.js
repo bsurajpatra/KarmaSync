@@ -219,6 +219,16 @@ const ProjectOverview = () => {
             ) : (
               <div className="title-display">
                 <h1>{project.title}</h1>
+                <div className="project-meta">
+                  <span className="project-id">ID: {project.shortId}</span>
+                  <span className="project-date">
+                    Created on {new Date(project.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </span>
+                </div>
                 <button 
                   className="btn btn-danger"
                   onClick={() => setEditingTitle(true)}
@@ -227,13 +237,6 @@ const ProjectOverview = () => {
                 </button>
               </div>
             )}
-            <p className="project-meta">
-              Created on {new Date(project.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </p>
           </div>
           <div className="projects-header-actions">
             <button 

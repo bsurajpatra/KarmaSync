@@ -143,7 +143,7 @@ const TaskOverview = () => {
       <div className="task-overview-header">
         <div className="task-overview-header-content">
           <div className="task-overview-header-left">
-            <h1>Task Details</h1>
+            <h1>Issue Details</h1>
           </div>
           <div className="task-overview-header-actions">
             <button 
@@ -286,6 +286,7 @@ const TaskOverview = () => {
             <div className="task-section">
               <h2>{task.title}</h2>
               <div className="task-meta">
+                <span className="task-id">#{task.serialNumber}</span>
                 <span className={`task-type ${task.type}`}>
                   {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
                 </span>

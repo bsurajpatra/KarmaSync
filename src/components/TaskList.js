@@ -49,7 +49,7 @@ const TaskList = () => {
     <div className="tasks-container">
       <div className="tasks-header">
         <div className="tasks-header-content">
-          <h2>Project Tasks</h2>
+          <h2>Project Issues</h2>
           <div className="tasks-header-actions">
             <button 
               className="btn btn-secondary"
