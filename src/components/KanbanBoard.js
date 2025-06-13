@@ -10,9 +10,9 @@ const KanbanBoard = () => {
   const { id: projectId } = useParams();
   const [project, setProject] = useState(null);
   const [boards, setBoards] = useState({
-    todo: { name: 'To Do', items: [] },
-    doing: { name: 'Doing', items: [] },
-    done: { name: 'Done', items: [] }
+    todo: { name: 'To Do', items: [], minimized: false },
+    doing: { name: 'Doing', items: [], minimized: false },
+    done: { name: 'Done', items: [], minimized: false }
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -280,6 +280,16 @@ const KanbanBoard = () => {
     }
   };
 
+  const toggleBoardMinimize = (boardId) => {
+    setBoards(prev => ({
+      ...prev,
+      [boardId]: {
+        ...prev[boardId],
+        minimized: !prev[boardId].minimized
+      }
+    }));
+  };
+
   if (loading) return (
     <div className="kanban-container" style={{ 
       minHeight: '100vh',
@@ -300,16 +310,25 @@ const KanbanBoard = () => {
   const renderBoard = (boardId, board) => (
     <div 
       key={boardId}
-      className="kanban-column"
+      className={`kanban-column ${board.minimized ? 'minimized' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={(e) => handleDrop(e, boardId)}
     >
       <div className="column-header">
-        <h3>{board.name}</h3>
-        <span className="task-count">{board.items.length}</span>
+        <div className="column-header-left">
+          <h3>{board.name}</h3>
+          <span className="task-count">{board.items.length}</span>
+        </div>
+        <button 
+          className="minimize-button"
+          onClick={() => toggleBoardMinimize(boardId)}
+          title={board.minimized ? "Maximize" : "Minimize"}
+        >
+          <i className={`fas fa-chevron-${board.minimized ? 'down' : 'up'}`}></i>
+        </button>
       </div>
-      <div className="task-list">
+      <div className={`task-list ${board.minimized ? 'minimized' : ''}`}>
         {board.items.map(task => (
           <div
             key={task._id}
