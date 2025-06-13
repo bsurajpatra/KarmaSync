@@ -19,19 +19,35 @@ const BoardManager = ({ boards, onBoardAdd, onBoardEdit, onBoardDelete }) => {
     }
 
     // Generate a unique ID for new boards
-    if (!formData.id) {
-      formData.id = formData.name.toLowerCase().replace(/\s+/g, '-');
-    }
+    const boardId = formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
-    if (formData.id in boards) {
+    if (boardId in boards) {
       setError('A board with this name already exists');
       return;
     }
 
-    onBoardAdd(formData);
-    setShowForm(false);
-    setFormData({ id: '', name: '' });
-    setError('');
+    // Validate board name length
+    if (formData.name.length < 3) {
+      setError('Board name must be at least 3 characters long');
+      return;
+    }
+
+    if (formData.name.length > 50) {
+      setError('Board name must be less than 50 characters');
+      return;
+    }
+
+    try {
+      onBoardAdd({
+        id: boardId,
+        name: formData.name.trim()
+      });
+      setShowForm(false);
+      setFormData({ id: '', name: '' });
+      setError('');
+    } catch (err) {
+      setError(err.message || 'Failed to create board. Please try again.');
+    }
   };
 
   const handleDelete = (boardId) => {

@@ -42,30 +42,41 @@ const KanbanBoard = () => {
 
       setProject(projectData);
       
-      // Group tasks by status
+      // Initialize boards with default structure
       const groupedTasks = {
         todo: { 
           name: 'To Do',
-          items: tasksData.filter(task => task.status === 'todo')
+          items: []
         },
         doing: { 
           name: 'Doing',
-          items: tasksData.filter(task => task.status === 'doing')
+          items: []
         },
         done: { 
           name: 'Done',
-          items: tasksData.filter(task => task.status === 'done')
+          items: []
         }
       };
 
+      // Add custom boards if they exist
       if (projectData.customBoards) {
         projectData.customBoards.forEach(board => {
           groupedTasks[board.id] = {
             name: board.name,
-            items: tasksData.filter(task => task.status === board.id)
+            items: []
           };
         });
       }
+
+      // Distribute tasks to their respective boards
+      tasksData.forEach(task => {
+        if (groupedTasks[task.status]) {
+          groupedTasks[task.status].items.push(task);
+        } else {
+          // If task status doesn't match any board, put it in todo
+          groupedTasks.todo.items.push(task);
+        }
+      });
       
       setBoards(groupedTasks);
       setError('');
@@ -181,19 +192,35 @@ const KanbanBoard = () => {
   const handleIssueFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const newIssue = await createTask({
-        ...issueFormData,
-        projectId
-      });
+      // Prepare the task data
+      const taskData = {
+        title: issueFormData.title,
+        description: issueFormData.description,
+        type: issueFormData.type,
+        status: issueFormData.status,
+        deadline: issueFormData.deadline,
+        projectId: projectId
+      };
 
+      console.log('Creating task with data:', taskData); // Debug log
+
+      const newIssue = await createTask(taskData);
+      console.log('Created task:', newIssue); // Debug log
+
+      if (!newIssue) {
+        throw new Error('Failed to create task - no response from server');
+      }
+
+      // Update the correct board with the new issue
       setBoards(prev => ({
         ...prev,
-        [newIssue.status]: {
-          ...prev[newIssue.status],
-          items: [...prev[newIssue.status].items, newIssue]
+        [issueFormData.status]: {
+          ...prev[issueFormData.status],
+          items: [...prev[issueFormData.status].items, newIssue]
         }
       }));
 
+      // Reset form and close modal
       setShowAddIssueModal(false);
       setShowCustomType(false);
       setIssueFormData({
@@ -204,9 +231,10 @@ const KanbanBoard = () => {
         deadline: '',
         customType: ''
       });
+      setError(''); // Clear any previous errors
     } catch (err) {
       console.error('Error creating issue:', err);
-      setError('Failed to create issue');
+      setError(err.message || 'Failed to create issue. Please try again.');
     }
   };
 
