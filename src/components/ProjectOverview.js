@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProjectById, updateProject, deleteProject } from '../api/projectApi';
 import { getTasks } from '../api/taskApi';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 
 const ProjectOverview = () => {
   const navigate = useNavigate();
@@ -18,6 +19,9 @@ const ProjectOverview = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [taskCount, setTaskCount] = useState(0);
   const [tasks, setTasks] = useState([]);
+  const [boardStats, setBoardStats] = useState([]);
+
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658'];
 
   const fetchProject = useCallback(async () => {
     try {
@@ -44,6 +48,30 @@ const ProjectOverview = () => {
       console.log('Tasks received:', tasksData);
       setTasks(tasksData);
       setTaskCount(tasksData.length);
+
+      // Calculate board statistics
+      const boardCounts = {
+        todo: { name: 'To Do', value: 0 },
+        doing: { name: 'Doing', value: 0 },
+        done: { name: 'Done', value: 0 }
+      };
+
+      // Count tasks for each default board
+      tasksData.forEach(task => {
+        if (boardCounts[task.status]) {
+          boardCounts[task.status].value++;
+        } else {
+          // Handle custom boards
+          boardCounts[task.status] = {
+            name: task.status.charAt(0).toUpperCase() + task.status.slice(1),
+            value: 1
+          };
+        }
+      });
+
+      // Convert to array format for the pie chart
+      const stats = Object.values(boardCounts).filter(board => board.value > 0);
+      setBoardStats(stats);
     } catch (err) {
       console.error('Error fetching task count:', err);
     }
@@ -332,11 +360,9 @@ const ProjectOverview = () => {
           </p>
         </div>
 
-        
-
         <div className="project-overview-section tasks-section">
           <div className="section-header">
-            <h2>Issues</h2>
+            <h2>Issues Overview</h2>
             <button 
               className="btn btn-primary view-all-btn"
               onClick={() => navigate(`/project/${id}/tasks`)}
@@ -345,34 +371,43 @@ const ProjectOverview = () => {
             </button>
           </div>
           
-          <div className="tasks-list">
-            {tasks.length > 0 ? (
-              tasks.slice(0, 3).map((task) => (
-                <div key={task._id} className="task-item">
-                  <div className="task-item-header">
-                    <h3>{task.title}</h3>
-                    <span className={`task-type ${task.type}`}>
-                      {task.type}
-                    </span>
-                  </div>
-                  <p className="task-description">{task.description}</p>
-                  <div className="task-meta">
-                    <span className={`status-badge ${task.status}`}>
-                      {task.status}
-                    </span>
-                    <span className="task-date">
-                      {new Date(task.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
-                      })}
-                    </span>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="no-tasks">No tasks created yet</p>
-            )}
+          <div className="tasks-overview">
+            <div className="tasks-count">
+              <h3>Total Issues</h3>
+              <div className="count-display">{taskCount}</div>
+            </div>
+            
+            <div className="board-distribution">
+              <h3>Issues by Board</h3>
+              <div className="chart-container">
+                {boardStats.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={boardStats}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="value"
+                        label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                      >
+                        {boardStats.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip 
+                        formatter={(value, name) => [`${value} issues`, name]}
+                      />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="no-data">No issues found</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
