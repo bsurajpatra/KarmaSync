@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { signup, checkUsername } from '../api/authApi';
-import Footer from './Footer';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import LoadingAnimation from './LoadingAnimation';
+import Footer from './Footer';
 
 const Signup = () => {
   console.log('Signup component rendered');
@@ -202,6 +202,7 @@ const Signup = () => {
     <div className="auth-container">
       <div className="auth-logo-section">
         <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
+        <div className="auth-logo-text">KarmaSync</div>
       </div>
       <div className="auth-content">
         <div className="auth-card">

@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import config from '../config';
-import Footer from './Footer';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import LoadingAnimation from './LoadingAnimation';
 
@@ -86,7 +85,6 @@ const ResetPassword = () => {
             </div>
           </div>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -180,7 +178,6 @@ const ResetPassword = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

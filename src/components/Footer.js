@@ -1,15 +1,31 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import React from "react";
 
 const Footer = () => {
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="dashboard-footer-main">
-      <div className="footer-content">
-        <p>© {new Date().getFullYear()} KarmaSync. Licensed under the MIT License.</p>
-      </div>
+    <footer
+      style={{
+        backgroundColor: "transparent",
+        color: "white",
+        textAlign: "center",
+        padding: "1rem",
+        fontSize: "0.9rem",
+        borderTop: "1px solid white",
+        fontWeight: 500,
+      }}
+    >
+      &copy; {year} KarmaSync. Licensed under{" "}
+      <a    
+        href="https://opensource.org/licenses/MIT"
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{ color: "white", textDecoration: "underline" }}
+      >
+        MIT License
+      </a>.
     </footer>
   );
 };
 
-export default Footer; 
+export default Footer;

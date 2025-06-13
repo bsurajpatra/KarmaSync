@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import config from '../config';
-import Footer from './Footer';
 import LoadingAnimation from './LoadingAnimation';
+import { forgotPassword } from '../api/authApi';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -102,7 +102,6 @@ const ForgotPassword = () => {
           </div>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };
