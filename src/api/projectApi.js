@@ -86,17 +86,14 @@ export const updateProject = async (id, projectData) => {
 };
 
 // Delete project
-export const deleteProject = async (id) => {
+export const deleteProject = async (projectId) => {
   try {
-    console.log('Making DELETE request to /api/projects/' + id);
-    const response = await axios.delete(`${BASE_URL}/${id}`, {
-      headers: getAuthHeader()
-    });
-    console.log('DELETE /api/projects/' + id + ' response:', response.data);
+    const response = await axios.delete(`${BASE_URL}/${projectId}`);
+    console.log('Project and tasks deleted:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error in deleteProject:', error.response || error);
-    throw error;
+    console.error('Error deleting project:', error);
+    throw error.response?.data || error.message;
   }
 };
 
