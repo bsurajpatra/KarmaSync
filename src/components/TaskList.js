@@ -139,7 +139,7 @@ const TaskList = () => {
               className="btn btn-secondary"
               onClick={() => navigate(`/project/${projectId}/overview`)}
             >
-              <i className="fas fa-arrow-left"></i> Back to Project
+              <i className="fas fa-arrow-left"></i> Back to Overview
             </button>
           </div>
         </div>

@@ -30,10 +30,10 @@ export const getTaskById = async (id) => {
   try {
     console.log('Making GET request to /api/tasks/' + id);
     const response = await axios.get(`${config.API_URL}/api/tasks/${id}`, {
-      headers: getAuthHeader()
-    });
+    headers: getAuthHeader()
+  });
     console.log('GET /api/tasks/' + id + ' response:', response.data);
-    return response.data;
+  return response.data;
   } catch (error) {
     console.error('Error in getTaskById:', error.response || error);
     throw error;

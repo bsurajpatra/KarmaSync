@@ -141,8 +141,8 @@ const KanbanBoard = () => {
         
         return newBoards;
       });
-    } catch (err) {
-      console.error('Error updating task status:', err);
+      } catch (err) {
+        console.error('Error updating task status:', err);
       setError('Failed to update task status');
     }
   };
@@ -401,11 +401,11 @@ const KanbanBoard = () => {
         />
       )}
 
-      <div className="kanban-board">
-        {Object.entries(boards).map(([status, board]) => (
+        <div className="kanban-board">
+          {Object.entries(boards).map(([status, board]) => (
           renderBoard(status, board)
-        ))}
-      </div>
+          ))}
+        </div>
 
       {showAddIssueModal && (
         <div className="modal-overlay">

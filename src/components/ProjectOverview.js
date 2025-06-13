@@ -308,15 +308,15 @@ const ProjectOverview = () => {
               </form>
             ) : (
               <div className="title-display">
-                <h1>{project.title}</h1>
+            <h1>{project.title}</h1>
                 <div className="project-meta">
                   <span className="project-id">ID: {project.shortId}</span>
                   <span className="project-date">
-                    Created on {new Date(project.createdAt).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
+              Created on {new Date(project.createdAt).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+              })}
                   </span>
                 </div>
                 <button 
@@ -354,7 +354,7 @@ const ProjectOverview = () => {
       <div className="project-overview-container">
         <div className="project-overview-section">
           <div className="section-header">
-            <h2>Description</h2>
+          <h2>Description</h2>
             {!editingDescription && (
               <button 
                 className="btn btn-danger"
@@ -389,12 +389,12 @@ const ProjectOverview = () => {
               </div>
             </form>
           ) : (
-            <p>{project.description || 'No description provided'}</p>
+          <p>{project.description || 'No description provided'}</p>
           )}
         </div>
 
-        <div className="project-overview-section">
-          <h2>GitHub Repository</h2>
+          <div className="project-overview-section">
+            <h2>GitHub Repository</h2>
           {editingGithub ? (
             <form onSubmit={handleGithubSubmit} className="github-form">
               <input
@@ -424,14 +424,14 @@ const ProjectOverview = () => {
             </form>
           ) : project.githubLink ? (
             <div className="github-display">
-              <a 
-                href={project.githubLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="github-link"
-              >
-                <i className="fab fa-github"></i> {project.githubLink.replace('https://github.com/', '')}
-              </a>
+            <a 
+              href={project.githubLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="github-link"
+            >
+              <i className="fab fa-github"></i> {project.githubLink.replace('https://github.com/', '')}
+            </a>
               <button 
                 className="btn btn-secondary btn-edit-github"
                 onClick={() => setEditingGithub(true)}
@@ -448,8 +448,8 @@ const ProjectOverview = () => {
               >
                 <i className="fab fa-github"></i> Add GitHub Repository
               </button>
-            </div>
-          )}
+          </div>
+        )}
         </div>
 
         <div className="project-overview-section">
@@ -694,4 +694,4 @@ const ProjectOverview = () => {
   );
 };
 
-export default ProjectOverview;
+export default ProjectOverview; 
