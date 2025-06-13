@@ -17,6 +17,7 @@ const ProjectOverview = () => {
   const [description, setDescription] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [taskCount, setTaskCount] = useState(0);
+  const [tasks, setTasks] = useState([]);
 
   const fetchProject = useCallback(async () => {
     try {
@@ -39,9 +40,10 @@ const ProjectOverview = () => {
   const fetchTaskCount = useCallback(async () => {
     try {
       console.log('Fetching tasks for project:', id);
-      const tasks = await getTasks(id);
-      console.log('Tasks received:', tasks);
-      setTaskCount(tasks.length);
+      const tasksData = await getTasks(id);
+      console.log('Tasks received:', tasksData);
+      setTasks(tasksData);
+      setTaskCount(tasksData.length);
     } catch (err) {
       console.error('Error fetching task count:', err);
     }
@@ -192,9 +194,6 @@ const ProjectOverview = () => {
                 month: 'long',
                 day: 'numeric'
               })}
-              <span className="task-count-badge">
-                {taskCount} {taskCount === 1 ? 'Issue' : 'Issues'}
-              </span>
             </p>
           </div>
           <div className="projects-header-actions">
@@ -331,6 +330,50 @@ const ProjectOverview = () => {
               {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
             </span>
           </p>
+        </div>
+
+        
+
+        <div className="project-overview-section tasks-section">
+          <div className="section-header">
+            <h2>Issues</h2>
+            <button 
+              className="btn btn-primary view-all-btn"
+              onClick={() => navigate(`/project/${id}/tasks`)}
+            >
+              View All Issues
+            </button>
+          </div>
+          
+          <div className="tasks-list">
+            {tasks.length > 0 ? (
+              tasks.slice(0, 3).map((task) => (
+                <div key={task._id} className="task-item">
+                  <div className="task-item-header">
+                    <h3>{task.title}</h3>
+                    <span className={`task-type ${task.type}`}>
+                      {task.type}
+                    </span>
+                  </div>
+                  <p className="task-description">{task.description}</p>
+                  <div className="task-meta">
+                    <span className={`status-badge ${task.status}`}>
+                      {task.status}
+                    </span>
+                    <span className="task-date">
+                      {new Date(task.createdAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric'
+                      })}
+                    </span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p className="no-tasks">No tasks created yet</p>
+            )}
+          </div>
         </div>
 
         <div className="project-overview-section danger-zone">
