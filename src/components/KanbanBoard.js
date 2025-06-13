@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getProjectById, addCustomBoard, deleteCustomBoard } from '../api/projectApi';
 import { getTasks, updateTaskStatus, createTask } from '../api/taskApi';
 import BoardManager from './BoardManager';
@@ -88,63 +87,62 @@ const KanbanBoard = () => {
     }
   };
 
-  const handleDragEnd = async (result) => {
-    if (!result.destination) return;
+  // Add drag and drop handlers
+  const handleDragStart = (e, taskId, sourceBoard) => {
+    e.dataTransfer.setData('taskId', taskId);
+    e.dataTransfer.setData('sourceBoard', sourceBoard);
+    e.target.classList.add('dragging');
+  };
 
-    const { source, destination, draggableId } = result;
+  const handleDragEnd = (e) => {
+    e.target.classList.remove('dragging');
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.currentTarget.classList.add('dragging-over');
+  };
+
+  const handleDragLeave = (e) => {
+    e.currentTarget.classList.remove('dragging-over');
+  };
+
+  const handleDrop = async (e, targetBoard) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('dragging-over');
     
-    if (source.droppableId === destination.droppableId) {
-      // Reorder within the same column
-      const column = boards[source.droppableId].items;
-      const newColumn = Array.from(column);
-      const [removed] = newColumn.splice(source.index, 1);
-      newColumn.splice(destination.index, 0, removed);
+    const taskId = e.dataTransfer.getData('taskId');
+    const sourceBoard = e.dataTransfer.getData('sourceBoard');
+    
+    if (sourceBoard === targetBoard) return;
 
-      setBoards({
-        ...boards,
-        [source.droppableId]: {
-          ...boards[source.droppableId],
-          items: newColumn
+    try {
+      // Update task status in the backend
+      await updateTaskStatus(taskId, targetBoard);
+
+      // Update local state
+      setBoards(prev => {
+        const newBoards = { ...prev };
+        const task = newBoards[sourceBoard].items.find(item => item._id === taskId);
+        
+        if (task) {
+          // Remove from source board
+          newBoards[sourceBoard].items = newBoards[sourceBoard].items.filter(
+            item => item._id !== taskId
+          );
+          
+          // Add to target board
+          newBoards[targetBoard].items = [...newBoards[targetBoard].items, {
+            ...task,
+            status: targetBoard
+          }];
         }
+        
+        return newBoards;
       });
-    } else {
-      // Move between columns
-      const sourceColumn = boards[source.droppableId].items;
-      const destColumn = boards[destination.droppableId].items;
-      const newSourceColumn = Array.from(sourceColumn);
-      const newDestColumn = Array.from(destColumn);
-      const [moved] = newSourceColumn.splice(source.index, 1);
-      newDestColumn.splice(destination.index, 0, moved);
-
-      setBoards({
-        ...boards,
-        [source.droppableId]: {
-          ...boards[source.droppableId],
-          items: newSourceColumn
-        },
-        [destination.droppableId]: {
-          ...boards[destination.droppableId],
-          items: newDestColumn
-        }
-      });
-
-      try {
-        await updateTaskStatus(draggableId, destination.droppableId);
-      } catch (err) {
-        console.error('Error updating task status:', err);
-        // Revert the change if the API call fails
-        setBoards({
-          ...boards,
-          [source.droppableId]: {
-            ...boards[source.droppableId],
-            items: sourceColumn
-          },
-          [destination.droppableId]: {
-            ...boards[destination.droppableId],
-            items: destColumn
-          }
-        });
-      }
+    } catch (err) {
+      console.error('Error updating task status:', err);
+      setError('Failed to update task status');
     }
   };
 
@@ -287,6 +285,46 @@ const KanbanBoard = () => {
 
   if (!project) return <div className="error-message">Project not found</div>;
 
+  // Update the board rendering to use native drag and drop
+  const renderBoard = (boardId, board) => (
+    <div 
+      key={boardId}
+      className="kanban-column"
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={(e) => handleDrop(e, boardId)}
+    >
+      <div className="column-header">
+        <h3>{board.name}</h3>
+        <span className="task-count">{board.items.length}</span>
+      </div>
+      <div className="task-list">
+        {board.items.map(task => (
+          <div
+            key={task._id}
+            className="task-card"
+            draggable
+            onDragStart={(e) => handleDragStart(e, task._id, boardId)}
+            onDragEnd={handleDragEnd}
+          >
+            <h3>{task.title}</h3>
+            <p>{task.description}</p>
+            <div className="task-meta">
+              <span className={`task-type ${task.type}`}>
+                {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+              </span>
+              {task.deadline && (
+                <span className="task-deadline">
+                  Due: {new Date(task.deadline).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <div className="kanban-container">
       <div className="projects-header">
@@ -325,54 +363,11 @@ const KanbanBoard = () => {
         />
       )}
 
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <div className="kanban-board">
-          {Object.entries(boards).map(([status, board]) => (
-            <div key={status} className="kanban-column">
-              <h2 className="column-title">
-                {board.name}
-                <span className="task-count">{board.items.length}</span>
-              </h2>
-              <Droppable droppableId={status}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
-                    className={`task-list ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}
-                  >
-                    {board.items.map((issue, index) => (
-                      <Draggable
-                        key={issue._id}
-                        draggableId={issue._id}
-                        index={index}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            {...provided.dragHandleProps}
-                            className={`task-card ${snapshot.isDragging ? 'dragging' : ''}`}
-                            onClick={() => handleIssueClick(issue)}
-                          >
-                            <h3>{issue.title}</h3>
-                            <div className="task-meta">
-                              <span className={`task-type ${issue.type}`}>
-                                {issue.type}
-                              </span>
-                              
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </div>
-          ))}
-        </div>
-      </DragDropContext>
+      <div className="kanban-board">
+        {Object.entries(boards).map(([status, board]) => (
+          renderBoard(status, board)
+        ))}
+      </div>
 
       {showAddIssueModal && (
         <div className="modal-overlay">

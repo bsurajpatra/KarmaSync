@@ -59,10 +59,10 @@ export const createTask = async (taskData) => {
 export const updateTaskStatus = async (id, status) => {
   try {
     console.log('Making PATCH request to /api/tasks/' + id + '/status with status:', status);
-    const response = await axios.patch(`${BASE_URL}/${id}/status`, { status }, {
+    const response = await axios.patch(`${BASE_URL}/${id}`, { status }, {
       headers: getAuthHeader()
     });
-    console.log('PATCH /api/tasks/' + id + '/status response:', response.data);
+    console.log('PATCH /api/tasks/' + id + ' response:', response.data);
     return response.data;
   } catch (error) {
     console.error('Error in updateTaskStatus:', error.response || error);
