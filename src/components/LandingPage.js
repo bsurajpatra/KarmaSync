@@ -9,7 +9,7 @@ const LandingPage = () => {
       <section className="landing-header">
         <div className="header-text">
           <h1 className="app-title">KarmaSync</h1>
-          <p className="app-tagline">Your Personal Productivity Companion</p>
+          <p className="app-tagline">Agile Project Management Made Simple</p>
           <div className="header-cta">
             <Link to="/signup" className="btn btn-primary btn-lg">
               Get Started

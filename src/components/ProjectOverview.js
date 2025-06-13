@@ -378,7 +378,6 @@ const ProjectOverview = () => {
             </div>
             
             <div className="board-distribution">
-              <h3>Issues by Board</h3>
               <div className="chart-container">
                 {boardStats.length > 0 ? (
                   <ResponsiveContainer width="100%" height={300}>
