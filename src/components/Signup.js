@@ -15,18 +15,51 @@ const Signup = () => {
     confirmPassword: ''
   });
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [checkingUsername, setCheckingUsername] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+
+    // Clear field-specific error when user starts typing
+    setFieldErrors(prev => ({
+      ...prev,
+      [name]: ''
+    }));
+
+    // Check username availability after user stops typing
+    if (name === 'username' && value.length >= 3) {
+      setCheckingUsername(true);
+      try {
+        const response = await axios.post(`${config.API_URL}/api/auth/check-username`, {
+          username: value
+        });
+        if (response.data.available) {
+          setFieldErrors(prev => ({
+            ...prev,
+            username: ''
+          }));
+        } else {
+          setFieldErrors(prev => ({
+            ...prev,
+            username: 'Username is already taken'
+          }));
+        }
+      } catch (error) {
+        console.error('Error checking username:', error);
+      } finally {
+        setCheckingUsername(false);
+      }
+    }
   };
 
   const validateUsername = (username) => {
@@ -38,29 +71,27 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setFieldErrors({});
     setLoading(true);
 
     // Validation
+    const errors = {};
+    
     if (!validateUsername(formData.username)) {
-      setError('Username must be 3-20 characters and can only contain letters, numbers, underscores, and hyphens');
-      setLoading(false);
-      return;
+      errors.username = 'Username must be 3-20 characters and can only contain letters, numbers, underscores, and hyphens';
     }
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
+      errors.confirmPassword = 'Passwords do not match';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       setLoading(false);
       return;
     }
 
     try {
-      console.log('Sending signup request to:', `${config.API_URL}/api/auth/signup`);
-      console.log('Signup data:', {
-        fullName: formData.fullName,
-        username: formData.username,
-        email: formData.email
-      });
-      
       const response = await axios.post(`${config.API_URL}/api/auth/signup`, {
         fullName: formData.fullName,
         username: formData.username,
@@ -68,10 +99,8 @@ const Signup = () => {
         password: formData.password
       });
       
-      console.log('Signup response:', response.data);
       setSuccess(true);
       
-      // Show success message for 2 seconds then redirect to login
       setTimeout(() => {
         navigate('/login', { 
           state: { 
@@ -81,8 +110,23 @@ const Signup = () => {
       }, 2000);
     } catch (error) {
       console.error('Signup error:', error);
-      console.error('Error response:', error.response?.data);
-      setError(error.response?.data?.message || 'An error occurred');
+      if (error.response?.data?.message) {
+        if (error.response.data.message.includes('Username')) {
+          setFieldErrors(prev => ({
+            ...prev,
+            username: error.response.data.message
+          }));
+        } else if (error.response.data.message.includes('Email')) {
+          setFieldErrors(prev => ({
+            ...prev,
+            email: error.response.data.message
+          }));
+        } else {
+          setError(error.response.data.message);
+        }
+      } else {
+        setError('An error occurred during signup');
+      }
     } finally {
       setLoading(false);
     }
@@ -125,11 +169,12 @@ const Signup = () => {
                 type="text"
                 name="fullName"
                 required
-                className="auth-input"
+                className={`auth-input ${fieldErrors.fullName ? 'error' : ''}`}
                 placeholder="Full Name"
                 value={formData.fullName}
                 onChange={handleChange}
               />
+              {fieldErrors.fullName && <div className="field-error">{fieldErrors.fullName}</div>}
             </div>
             
             <div className="form-group">
@@ -137,11 +182,13 @@ const Signup = () => {
                 type="text"
                 name="username"
                 required
-                className="auth-input"
+                className={`auth-input ${fieldErrors.username ? 'error' : ''}`}
                 placeholder="Username"
                 value={formData.username}
                 onChange={handleChange}
               />
+              {checkingUsername && <div className="checking-username">Checking username availability...</div>}
+              {fieldErrors.username && <div className="field-error">{fieldErrors.username}</div>}
               <small className="input-hint">3-20 characters, letters, numbers, _ and - only</small>
             </div>
             
@@ -150,11 +197,12 @@ const Signup = () => {
                 type="email"
                 name="email"
                 required
-                className="auth-input"
+                className={`auth-input ${fieldErrors.email ? 'error' : ''}`}
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
               />
+              {fieldErrors.email && <div className="field-error">{fieldErrors.email}</div>}
             </div>
             
             <div className="form-group password-group">
@@ -162,7 +210,7 @@ const Signup = () => {
                 type={showPassword ? "text" : "password"}
                 name="password"
                 required
-                className="auth-input"
+                className={`auth-input ${fieldErrors.password ? 'error' : ''}`}
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -174,6 +222,7 @@ const Signup = () => {
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
+              {fieldErrors.password && <div className="field-error">{fieldErrors.password}</div>}
             </div>
             
             <div className="form-group password-group">
@@ -181,7 +230,7 @@ const Signup = () => {
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 required
-                className="auth-input"
+                className={`auth-input ${fieldErrors.confirmPassword ? 'error' : ''}`}
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -193,12 +242,13 @@ const Signup = () => {
               >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
+              {fieldErrors.confirmPassword && <div className="field-error">{fieldErrors.confirmPassword}</div>}
             </div>
             
             <button 
               type="submit" 
               className="auth-button"
-              disabled={loading}
+              disabled={loading || checkingUsername || Object.keys(fieldErrors).length > 0}
             >
               {loading ? 'Signing Up...' : 'Sign Up'}
             </button>
