@@ -15,6 +15,7 @@ import Profile from './components/Profile';
 import CreatePersonalProject from './components/CreatePersonalProject';
 import ProjectOverview from './components/ProjectOverview';
 import KanbanBoard from './components/KanbanBoard';
+import TaskList from './components/TaskList';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -77,6 +78,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <KanbanBoard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project/:id/tasks"
+            element={
+              <ProtectedRoute>
+                <TaskList />
               </ProtectedRoute>
             }
           />

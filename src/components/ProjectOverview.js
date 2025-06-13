@@ -237,16 +237,22 @@ const ProjectOverview = () => {
           </div>
           <div className="projects-header-actions">
             <button 
-              className="back-to-dashboard-button"
+              className="btn btn-secondary"
               onClick={() => navigate('/projects')}
             >
               <i className="fas fa-arrow-left"></i> Back to Projects
             </button>
             <button 
               className="btn btn-primary"
-              onClick={() => navigate(`/project/${id}/kanban`)}
+              onClick={() => navigate(`/project/${project._id}/kanban`)}
             >
-              <i className="fas fa-columns"></i> Go to Kanban Board
+              <i className="fas fa-columns"></i> Kanban Board
+            </button>
+            <button 
+              className="btn btn-danger"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              <i className="fas fa-trash"></i> Delete Project
             </button>
           </div>
         </div>

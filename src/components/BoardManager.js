@@ -42,9 +42,9 @@ const BoardManager = ({ boards, onBoardAdd, onBoardEdit, onBoardDelete }) => {
         id: boardId,
         name: formData.name.trim()
       });
-      setShowForm(false);
-      setFormData({ id: '', name: '' });
-      setError('');
+    setShowForm(false);
+    setFormData({ id: '', name: '' });
+    setError('');
     } catch (err) {
       setError(err.message || 'Failed to create board. Please try again.');
     }

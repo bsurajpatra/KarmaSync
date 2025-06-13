@@ -352,6 +352,12 @@ const KanbanBoard = () => {
             </button>
             <button 
               className="btn btn-secondary"
+              onClick={() => navigate(`/project/${projectId}/tasks`)}
+            >
+              <i className="fas fa-list"></i> View All Issues
+            </button>
+            <button 
+              className="btn btn-secondary"
               onClick={() => setShowBoardManager(!showBoardManager)}
             >
               Manage Boards
