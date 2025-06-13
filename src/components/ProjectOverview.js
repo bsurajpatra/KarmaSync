@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProjectById, updateProject, deleteProject } from '../api/projectApi';
-import { getTasks } from '../api/taskApi';
+import { getTasks, createTask } from '../api/taskApi';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import LoadingAnimation from './LoadingAnimation';
 
@@ -21,6 +21,16 @@ const ProjectOverview = () => {
   const [taskCount, setTaskCount] = useState(0);
   const [tasks, setTasks] = useState([]);
   const [boardStats, setBoardStats] = useState([]);
+  const [showAddIssueModal, setShowAddIssueModal] = useState(false);
+  const [issueFormData, setIssueFormData] = useState({
+    title: '',
+    description: '',
+    type: 'tech',
+    status: 'todo',
+    deadline: '',
+    customType: ''
+  });
+  const [showCustomType, setShowCustomType] = useState(false);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658'];
 
@@ -129,6 +139,86 @@ const ProjectOverview = () => {
     } catch (err) {
       console.error('Error deleting project:', err);
       setError(err.message || 'Failed to delete project');
+    }
+  };
+
+  const handleIssueFormChange = (e) => {
+    const { name, value } = e.target;
+    
+    if (name === 'type') {
+      if (value === 'custom') {
+        setShowCustomType(true);
+        setIssueFormData(prev => ({
+          ...prev,
+          [name]: prev.customType || ''
+        }));
+      } else {
+        setShowCustomType(false);
+        setIssueFormData(prev => ({
+          ...prev,
+          [name]: value,
+          customType: ''
+        }));
+      }
+    } else if (name === 'customType') {
+      const validatedValue = value.replace(/[^a-zA-Z0-9-_]/g, '');
+      setIssueFormData(prev => ({
+        ...prev,
+        type: validatedValue,
+        customType: validatedValue
+      }));
+    } else {
+      setIssueFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
+  };
+
+  const handleIssueFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const taskData = {
+        ...issueFormData,
+        projectId: id
+      };
+
+      const newIssue = await createTask(taskData);
+      
+      // Update tasks list and count
+      setTasks(prev => [...prev, newIssue]);
+      setTaskCount(prev => prev + 1);
+      
+      // Update board stats
+      setBoardStats(prev => {
+        const newStats = [...prev];
+        const boardIndex = newStats.findIndex(board => board.name === issueFormData.status);
+        if (boardIndex >= 0) {
+          newStats[boardIndex].value++;
+        } else {
+          newStats.push({
+            name: issueFormData.status,
+            value: 1
+          });
+        }
+        return newStats;
+      });
+
+      // Reset form and close modal
+      setShowAddIssueModal(false);
+      setShowCustomType(false);
+      setIssueFormData({
+        title: '',
+        description: '',
+        type: 'tech',
+        status: 'todo',
+        deadline: '',
+        customType: ''
+      });
+      setError('');
+    } catch (err) {
+      console.error('Error creating issue:', err);
+      setError(err.message || 'Failed to create issue');
     }
   };
 
@@ -383,12 +473,22 @@ const ProjectOverview = () => {
         <div className="project-overview-section tasks-section">
           <div className="section-header">
             <h2>Issues Overview</h2>
-            <button 
-              className="btn btn-primary view-all-btn"
-              onClick={() => navigate(`/project/${id}/tasks`)}
-            >
-              View All Issues
-            </button>
+            <div className="section-actions">
+              {taskCount === 0 && (
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => setShowAddIssueModal(true)}
+                >
+                  <i className="fas fa-plus"></i> Add First Issue
+                </button>
+              )}
+              <button 
+                className="btn btn-secondary view-all-btn"
+                onClick={() => navigate(`/project/${id}/tasks`)}
+              >
+                View All Issues
+              </button>
+            </div>
           </div>
           
           <div className="tasks-overview">
@@ -448,6 +548,148 @@ const ProjectOverview = () => {
           </div>
         </div>
       </div>
+
+      {showAddIssueModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Add New Issue</h2>
+              <button 
+                className="modal-close"
+                onClick={() => {
+                  setShowAddIssueModal(false);
+                  setShowCustomType(false);
+                  setIssueFormData({
+                    title: '',
+                    description: '',
+                    type: 'tech',
+                    status: 'todo',
+                    deadline: '',
+                    customType: ''
+                  });
+                }}
+              >
+                &times;
+              </button>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={handleIssueFormSubmit} className="issue-form">
+                <div className="form-group">
+                  <label htmlFor="title">Title</label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={issueFormData.title}
+                    onChange={handleIssueFormChange}
+                    required
+                    className="form-control"
+                    placeholder="Enter issue title"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="description">Description</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={issueFormData.description}
+                    onChange={handleIssueFormChange}
+                    className="form-control"
+                    rows="3"
+                    placeholder="Enter issue description"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="type">Type</label>
+                  <select
+                    id="type"
+                    name="type"
+                    value={showCustomType ? 'custom' : issueFormData.type}
+                    onChange={handleIssueFormChange}
+                    className="form-control"
+                  >
+                    <option value="tech">Technical</option>
+                    <option value="review">Review</option>
+                    <option value="bug">Bug</option>
+                    <option value="feature">Feature</option>
+                    <option value="documentation">Documentation</option>
+                    <option value="custom">Custom Type</option>
+                  </select>
+                  {showCustomType && (
+                    <input
+                      type="text"
+                      name="customType"
+                      value={issueFormData.customType}
+                      onChange={handleIssueFormChange}
+                      className="form-control custom-type-input"
+                      placeholder="Enter custom issue type"
+                      required
+                    />
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="status">Status</label>
+                  <select
+                    id="status"
+                    name="status"
+                    value={issueFormData.status}
+                    onChange={handleIssueFormChange}
+                    className="form-control"
+                  >
+                    <option value="todo">To Do</option>
+                    <option value="doing">Doing</option>
+                    <option value="done">Done</option>
+                    {project?.customBoards?.map(board => (
+                      <option key={board.id} value={board.id}>
+                        {board.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="deadline">Deadline</label>
+                  <input
+                    type="date"
+                    id="deadline"
+                    name="deadline"
+                    value={issueFormData.deadline}
+                    onChange={handleIssueFormChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="modal-actions">
+                  <button type="submit" className="btn btn-primary">
+                    Create Issue
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setShowAddIssueModal(false);
+                      setShowCustomType(false);
+                      setIssueFormData({
+                        title: '',
+                        description: '',
+                        type: 'tech',
+                        status: 'todo',
+                        deadline: '',
+                        customType: ''
+                      });
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

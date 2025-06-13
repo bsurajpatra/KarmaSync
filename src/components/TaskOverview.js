@@ -144,13 +144,19 @@ const TaskOverview = () => {
         <div className="task-overview-header-content">
           <div className="task-overview-header-left">
             <h1>Issue Details</h1>
+            {project && (
+              <div className="project-info">
+                <span className="project-name">{project.title}</span>
+                <span className="project-id">#{project.shortId}</span>
+              </div>
+            )}
           </div>
           <div className="task-overview-header-actions">
             <button 
               className="btn btn-secondary"
               onClick={() => navigate(`/project/${project._id}/tasks`)}
             >
-              <i className="fas fa-arrow-left"></i> Back to Tasks
+              <i className="fas fa-arrow-left"></i> Back to Issues List
             </button>
             <button 
               className="btn btn-secondary"
@@ -163,7 +169,7 @@ const TaskOverview = () => {
                 className="btn btn-primary"
                 onClick={() => setEditing(true)}
               >
-                <i className="fas fa-edit"></i> Edit Task
+                <i className="fas fa-edit"></i> Edit Issue
               </button>
             )}
           </div>
@@ -342,8 +348,8 @@ const TaskOverview = () => {
               <div className="danger-zone-content">
                 <div className="danger-action">
                   <div className="danger-action-info">
-                    <h4>Delete this task</h4>
-                    <p>Once you delete a task, there is no going back. Please be certain.</p>
+                    <h4>Delete this issue</h4>
+                    <p>Once you delete a issue, there is no going back. Please be certain.</p>
                   </div>
                   <button 
                     className="btn btn-danger"
@@ -362,7 +368,7 @@ const TaskOverview = () => {
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h2>Delete Task</h2>
+              <h2>Delete Issue</h2>
               <button 
                 className="modal-close"
                 onClick={() => setShowDeleteConfirm(false)}
@@ -371,10 +377,10 @@ const TaskOverview = () => {
               </button>
             </div>
             <div className="modal-body">
-              <p>Are you sure you want to delete this task?</p>
+              <p>Are you sure you want to delete this issue?</p>
               <p className="warning-text">This action cannot be undone.</p>
               <div className="task-to-delete">
-                <strong>Task to delete:</strong> {task.title}
+                <strong>Issue to delete:</strong> {task.title}
               </div>
             </div>
             <div className="modal-actions">
@@ -388,7 +394,7 @@ const TaskOverview = () => {
                 className="btn btn-danger"
                 onClick={handleDelete}
               >
-                Delete Task
+                Delete Issue
               </button>
             </div>
           </div>
