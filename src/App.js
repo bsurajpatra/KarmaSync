@@ -17,6 +17,7 @@ import ProjectOverview from './components/ProjectOverview';
 import KanbanBoard from './components/KanbanBoard';
 import TaskList from './components/TaskList';
 import TaskOverview from './components/TaskOverview';
+import Contact from './components/Contact';
 
 // Protected Route component
 const ProtectedRoute = ({ children }) => {
@@ -91,6 +92,7 @@ function App() {
             }
           />
           <Route path="/task/:id" element={<ProtectedRoute><TaskOverview /></ProtectedRoute>} />
+          <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
         </Routes>
       </Router>
     </AuthProvider>

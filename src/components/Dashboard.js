@@ -32,7 +32,7 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
 };
 
 const Dashboard = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -84,7 +84,7 @@ const Dashboard = () => {
       <div className="dashboard-content">
         <div className="dashboard-header">
           <div className="header-content">
-            <h1>Welcome to KarmaSync</h1>
+            <h1>Welcome, {user?.name || 'User'}!</h1>
             <p className="dashboard-subtitle">Manage your productivity and projects</p>
           </div>
           <button className="logout-button" onClick={handleLogoutClick}>
@@ -96,18 +96,26 @@ const Dashboard = () => {
         <div className="feature-grid">
           <Link to="/projects" className="feature-card">
             <div className="feature-icon">
-              <i className="fas fa-project-diagram fa-2x"></i>
+              <i className="fas fa-project-diagram"></i>
             </div>
             <h3>Projects</h3>
-            <p>Manage your projects and track their progress</p>
+            <p>Manage your projects and track progress</p>
           </Link>
 
           <Link to="/profile" className="feature-card">
             <div className="feature-icon">
-              <i className="fas fa-user-cog fa-2x"></i>
+              <i className="fas fa-user"></i>
             </div>
             <h3>Profile</h3>
-            <p>Manage your account settings and preferences</p>
+            <p>View and update your profile settings</p>
+          </Link>
+
+          <Link to="/contact" className="feature-card">
+            <div className="feature-icon">
+              <i className="fas fa-envelope"></i>
+            </div>
+            <h3>Contact Us</h3>
+            <p>Get in touch with our support team</p>
           </Link>
         </div>
       </div>
