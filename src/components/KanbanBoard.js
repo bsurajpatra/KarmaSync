@@ -478,8 +478,11 @@ const KanbanBoard = () => {
                     onChange={handleIssueFormChange}
                     className="form-control"
                   >
-                    {Object.entries(boards).map(([key, board]) => (
-                      <option key={key} value={key}>
+                    <option value="todo">To Do</option>
+                    <option value="doing">Doing</option>
+                    <option value="done">Done</option>
+                    {project?.customBoards?.map(board => (
+                      <option key={board.id} value={board.id}>
                         {board.name}
                       </option>
                     ))}

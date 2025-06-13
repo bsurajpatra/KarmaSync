@@ -19,8 +19,10 @@ const TaskOverview = () => {
     description: '',
     type: '',
     status: '',
-    deadline: ''
+    deadline: '',
+    customType: ''
   });
+  const [showCustomType, setShowCustomType] = useState(false);
 
   useEffect(() => {
     fetchTaskAndProject();
@@ -52,10 +54,35 @@ const TaskOverview = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    
+    if (name === 'type') {
+      if (value === 'custom') {
+        setShowCustomType(true);
+        setFormData(prev => ({
+          ...prev,
+          [name]: prev.customType || ''
+        }));
+      } else {
+        setShowCustomType(false);
+        setFormData(prev => ({
+          ...prev,
+          [name]: value,
+          customType: ''
+        }));
+      }
+    } else if (name === 'customType') {
+      const validatedValue = value.replace(/[^a-zA-Z0-9-_]/g, '');
+      setFormData(prev => ({
+        ...prev,
+        type: validatedValue,
+        customType: validatedValue
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -176,7 +203,7 @@ const TaskOverview = () => {
               <select
                 id="type"
                 name="type"
-                value={formData.type}
+                value={showCustomType ? 'custom' : formData.type}
                 onChange={handleInputChange}
                 className="form-control"
                 required
@@ -186,7 +213,19 @@ const TaskOverview = () => {
                 <option value="bug">Bug</option>
                 <option value="feature">Feature</option>
                 <option value="documentation">Documentation</option>
+                <option value="custom">Custom Type</option>
               </select>
+              {showCustomType && (
+                <input
+                  type="text"
+                  name="customType"
+                  value={formData.customType}
+                  onChange={handleInputChange}
+                  className="form-control custom-type-input"
+                  placeholder="Enter custom issue type"
+                  required
+                />
+              )}
             </div>
 
             <div className="form-group">
@@ -199,6 +238,9 @@ const TaskOverview = () => {
                 className="form-control"
                 required
               >
+                <option value="todo">To Do</option>
+                <option value="doing">Doing</option>
+                <option value="done">Done</option>
                 {project?.customBoards?.map(board => (
                   <option key={board.id} value={board.id}>
                     {board.name}
