@@ -3967,3 +3967,115 @@ input[type="submit"].btn {
         margin-top: 1rem;
     }
 }
+
+/* OTP Verification Styles */
+.otp-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.otp-inputs {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.otp-input-group {
+  width: 50px;
+  height: 50px;
+}
+
+.otp-input {
+  width: 100%;
+  height: 100%;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.otp-input:focus {
+  border-color: #a770ef;
+  box-shadow: 0 0 0 2px rgba(167, 112, 239, 0.2);
+  outline: none;
+}
+
+.resend-otp {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.resend-button {
+  background: none;
+  border: none;
+  color: #a770ef;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px 10px;
+  transition: all 0.3s ease;
+}
+
+.resend-button:disabled {
+  color: #999;
+  cursor: not-allowed;
+}
+
+.resend-button:hover:not(:disabled) {
+  color: #8a4ed8;
+  text-decoration: underline;
+}
+
+@media (max-width: 480px) {
+  .otp-inputs {
+    gap: 8px;
+  }
+
+  .otp-input-group {
+    width: 40px;
+    height: 40px;
+  }
+
+  .otp-input {
+    font-size: 20px;
+  }
+}
+
+.error-message {
+  color: #d32f2f;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.success-message {
+  color: #388e3c;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-message {
+  color: #1976d2;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}

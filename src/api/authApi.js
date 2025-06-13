@@ -32,7 +32,7 @@ export const login = async (credentials) => {
     const response = await axios.post('/api/auth/login', credentials);
     const { token, user } = response.data;
     setAuthToken(token);
-    return { user };
+    return { user, token };
   } catch (error) {
     throw error.response?.data || { message: 'Error logging in' };
   }
@@ -47,6 +47,26 @@ export const signup = async (userData) => {
     return { user };
   } catch (error) {
     throw error.response?.data || { message: 'Error registering user' };
+  }
+};
+
+// Verify OTP
+export const verifyOTP = async (verifyData) => {
+  try {
+    const response = await axios.post('/api/auth/verify-otp', verifyData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error verifying OTP' };
+  }
+};
+
+// Resend OTP
+export const resendOTP = async (emailData) => {
+  try {
+    const response = await axios.post('/api/auth/resend-otp', emailData);
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error resending OTP' };
   }
 };
 
@@ -139,5 +159,25 @@ export const deleteAccount = async () => {
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error deleting account' };
+  }
+};
+
+// Check username availability
+export const checkUsername = async (username) => {
+  try {
+    const response = await axios.post('/api/auth/check-username', { username });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error checking username availability' };
+  }
+};
+
+// Check email availability
+export const checkEmail = async (email) => {
+  try {
+    const response = await axios.post('/api/auth/check-email', { email });
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || { message: 'Error checking email availability' };
   }
 }; 

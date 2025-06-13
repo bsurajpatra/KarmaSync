@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import config from '../config';
+import { signup, checkUsername } from '../api/authApi';
 import Footer from './Footer';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import LoadingAnimation from './LoadingAnimation';
 
 const Signup = () => {
+  console.log('Signup component rendered');
   const [formData, setFormData] = useState({
     fullName: '',
     username: '',
@@ -20,129 +20,183 @@ const Signup = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [checkingUsername, setCheckingUsername] = useState(false);
+  const [availabilityStatus, setAvailabilityStatus] = useState({
+    username: { isChecking: false, isAvailable: null, message: '' }
+  });
   const navigate = useNavigate();
+
+  // Debounce function
+  const debounce = (func, wait) => {
+    let timeout;
+    return (...args) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func(...args), wait);
+    };
+  };
+
+  // Check username availability
+  const checkUsernameAvailability = async (username) => {
+    if (!username || username.length < 3) return;
+    
+    setAvailabilityStatus(prev => ({
+      ...prev,
+      username: { ...prev.username, isChecking: true }
+    }));
+
+    try {
+      const response = await checkUsername(username);
+      setAvailabilityStatus(prev => ({
+        ...prev,
+        username: {
+          isChecking: false,
+          isAvailable: response.available,
+          message: response.message
+        }
+      }));
+    } catch (error) {
+      setAvailabilityStatus(prev => ({
+        ...prev,
+        username: {
+          isChecking: false,
+          isAvailable: false,
+          message: error.message
+        }
+      }));
+    }
+  };
+
+  // Debounced check function
+  const debouncedCheckUsername = debounce(checkUsernameAvailability, 500);
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
+    console.log('Input changed:', { field: name, value });
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
 
-    // Clear field-specific error when user starts typing
     setFieldErrors(prev => ({
       ...prev,
       [name]: ''
     }));
 
-    // Check username availability after user stops typing
+    // Trigger username availability check
     if (name === 'username' && value.length >= 3) {
-      setCheckingUsername(true);
-      try {
-        const response = await axios.post(`${config.API_URL}/api/auth/check-username`, {
-          username: value
-        });
-        if (response.data.available) {
-          setFieldErrors(prev => ({
-            ...prev,
-            username: ''
-          }));
-        } else {
-          setFieldErrors(prev => ({
-            ...prev,
-            username: 'Username is already taken'
-          }));
-        }
-      } catch (error) {
-        console.error('Error checking username:', error);
-      } finally {
-        setCheckingUsername(false);
-      }
+      debouncedCheckUsername(value);
     }
   };
 
   const validateUsername = (username) => {
-    // Username should be 3-20 characters, alphanumeric with underscores and hyphens
-    const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
-    return usernameRegex.test(username);
+    console.log('Validating username:', username);
+    const regex = /^[a-zA-Z0-9_-]+$/;
+    return regex.test(username);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form submission started');
+    console.log('Form data:', formData);
+
+    // Reset errors
     setError('');
     setFieldErrors({});
-    setLoading(true);
 
-    // Validation
+    // Validate form data
     const errors = {};
-    
-    if (!validateUsername(formData.username)) {
-      errors.username = 'Username must be 3-20 characters and can only contain letters, numbers, underscores, and hyphens';
+    if (!formData.fullName.trim()) {
+      errors.fullName = 'Full name is required';
     }
-
+    if (!formData.username.trim()) {
+      errors.username = 'Username is required';
+    } else if (!validateUsername(formData.username)) {
+      errors.username = 'Username can only contain letters, numbers, underscores, and hyphens';
+    } else if (!availabilityStatus.username.isAvailable) {
+      errors.username = availabilityStatus.username.message;
+    }
+    if (!formData.email.trim()) {
+      errors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    if (!formData.password) {
+      errors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      errors.password = 'Password must be at least 6 characters long';
+    }
     if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = 'Passwords do not match';
     }
 
+    console.log('Validation errors:', errors);
     if (Object.keys(errors).length > 0) {
+      console.log('Form validation failed');
       setFieldErrors(errors);
-      setLoading(false);
       return;
     }
 
+    setLoading(true);
+    console.log('Starting signup process...');
+
     try {
-      const response = await axios.post(`${config.API_URL}/api/auth/signup`, {
+      const signupData = {
         fullName: formData.fullName,
         username: formData.username,
         email: formData.email,
         password: formData.password
-      });
+      };
+      console.log('Signup request payload:', signupData);
+
+      const response = await signup(signupData);
+      console.log('Signup response:', response);
       
       setSuccess(true);
-      
-      setTimeout(() => {
-        navigate('/login', { 
-          state: { 
-            message: 'Account created successfully! Please login to continue.'
+      console.log('Setting success state to true');
+
+      console.log('Preparing to navigate to OTP verification');
+      const navigationData = {
+        state: { 
+          userData: {
+            email: formData.email,
+            username: formData.username
           }
-        });
-      }, 2000);
-    } catch (error) {
-      console.error('Signup error:', error);
-      if (error.response?.data?.message) {
-        if (error.response.data.message.includes('Username')) {
-          setFieldErrors(prev => ({
-            ...prev,
-            username: error.response.data.message
-          }));
-        } else if (error.response.data.message.includes('Email')) {
-          setFieldErrors(prev => ({
-            ...prev,
-            email: error.response.data.message
-          }));
-        } else {
-          setError(error.response.data.message);
         }
+      };
+      console.log('Navigation data:', navigationData);
+
+      navigate('/verify-otp', navigationData);
+      console.log('Navigation triggered');
+
+    } catch (err) {
+      console.error('Signup error:', err);
+      
+      if (err.message === 'Email already registered') {
+        setError('An account with this email already exists. Proceed for login instead.');
+      } else if (err.message) {
+        setError(err.message);
       } else {
-        setError('An error occurred during signup');
+        setError('An unexpected error occurred during signup');
       }
     } finally {
+      console.log('Signup process completed');
       setLoading(false);
     }
   };
 
-  if (loading) return (
-    <div className="auth-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-    }}>
-      <LoadingAnimation message="Creating your account..." />
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="auth-container" style={{ 
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+      }}>
+        <LoadingAnimation message="Creating your account..." />
+      </div>
+    );
+  }
 
   return (
     <div className="auth-container">
@@ -153,64 +207,77 @@ const Signup = () => {
         <div className="auth-card">
           <div className="auth-header">
             <h2>Create Account</h2>
-            <p className="auth-subtitle">Join us to start your productivity journey</p>
+            <p className="auth-subtitle">Join us and start managing your projects</p>
           </div>
-          
-          {error && <div className="auth-error">{error}</div>}
-          {success && (
-            <div className="auth-success">
-              Account created successfully! Redirecting to login...
+
+          {error && (
+            <div className="auth-error">
+              {error.includes('Please login') 
+                ? 'An account with this email already exists. Proceed for login instead.' 
+                : error}
             </div>
           )}
-          
+          {success && (
+            <div className="auth-success">
+              Account created successfully! Redirecting to verification...
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
               <input
                 type="text"
                 name="fullName"
-                required
-                className={`auth-input ${fieldErrors.fullName ? 'error' : ''}`}
+                className="auth-input"
                 placeholder="Full Name"
                 value={formData.fullName}
                 onChange={handleChange}
               />
-              {fieldErrors.fullName && <div className="field-error">{fieldErrors.fullName}</div>}
+              {fieldErrors.fullName && (
+                <div className="error-message">{fieldErrors.fullName}</div>
+              )}
             </div>
-            
+
             <div className="form-group">
               <input
                 type="text"
                 name="username"
-                required
-                className={`auth-input ${fieldErrors.username ? 'error' : ''}`}
+                className="auth-input"
                 placeholder="Username"
                 value={formData.username}
                 onChange={handleChange}
               />
-              {checkingUsername && <div className="checking-username">Checking username availability...</div>}
-              {fieldErrors.username && <div className="field-error">{fieldErrors.username}</div>}
-              <small className="input-hint">3-20 characters, letters, numbers, _ and - only</small>
+              {availabilityStatus.username.isChecking ? (
+                <div className="info-message">Checking username availability...</div>
+              ) : availabilityStatus.username.message && (
+                <div className={`${availabilityStatus.username.isAvailable ? 'success-message' : 'error-message'}`}>
+                  {availabilityStatus.username.message}
+                </div>
+              )}
+              {fieldErrors.username && (
+                <div className="error-message">{fieldErrors.username}</div>
+              )}
             </div>
-            
+
             <div className="form-group">
               <input
                 type="email"
                 name="email"
-                required
-                className={`auth-input ${fieldErrors.email ? 'error' : ''}`}
+                className="auth-input"
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
               />
-              {fieldErrors.email && <div className="field-error">{fieldErrors.email}</div>}
+              {fieldErrors.email && (
+                <div className="error-message">{fieldErrors.email}</div>
+              )}
             </div>
-            
+
             <div className="form-group password-group">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                required
-                className={`auth-input ${fieldErrors.password ? 'error' : ''}`}
+                className="auth-input"
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -222,15 +289,16 @@ const Signup = () => {
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
-              {fieldErrors.password && <div className="field-error">{fieldErrors.password}</div>}
+              {fieldErrors.password && (
+                <div className="error-message">{fieldErrors.password}</div>
+              )}
             </div>
-            
+
             <div className="form-group password-group">
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
-                required
-                className={`auth-input ${fieldErrors.confirmPassword ? 'error' : ''}`}
+                className="auth-input"
                 placeholder="Confirm Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -242,18 +310,20 @@ const Signup = () => {
               >
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
-              {fieldErrors.confirmPassword && <div className="field-error">{fieldErrors.confirmPassword}</div>}
+              {fieldErrors.confirmPassword && (
+                <div className="error-message">{fieldErrors.confirmPassword}</div>
+              )}
             </div>
-            
+
             <button 
               type="submit" 
               className="auth-button"
-              disabled={loading || checkingUsername || Object.keys(fieldErrors).length > 0}
+              disabled={loading || success}
             >
-              {loading ? 'Signing Up...' : 'Sign Up'}
+              {loading ? 'Creating Account...' : 'Sign Up'}
             </button>
           </form>
-          
+
           <div className="auth-footer">
             <p>
               Already have an account?{' '}
@@ -261,9 +331,6 @@ const Signup = () => {
                 Login
               </Link>
             </p>
-            <Link to="/forgot-password" className="auth-link">
-              Forgot Password?
-            </Link>
             <Link to="/" className="auth-link back-link">
               Back to Home
             </Link>

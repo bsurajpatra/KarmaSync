@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import config from '../config';
+import { login as loginApi } from '../api/authApi';
 import Footer from './Footer';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
@@ -16,7 +15,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login: authLogin } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,43 +32,36 @@ const Login = () => {
 
     try {
       console.log('Attempting login with:', { email: formData.email });
-      const response = await axios.post(`${config.API_URL}/api/auth/login`, formData);
-      console.log('Login response:', response.data);
-      
-      if (!response.data.token || !response.data.user) {
-        throw new Error('Invalid response from server');
-      }
+      const response = await loginApi(formData);
+      console.log('Login successful:', response);
       
       // Use the login function from AuthContext with both user data and token
-      await login(response.data.user, response.data.token);
+      await authLogin(response.user, response.token);
       console.log('Login successful, redirecting to dashboard');
       
       // Redirect to dashboard
       navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      console.error('Error details:', {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status
-      });
-      setError(error.response?.data?.message || 'An error occurred during login');
+      setError(error.message || 'An error occurred during login');
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) return (
-    <div className="auth-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-    }}>
-      <LoadingAnimation message="Signing you in..." />
-    </div>
-  );
+  if (loading) {
+    return (
+      <div className="auth-container" style={{ 
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+      }}>
+        <LoadingAnimation message="Signing you in..." />
+      </div>
+    );
+  }
 
   return (
     <div className="auth-container">
@@ -90,7 +82,6 @@ const Login = () => {
               <input
                 type="email"
                 name="email"
-                required
                 className="auth-input"
                 placeholder="Email"
                 value={formData.email}
@@ -102,7 +93,6 @@ const Login = () => {
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
-                required
                 className="auth-input"
                 placeholder="Password"
                 value={formData.password}
