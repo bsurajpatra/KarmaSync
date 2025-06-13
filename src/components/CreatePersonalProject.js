@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createProject } from '../api/projectApi';
+import LoadingAnimation from './LoadingAnimation';
 
 const CreatePersonalProject = () => {
   const navigate = useNavigate();
@@ -39,6 +40,18 @@ const CreatePersonalProject = () => {
       setLoading(false);
     }
   };
+
+  if (loading) return (
+    <div className="projects-container" style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+    }}>
+      <LoadingAnimation message="Creating your project..." />
+    </div>
+  );
 
   return (
     <div className="projects-container">

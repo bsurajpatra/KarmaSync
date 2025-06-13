@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getCurrentUser } from '../api/authApi';
+import LoadingAnimation from './LoadingAnimation';
 
 // Logout Confirmation Modal Component
 const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
@@ -73,7 +74,7 @@ const Dashboard = () => {
         justifyContent: 'center',
         background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
       }}>
-        <div className="loading">Loading your dashboard...</div>
+        <LoadingAnimation message="Loading your dashboard..." />
       </div>
     );
   }

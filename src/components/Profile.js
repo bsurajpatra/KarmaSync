@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getCurrentUser, updateProfile, deleteAccount } from '../api/authApi';
+import LoadingAnimation from './LoadingAnimation';
 
 // DeleteAccountModal Component
 const DeleteAccountModal = ({ isOpen, onClose, onConfirm }) => {
@@ -277,8 +278,14 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="profile-wrapper">
-        <div className="loading">Loading profile...</div>
+      <div className="profile-wrapper" style={{ 
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+      }}>
+        <LoadingAnimation message="Loading your profile..." />
       </div>
     );
   }

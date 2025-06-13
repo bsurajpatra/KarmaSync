@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getProjectById, addCustomBoard, deleteCustomBoard } from '../api/projectApi';
 import { getTasks, updateTaskStatus, createTask } from '../api/taskApi';
 import BoardManager from './BoardManager';
+import LoadingAnimation from './LoadingAnimation';
 
 const KanbanBoard = () => {
   const navigate = useNavigate();
@@ -279,7 +280,17 @@ const KanbanBoard = () => {
     }
   };
 
-  if (loading) return <div className="loading">Loading board...</div>;
+  if (loading) return (
+    <div className="kanban-container" style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+    }}>
+      <LoadingAnimation message="Loading your board..." />
+    </div>
+  );
 
   if (error) return <div className="error-message">{error}</div>;
 

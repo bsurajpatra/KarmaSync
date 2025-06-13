@@ -5,6 +5,7 @@ import config from '../config';
 import Footer from './Footer';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
+import LoadingAnimation from './LoadingAnimation';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -57,6 +58,18 @@ const Login = () => {
       setLoading(false);
     }
   };
+
+  if (loading) return (
+    <div className="auth-container" style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+    }}>
+      <LoadingAnimation message="Signing you in..." />
+    </div>
+  );
 
   return (
     <div className="auth-container">

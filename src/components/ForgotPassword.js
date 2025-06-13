@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import config from '../config';
 import Footer from './Footer';
+import LoadingAnimation from './LoadingAnimation';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -35,6 +36,18 @@ const ForgotPassword = () => {
       setLoading(false);
     }
   };
+
+  if (loading) return (
+    <div className="auth-container" style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+    }}>
+      <LoadingAnimation message="Sending reset instructions..." />
+    </div>
+  );
 
   return (
     <div className="auth-container">

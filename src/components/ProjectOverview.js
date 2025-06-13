@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getProjectById, updateProject, deleteProject } from '../api/projectApi';
 import { getTasks } from '../api/taskApi';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import LoadingAnimation from './LoadingAnimation';
 
 const ProjectOverview = () => {
   const navigate = useNavigate();
@@ -168,7 +169,17 @@ const ProjectOverview = () => {
     </div>
   );
 
-  if (loading) return <div className="loading">Loading project details...</div>;
+  if (loading) return (
+    <div className="projects-container" style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+    }}>
+      <LoadingAnimation message="Loading project details..." />
+    </div>
+  );
 
   if (error) return <div className="error-message">{error}</div>;
 

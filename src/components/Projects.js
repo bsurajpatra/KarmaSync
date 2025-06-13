@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProjects, createProject, updateProject, deleteProject } from '../api/projectApi';
+import LoadingAnimation from './LoadingAnimation';
 
 const Projects = () => {
   const navigate = useNavigate();
@@ -97,13 +98,22 @@ const Projects = () => {
     if (type === 'personal') {
       navigate('/create-personal-project');
     } else {
-      // For now, we'll just show a message that collaborative projects are coming soon
       alert('Collaborative projects feature coming soon!');
     }
     setShowTypeModal(false);
   };
 
-  if (loading) return <div className="loading">Loading projects...</div>;
+  if (loading) return (
+    <div className="projects-container" style={{ 
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
+    }}>
+      <LoadingAnimation message="Loading your projects..." />
+    </div>
+  );
 
   return (
     <div className="projects-container" style={{ 
