@@ -1091,23 +1091,28 @@ input[type="submit"].btn {
 }
 
 .password-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
   position: absolute;
   right: 10px;
   top: 50%;
   transform: translateY(-50%);
-  background: none;
-  border: none;
-  color: #000000;
-  cursor: pointer;
-  padding: 5px;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.3s ease;
 }
 
-.password-toggle:hover {
-  color: #333333;
+.password-toggle svg {
+  width: 20px;
+  height: 20px;
+  fill: #000 !important; /* Force black color on the SVG */
+  color: #000 !important; /* For any SVG using currentColor */
+}
+
+.password-toggle:hover svg {
+  opacity: 0.7;
 }
 
 .input-hint {
