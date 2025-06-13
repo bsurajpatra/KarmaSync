@@ -72,7 +72,12 @@ const TaskList = () => {
       ) : (
         <div className="tasks-list">
           {tasks.map(task => (
-            <div key={task._id} className="task-item">
+            <div 
+              key={task._id} 
+              className="task-item"
+              onClick={() => navigate(`/task/${task._id}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <div className="task-item-header">
                 <h3>{task.title}</h3>
                 <div className="task-badges">

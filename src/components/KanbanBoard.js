@@ -317,6 +317,8 @@ const KanbanBoard = () => {
             draggable
             onDragStart={(e) => handleDragStart(e, task._id, boardId)}
             onDragEnd={handleDragEnd}
+            onClick={() => navigate(`/task/${task._id}`)}
+            style={{ cursor: 'pointer' }}
           >
             <h3>{task.title}</h3>
             <p>{task.description}</p>
