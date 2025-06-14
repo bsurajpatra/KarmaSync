@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createProject } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
+import Footer from './Footer';
+import '../styles/CreatePersonalProject.css';
 
 const CreatePersonalProject = () => {
   const navigate = useNavigate();
@@ -123,6 +125,7 @@ const CreatePersonalProject = () => {
           </div>
         </form>
       </div>
+      <Footer />
     </div>
   );
 };

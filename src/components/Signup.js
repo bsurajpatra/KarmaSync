@@ -215,7 +215,7 @@ const Signup = () => {
           )}
 
           <form onSubmit={handleSubmit} className="auth-form">
-            <div className="form-group">
+            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
               <input
                 type="text"
                 name="fullName"
@@ -229,7 +229,7 @@ const Signup = () => {
               )}
             </div>
 
-            <div className="form-group">
+            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
               <input
                 type="text"
                 name="username"
@@ -239,9 +239,9 @@ const Signup = () => {
                 onChange={handleChange}
               />
               {availabilityStatus.username.isChecking ? (
-                <div className="info-message">Checking username availability...</div>
+                <div className="info-message" style={{ color: '#ffffff' }}>Checking username availability...</div>
               ) : availabilityStatus.username.message && (
-                <div className={`${availabilityStatus.username.isAvailable ? 'success-message' : 'error-message'}`}>
+                <div className={`${availabilityStatus.username.isAvailable ? 'success-message' : 'error-message'}`} style={{ color: '#ffffff' }}>
                   {availabilityStatus.username.message}
                 </div>
               )}
@@ -250,7 +250,7 @@ const Signup = () => {
               )}
             </div>
 
-            <div className="form-group">
+            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
               <input
                 type="email"
                 name="email"
@@ -264,7 +264,7 @@ const Signup = () => {
               )}
             </div>
 
-            <div className="form-group password-group">
+            <div className="form-group password-group" style={{ marginBottom: '0.75rem' }}>
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -285,7 +285,7 @@ const Signup = () => {
               )}
             </div>
 
-            <div className="form-group password-group">
+            <div className="form-group password-group" style={{ marginBottom: '0.75rem' }}>
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
