@@ -185,17 +185,7 @@ const Signup = () => {
   };
 
   if (loading) {
-    return (
-      <div className="auth-container" style={{ 
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-      }}>
-        <LoadingAnimation message="Creating your account..." />
-      </div>
-    );
+    return <LoadingAnimation message="Creating your account..." />;
   }
 
   return (

@@ -41,17 +41,7 @@ const CreatePersonalProject = () => {
     }
   };
 
-  if (loading) return (
-    <div className="projects-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-    }}>
-      <LoadingAnimation message="Creating your project..." />
-    </div>
-  );
+  if (loading) return <LoadingAnimation message="Creating your project..." />;
 
   return (
     <div className="projects-container">

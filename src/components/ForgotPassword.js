@@ -38,17 +38,7 @@ const ForgotPassword = () => {
     }
   };
 
-  if (loading) return (
-    <div className="auth-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-    }}>
-      <LoadingAnimation message="Sending reset instructions..." />
-    </div>
-  );
+  if (loading) return <LoadingAnimation message="Processing your request..." />;
 
   return (
     <div className="auth-container">

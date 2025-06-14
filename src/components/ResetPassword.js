@@ -90,17 +90,7 @@ const ResetPassword = () => {
     );
   }
 
-  if (loading) return (
-    <div className="auth-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-    }}>
-      <LoadingAnimation message="Resetting your password..." />
-    </div>
-  );
+  if (loading) return <LoadingAnimation message="Resetting your password..." />;
 
   return (
     <div className="auth-container">

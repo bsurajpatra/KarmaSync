@@ -100,17 +100,7 @@ const TaskList = () => {
   };
 
   if (loading) {
-    return (
-      <div className="tasks-container" style={{ 
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-      }}>
-        <LoadingAnimation message="Loading tasks..." />
-      </div>
-    );
+    return <LoadingAnimation message="Loading your tasks..." />;
   }
 
   if (error) {

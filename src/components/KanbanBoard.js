@@ -290,17 +290,7 @@ const KanbanBoard = () => {
     }));
   };
 
-  if (loading) return (
-    <div className="kanban-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-    }}>
-      <LoadingAnimation message="Loading your board..." />
-    </div>
-  );
+  if (loading) return <LoadingAnimation message="Loading your board..." />;
 
   if (error) return <div className="error-message">{error}</div>;
 

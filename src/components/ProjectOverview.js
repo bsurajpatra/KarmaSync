@@ -259,17 +259,7 @@ const ProjectOverview = () => {
     </div>
   );
 
-  if (loading) return (
-    <div className="projects-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-    }}>
-      <LoadingAnimation message="Loading project details..." />
-    </div>
-  );
+  if (loading) return <LoadingAnimation message="Loading project details..." />;
 
   if (error) return <div className="error-message">{error}</div>;
 

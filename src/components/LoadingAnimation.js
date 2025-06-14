@@ -22,9 +22,9 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
       padding: '2rem',
       backdropFilter: 'blur(8px)',
       borderRadius: '20px',
-      background: 'rgba(255, 255, 255, 0.1)',
-      border: '2px solid rgba(255, 255, 255, 0.2)',
-      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)'
+      background: 'transparent',
+      border: '2px solid rgba(255, 255, 255, 0.1)',
+      boxShadow: 'none'
     },
     loadingRing: {
       position: 'relative',

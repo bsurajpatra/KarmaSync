@@ -123,17 +123,7 @@ const TaskOverview = () => {
     }
   };
 
-  if (loading) return (
-    <div className="task-overview-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-    }}>
-      <LoadingAnimation message="Loading task details..." />
-    </div>
-  );
+  if (loading) return <LoadingAnimation message="Loading task details..." />;
 
   if (error) return <div className="error-message">{error}</div>;
   if (!task) return <div className="error-message">Task not found</div>;

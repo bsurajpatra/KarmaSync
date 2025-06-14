@@ -129,11 +129,7 @@ const OTPVerification = () => {
   };
 
   if (loading) {
-    return (
-      <div className="auth-container">
-        <LoadingAnimation message="Verifying OTP..." />
-      </div>
-    );
+    return <LoadingAnimation message="Verifying your email..." />;
   }
 
   return (

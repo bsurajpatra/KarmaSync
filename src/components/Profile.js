@@ -277,17 +277,7 @@ const Profile = () => {
   };
 
   if (loading) {
-    return (
-      <div className="profile-wrapper" style={{ 
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-      }}>
-        <LoadingAnimation message="Loading your profile..." />
-      </div>
-    );
+    return <LoadingAnimation message="Loading your profile..." />;
   }
 
   return (

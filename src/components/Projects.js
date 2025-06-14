@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProjects, createProject, updateProject, deleteProject } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
+import '../styles/Projects.css';
+import Footer from './Footer';
 
 const Projects = () => {
   const navigate = useNavigate();
@@ -63,9 +65,6 @@ const Projects = () => {
       fetchProjects();
     } catch (err) {
       console.error('Error in handleSubmit:', err);
-      console.error('Error response:', err.response?.data);
-      console.error('Error status:', err.response?.status);
-      console.error('Full error object:', JSON.stringify(err, null, 2));
       setError(err.response?.data?.message || 'Failed to create project');
     }
   };
@@ -103,27 +102,12 @@ const Projects = () => {
     setShowTypeModal(false);
   };
 
-  if (loading) return (
-    <div className="projects-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-    }}>
-      <LoadingAnimation message="Loading your projects..." />
-    </div>
-  );
+  if (loading) {
+    return <LoadingAnimation message="Loading your projects..." />;
+  }
 
   return (
-    <div className="projects-container" style={{ 
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      position: 'relative',
-      paddingBottom: '0',
-      overflow: 'hidden'
-    }}>
+    <div className="projects-container">
       <div className="projects-header">
         <div className="projects-header-content">
           <div className="projects-header-left">
@@ -137,10 +121,10 @@ const Projects = () => {
               <i className="fas fa-arrow-left"></i> Back to Dashboard
             </button>
             <button 
-              className="btn btn-primary"
+              className="create-project-button"
               onClick={() => setShowTypeModal(true)}
             >
-              Create New Project
+              <i className="fas fa-plus"></i> Create New Project
             </button>
           </div>
         </div>
@@ -148,56 +132,65 @@ const Projects = () => {
 
       {error && <div className="error-message">{error}</div>}
 
-      {showTypeModal && (
-        <div className="project-type-modal">
-          <h2>Select Project Type</h2>
-          <div className="project-type-options">
-            <div 
-              className="project-type-option"
-              onClick={() => handleProjectTypeSelect('personal')}
-            >
-              <h3>Personal Project</h3>
-              <p>Create a project that you'll manage on your own</p>
+      <div className="projects-list-container">
+        <div className="projects-list">
+          {projects.length === 0 ? (
+            <div className="project-item" style={{ textAlign: 'center' }}>
+              <h3>No Projects Found</h3>
+              <p>Create your first project to get started!</p>
             </div>
-            <div 
-              className="project-type-option disabled"
-              onClick={() => handleProjectTypeSelect('collaborative')}
-            >
-              <h3>Collaborative Project</h3>
-              <p>Create a project and invite team members (Coming Soon)</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      <div className="projects-grid" style={{ 
-        flex: 1,
-        overflowY: 'auto',
-        paddingRight: '1rem'
-      }}>
-        {projects.length === 0 ? (
-          <div className="no-projects-message">
-            <h3>No Projects Found</h3>
-          </div>
-        ) : (
-          projects.map(project => (
-            <div 
-              key={project._id} 
-              className="project-card"
-                  onClick={() => navigate(`/project/${project._id}/overview`)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="project-card-header">
-                <h3>{project.title}</h3>
-                <span className={`project-type-badge ${project.projectType}`}>
-                  {project.projectType.charAt(0).toUpperCase() + project.projectType.slice(1)}
-                </span>
+          ) : (
+            projects.map(project => (
+              <div 
+                key={project._id} 
+                className="project-item"
+                onClick={() => navigate(`/project/${project._id}/overview`)}
+              >
+                <div className="project-item-header">
+                  <h3 className="project-item-title">{project.title}</h3>
+                  <span className={`project-type-badge ${project.projectType}`}>
+                    {project.projectType.charAt(0).toUpperCase() + project.projectType.slice(1)}
+                  </span>
+                </div>
+                <p className="project-item-description">{project.description}</p>
               </div>
-              <p>{project.description}</p>
-            </div>
-          ))
-        )}
+            ))
+          )}
+        </div>
       </div>
+
+      {showTypeModal && (
+  <div className="modal-overlay">
+    <div className="project-type-modal">
+      <button 
+        className="project-type-modal-close" 
+        onClick={() => setShowTypeModal(false)} 
+        aria-label="Close"
+      >
+        &times;
+      </button>
+      <h2>Select Project Type</h2>
+      <div className="project-type-options">
+        <div 
+          className="project-type-option"
+          onClick={() => handleProjectTypeSelect('personal')}
+        >
+          <h3>Personal Project</h3>
+          <p>Create a project that you'll manage on your own</p>
+        </div>
+        <div 
+          className="project-type-option disabled"
+          onClick={() => handleProjectTypeSelect('collaborative')}
+        >
+          <h3>Collaborative Project</h3>
+          <p>Create a project and invite team members (Coming Soon)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+      <Footer />
     </div>
   );
 };
