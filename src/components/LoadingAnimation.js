@@ -1,19 +1,81 @@
 import React from 'react';
 
 const LoadingAnimation = ({ message = 'Loading...' }) => {
+  const styles = {
+    container: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '2rem'
+    },
+    loadingRing: {
+      position: 'relative',
+      width: '80px',
+      height: '80px',
+      borderRadius: '50%',
+      animation: 'rotate 2s linear infinite'
+    },
+    circle: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      borderRadius: '50%',
+      border: '4px solid transparent',
+      borderTopColor: '#ffffff',
+      animation: 'rotate 1.5s linear infinite'
+    },
+    circle2: {
+      borderTopColor: '#00ffcc',
+      animationDelay: '-0.5s'
+    },
+    circle3: {
+      borderTopColor: '#fff176',
+      animationDelay: '-1s'
+    },
+    syncIcon: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      fontSize: '24px',
+      color: '#ffffff',
+      animation: 'pulse 1.5s ease-in-out infinite'
+    },
+    message: {
+      marginTop: '1.5rem',
+      color: '#ffffff',
+      fontSize: '1.2rem',
+      fontWeight: '500',
+      textAlign: 'center',
+      textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+    }
+  };
+
   return (
-    <div className="loading-container">
-      <div className="circular-loading">
-        <div className="progress-ring">
-          <div className="progress-ring-circle"></div>
-          <div className="progress-ring-circle"></div>
-          <div className="progress-ring-circle"></div>
-        </div>
-        <div className="sync-icon">
-          <i className="fas fa-sync-alt"></i>
+    <div style={styles.container}>
+      <style>
+        {`
+          @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(0.8); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(0.8); }
+          }
+        `}
+      </style>
+      <div style={styles.loadingRing}>
+        <div style={styles.circle}></div>
+        <div style={{...styles.circle, ...styles.circle2}}></div>
+        <div style={{...styles.circle, ...styles.circle3}}></div>
+        <div style={styles.syncIcon}>
+          🔄
         </div>
       </div>
-      <p className="loading-message">{message}</p>
+      <p style={styles.message}>{message}</p>
     </div>
   );
 };
