@@ -239,14 +239,18 @@ const Signup = () => {
                 onChange={handleChange}
               />
               {availabilityStatus.username.isChecking ? (
-                <div className="info-message" style={{ color: '#ffffff' }}>Checking username availability...</div>
+                <div style={{ color: '#ffffff', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+                  Checking username availability...
+                </div>
               ) : availabilityStatus.username.message && (
-                <div className={`${availabilityStatus.username.isAvailable ? 'success-message' : 'error-message'}`} style={{ color: '#ffffff' }}>
+                <div style={{ color: '#ffffff', fontSize: '0.9rem', marginTop: '0.25rem' }}>
                   {availabilityStatus.username.message}
                 </div>
               )}
               {fieldErrors.username && (
-                <div className="error-message">{fieldErrors.username}</div>
+                <div style={{ color: '#ffffff', fontSize: '0.9rem', marginTop: '0.25rem' }}>
+                  {fieldErrors.username}
+                </div>
               )}
             </div>
 

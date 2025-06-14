@@ -8,57 +8,57 @@
 }
 
 .contact-header {
-  width: 100%;
+    width: 100%;
   padding: 1rem 0;
-  color: white;
-  background: transparent;
-}
-
-.contact-header-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 2rem;
-}
-
-.contact-header-left h1 {
-  margin: 0;
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-}
-
-.contact-subtitle {
-  margin: 0.5rem 0 0;
-  opacity: 0.9;
-  font-size: 1.1rem;
-  font-weight: 600;
-}
-
-.back-to-dashboard-button {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 0.75rem 1.5rem;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.9rem;
-  letter-spacing: 0.5px;
+    color: white;
+    background: transparent;
+  }
+  
+  .contact-header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+  }
+  
+  .contact-header-left h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  
+  .contact-subtitle {
+    margin: 0.5rem 0 0;
+    opacity: 0.9;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  .back-to-dashboard-button {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.75rem 1.5rem;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
   text-decoration: none;
-}
-
-.back-to-dashboard-button:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+  }
+  
+  .back-to-dashboard-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
   text-decoration: none;
   color: white;
 }
@@ -291,4 +291,4 @@
     text-align: center;
     gap: 0.5rem;
   }
-}
+  }
