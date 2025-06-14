@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getTaskById, updateTask, deleteTask, addTaskComment } from '../api/taskApi';
 import { getProjectById } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
+import '../styles/TaskOverview.css';
+import Footer from './Footer';
 
 const TaskOverview = () => {
   const { id: taskId } = useParams();
@@ -390,6 +392,7 @@ const TaskOverview = () => {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 };

@@ -21,6 +21,7 @@ import TaskOverview from './components/TaskOverview';
 import Contact from './components/Contact';
 import OTPVerification from './components/OTPVerification';
 import ProtectedRoute from './components/ProtectedRoute';
+import Todos from './components/Todos';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
           <Route path="/project/:id/tasks" element={<ProtectedRoute><TaskList /></ProtectedRoute>} />
           <Route path="/task/:id" element={<ProtectedRoute><TaskOverview /></ProtectedRoute>} />
           <Route path="/contact" element={<ProtectedRoute><Contact /></ProtectedRoute>} />
+          <Route path="/todos" element={<ProtectedRoute><Todos /></ProtectedRoute>} />
         </Routes>
       </Router>
     </AuthProvider>

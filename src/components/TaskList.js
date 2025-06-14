@@ -139,7 +139,7 @@ const TaskList = () => {
       
       {tasks.length === 0 ? (
         <div className="no-tasks">
-          <p>No tasks found</p>
+          <p>No issues found</p>
           <strong>Create your first issue to get started!</strong>
         </div>
       ) : (
