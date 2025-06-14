@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getTasks, createTask } from '../api/taskApi';
 import LoadingAnimation from './LoadingAnimation';
+import '../styles/TaskList.css';
+import Footer from './Footer';
 
 const TaskList = () => {
   const { id: projectId } = useParams();
@@ -138,12 +140,7 @@ const TaskList = () => {
       {tasks.length === 0 ? (
         <div className="no-tasks">
           <p>No tasks found</p>
-          <button 
-            className="btn btn-primary"
-            onClick={() => setShowAddIssueModal(true)}
-          >
-            <i className="fas fa-plus"></i> Add First Issue
-          </button>
+          <strong>Create your first issue to get started!</strong>
         </div>
       ) : (
         <div className="tasks-list">
@@ -319,6 +316,7 @@ const TaskList = () => {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 };

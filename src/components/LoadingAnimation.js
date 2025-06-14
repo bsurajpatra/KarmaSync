@@ -23,7 +23,6 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
       backdropFilter: 'blur(8px)',
       borderRadius: '20px',
       background: 'transparent',
-      border: '2px solid rgba(255, 255, 255, 0.1)',
       boxShadow: 'none'
     },
     loadingRing: {

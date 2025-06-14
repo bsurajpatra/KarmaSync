@@ -591,7 +591,7 @@ const ProjectOverview = () => {
                     value={issueFormData.description}
                     onChange={handleIssueFormChange}
                     className="form-control"
-                    rows="3"
+                    rows="1"
                     placeholder="Enter issue description"
                   />
                 </div>
