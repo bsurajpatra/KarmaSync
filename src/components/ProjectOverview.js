@@ -4,6 +4,8 @@ import { getProjectById, updateProject, deleteProject } from '../api/projectApi'
 import { getTasks, createTask } from '../api/taskApi';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import LoadingAnimation from './LoadingAnimation';
+import '../styles/ProjectOverview.css';
+import Footer from './Footer';
 
 const ProjectOverview = () => {
   const navigate = useNavigate();
@@ -298,23 +300,25 @@ const ProjectOverview = () => {
               </form>
             ) : (
               <div className="title-display">
-            <h1>{project.title}</h1>
+                <h1>
+                  {project.title}
+                  <button 
+                    className="edit-title-btn"
+                    onClick={() => setEditingTitle(true)}
+                  >
+                    Edit
+                  </button>
+                </h1>
                 <div className="project-meta">
                   <span className="project-id">ID: {project.shortId}</span>
                   <span className="project-date">
-              Created on {new Date(project.createdAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
+                    Created on {new Date(project.createdAt).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
                   </span>
                 </div>
-                <button 
-                  className="btn btn-danger"
-                  onClick={() => setEditingTitle(true)}
-                >
-                  Edit
-                </button>
               </div>
             )}
           </div>
@@ -344,10 +348,10 @@ const ProjectOverview = () => {
       <div className="project-overview-container">
         <div className="project-overview-section">
           <div className="section-header">
-          <h2>Description</h2>
+            <h2>Description</h2>
             {!editingDescription && (
               <button 
-                className="btn btn-danger"
+                className="section-edit-btn"
                 onClick={() => setEditingDescription(true)}
               >
                 Edit
@@ -384,86 +388,87 @@ const ProjectOverview = () => {
         </div>
 
           <div className="project-overview-section">
-            <h2>GitHub Repository</h2>
-          {editingGithub ? (
-            <form onSubmit={handleGithubSubmit} className="github-form">
-              <input
-                type="url"
-                value={githubLink}
-                onChange={(e) => setGithubLink(e.target.value)}
-                placeholder="https://github.com/username/repository"
-                pattern="https://github.com/.*"
-                className="github-input"
-                required
-              />
-              <div className="github-form-actions">
-                <button type="submit" className="btn btn-primary">
-                  Save
-                </button>
+            <div className="section-header">
+              <h2>GitHub Repository</h2>
+              {!editingGithub && (
                 <button 
-                  type="button" 
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    setEditingGithub(false);
-                    setGithubLink(project.githubLink || '');
-                  }}
+                  className="section-edit-btn"
+                  onClick={() => setEditingGithub(true)}
                 >
-                  Cancel
+                  {project.githubLink ? 'Edit' : 'Add'}
                 </button>
-              </div>
-            </form>
-          ) : project.githubLink ? (
-            <div className="github-display">
-            <a 
-              href={project.githubLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="github-link"
-            >
-              <i className="fab fa-github"></i> {project.githubLink.replace('https://github.com/', '')}
-            </a>
-              <button 
-                className="btn btn-secondary btn-edit-github"
-                onClick={() => setEditingGithub(true)}
-              >
-                <i className="fas fa-edit"></i> Edit
-              </button>
+              )}
             </div>
-          ) : (
-            <div className="github-display">
-              <p className="no-github">No GitHub repository linked</p>
-              <button 
-                className="btn btn-primary"
-                onClick={() => setEditingGithub(true)}
-              >
-                <i className="fab fa-github"></i> Add GitHub Repository
-              </button>
+            {editingGithub ? (
+              <form onSubmit={handleGithubSubmit} className="github-form">
+                <input
+                  type="url"
+                  value={githubLink}
+                  onChange={(e) => setGithubLink(e.target.value)}
+                  placeholder="https://github.com/username/repository"
+                  pattern="https://github.com/.*"
+                  className="github-input"
+                  required
+                />
+                <div className="github-form-actions">
+                  <button type="submit" className="btn btn-primary">
+                    Save
+                  </button>
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setEditingGithub(false);
+                      setGithubLink(project.githubLink || '');
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            ) : project.githubLink ? (
+              <div className="github-display">
+                <a 
+                  href={project.githubLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="github-link"
+                >
+                  <i className="fab fa-github"></i> {project.githubLink.replace('https://github.com/', '')}
+                </a>
+              </div>
+            ) : (
+              <div className="github-display">
+                <p className="no-github">No GitHub repository linked</p>
+              </div>
+            )}
           </div>
-        )}
+
+        <div className="project-overview-section">
+          <div className="project-type-status">
+            <div>
+              <h3>Project Type</h3>
+              <p className="project-type">
+                <span className={`project-type-badge ${project.projectType}`}>
+                  {project.projectType.charAt(0).toUpperCase() + project.projectType.slice(1)}
+                </span>
+              </p>
+            </div>
+            <div>
+              <h3>Project Status</h3>
+              <p className="project-status">
+                <span className={`status-badge ${project.status}`}>
+                  {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                </span>
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="project-overview-section">
-          <h2>Project Type</h2>
-          <p className="project-type">
-            <span className={`project-type-badge ${project.projectType}`}>
-              {project.projectType.charAt(0).toUpperCase() + project.projectType.slice(1)}
-            </span>
-          </p>
-        </div>
-
-        <div className="project-overview-section">
-          <h2>Project Status</h2>
-          <p className="project-status">
-            <span className={`status-badge ${project.status}`}>
-              {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-            </span>
-          </p>
-        </div>
-
-        <div className="project-overview-section tasks-section">
-          <div className="section-header">
+          <div className="tasks-header">
             <h2>Issues Overview</h2>
-            <div className="section-actions">
+            <div className="tasks-actions">
               {taskCount === 0 && (
                 <button 
                   className="btn btn-primary"
@@ -473,7 +478,7 @@ const ProjectOverview = () => {
                 </button>
               )}
               <button 
-                className="btn btn-secondary view-all-btn"
+                className="btn btn-secondary"
                 onClick={() => navigate(`/project/${id}/tasks`)}
               >
                 View All Issues
@@ -481,60 +486,60 @@ const ProjectOverview = () => {
             </div>
           </div>
           
-          <div className="tasks-overview">
-            <div className="tasks-count">
-              <h3>Total Issues</h3>
-              <div className="count-display">{taskCount}</div>
+          <div className="issues-overview">
+            <div className="issues-stats">
+              <div className="total-issues">
+                <span className="issues-count">{taskCount}</span>
+                <span className="issues-label">Total Issues</span>
+              </div>
             </div>
             
-            <div className="board-distribution">
-              <div className="chart-container">
-                {boardStats.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
-                        data={boardStats}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        outerRadius={100}
-                        fill="#8884d8"
-                        dataKey="value"
-                        label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                      >
-                        {boardStats.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip 
-                        formatter={(value, name) => [`${value} issues`, name]}
-                      />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                ) : (
-                  <p className="no-data">No issues found</p>
-                )}
-              </div>
+            <div className="chart-container">
+              {boardStats.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={boardStats}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                      label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                    >
+                      {boardStats.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip 
+                      formatter={(value, name) => [`${value} issues`, name]}
+                    />
+                    <Legend />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="no-data-chart">
+                  0 Issues Found
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="project-overview-section danger-zone">
+        <div className="project-overview-section project-danger-section">
           <h2>Danger Zone</h2>
-          <div className="danger-zone-content">
-            <div className="danger-action">
-              <div className="danger-action-info">
-                <h3>Delete this project</h3>
-                <p>Once you delete a project, there is no going back. Please be certain.</p>
-              </div>
-              <button 
-                className="btn btn-danger"
-                onClick={() => setShowDeleteConfirm(true)}
-              >
-                Delete Project
-              </button>
+          <div className="project-danger-content">
+            <div className="project-danger-info">
+              <h3>Delete this project</h3>
+              <p>Once you delete a project, there is no going back. Please be certain.</p>
             </div>
+            <button 
+              className="btn btn-danger"
+              onClick={() => setShowDeleteConfirm(true)}
+            >
+              Delete Project
+            </button>
           </div>
         </div>
       </div>
@@ -680,6 +685,7 @@ const ProjectOverview = () => {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 };
