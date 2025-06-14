@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getCurrentUser, updateProfile, deleteAccount } from '../api/authApi';
 import LoadingAnimation from './LoadingAnimation';
+import Footer from './Footer';
+import '../styles/Profile.css';
 
 // DeleteAccountModal Component
 const DeleteAccountModal = ({ isOpen, onClose, onConfirm }) => {
@@ -89,6 +91,17 @@ const Profile = () => {
     console.log('Profile component mounted');
     fetchUserData();
   }, []);
+
+  useEffect(() => {
+    let timer;
+    if (error || success) {
+      timer = setTimeout(() => {
+        setError('');
+        setSuccess('');
+      }, 4000);
+    }
+    return () => clearTimeout(timer);
+  }, [error, success]);
 
   const fetchUserData = async () => {
     try {
@@ -282,22 +295,22 @@ const Profile = () => {
 
   return (
     <div className="profile-wrapper">
-      <div className="profile-content">
-        <div className="profile-header">
-          <div className="profile-header-content">
-            <div className="profile-header-left">
-              <h1>Profile Settings</h1>
-              <p className="profile-subtitle">Manage your account information</p>
-            </div>
-            <button 
-              className="back-to-dashboard-button"
-              onClick={() => navigate('/dashboard')}
-            >
-              <i className="fas fa-arrow-left"></i> Back to Dashboard
-            </button>
+      <div className="profile-header">
+        <div className="profile-header-content">
+          <div className="profile-header-left">
+            <h1>Profile Settings</h1>
+            <p className="profile-subtitle">Manage your account information</p>
           </div>
+          <button 
+            className="back-to-dashboard-button"
+            onClick={() => navigate('/dashboard')}
+          >
+            <i className="fas fa-arrow-left"></i> Back to Dashboard
+          </button>
         </div>
-
+      </div>
+      
+      <div className="profile-main-content">
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
 
@@ -316,18 +329,20 @@ const Profile = () => {
                 <label>Email</label>
                 <p>{userData?.email}</p>
               </div>
-              <button 
-                className="edit-button"
-                onClick={() => setEditMode(true)}
-              >
-                Edit Profile
-              </button>
-              <button 
-                className="change-password-button"
-                onClick={() => setShowPasswordForm(true)}
-              >
-                Change Password
-              </button>
+              <div className="profile-actions">
+                <button 
+                  className="edit-button"
+                  onClick={() => setEditMode(true)}
+                >
+                  Edit Profile
+                </button>
+                <button 
+                  className="change-password-button"
+                  onClick={() => setShowPasswordForm(true)}
+                >
+                  Change Password
+                </button>
+              </div>
             </div>
           ) : (
             <form onSubmit={handleUpdateProfile} className="profile-form">
@@ -390,98 +405,101 @@ const Profile = () => {
           )}
 
           {showPasswordForm && (
-            <div className="password-form-container">
-              <h3>Change Password</h3>
-              <form onSubmit={handleUpdatePassword} className="password-form">
-                <div className="form-group password-group">
-                  <label htmlFor="currentPassword">Current Password</label>
-                  <div className="password-input-group">
-                    <input
-                      type={showPassword.current ? "text" : "password"}
-                      id="currentPassword"
-                      name="currentPassword"
-                      value={passwordData.currentPassword}
-                      onChange={handlePasswordChange}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="password-toggle"
-                      onClick={() => togglePasswordVisibility('current')}
+            <>
+              <div className="password-form-overlay" onClick={() => setShowPasswordForm(false)} />
+              <div className="password-form-container">
+                <h3>Change Password</h3>
+                <form onSubmit={handleUpdatePassword} className="password-form">
+                  <div className="form-group password-group">
+                    <label htmlFor="currentPassword">Current Password</label>
+                    <div className="password-input-group">
+                      <input
+                        type={showPassword.current ? "text" : "password"}
+                        id="currentPassword"
+                        name="currentPassword"
+                        value={passwordData.currentPassword}
+                        onChange={handlePasswordChange}
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => togglePasswordVisibility('current')}
+                        data-visible={showPassword.current}
+                        aria-label={showPassword.current ? "Hide password" : "Show password"}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group password-group">
+                    <label htmlFor="newPassword">New Password</label>
+                    <div className="password-input-group">
+                      <input
+                        type={showPassword.new ? "text" : "password"}
+                        id="newPassword"
+                        name="newPassword"
+                        value={passwordData.newPassword}
+                        onChange={handlePasswordChange}
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => togglePasswordVisibility('new')}
+                        data-visible={showPassword.new}
+                        aria-label={showPassword.new ? "Hide password" : "Show password"}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group password-group">
+                    <label htmlFor="confirmPassword">Confirm New Password</label>
+                    <div className="password-input-group">
+                      <input
+                        type={showPassword.confirm ? "text" : "password"}
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        value={passwordData.confirmPassword}
+                        onChange={handlePasswordChange}
+                        required
+                      />
+                      <button
+                        type="button"
+                        className="password-toggle"
+                        onClick={() => togglePasswordVisibility('confirm')}
+                        data-visible={showPassword.confirm}
+                        aria-label={showPassword.confirm ? "Hide password" : "Show password"}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-actions">
+                    <button type="submit" className="save-button">
+                      Update Password
+                    </button>
+                    <button 
+                      type="button" 
+                      className="cancel-button"
+                      onClick={() => {
+                        setShowPasswordForm(false);
+                        setPasswordData({
+                          currentPassword: '',
+                          newPassword: '',
+                          confirmPassword: ''
+                        });
+                        setShowPassword({
+                          current: false,
+                          new: false,
+                          confirm: false
+                        });
+                      }}
                     >
-                      {showPassword.current ? "Hide" : "Show"}
+                      Cancel
                     </button>
                   </div>
-                </div>
-
-                <div className="form-group password-group">
-                  <label htmlFor="newPassword">New Password</label>
-                  <div className="password-input-group">
-                    <input
-                      type={showPassword.new ? "text" : "password"}
-                      id="newPassword"
-                      name="newPassword"
-                      value={passwordData.newPassword}
-                      onChange={handlePasswordChange}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="password-toggle"
-                      onClick={() => togglePasswordVisibility('new')}
-                    >
-                      {showPassword.new ? "Hide" : "Show"}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="form-group password-group">
-                  <label htmlFor="confirmPassword">Confirm New Password</label>
-                  <div className="password-input-group">
-                    <input
-                      type={showPassword.confirm ? "text" : "password"}
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      value={passwordData.confirmPassword}
-                      onChange={handlePasswordChange}
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="password-toggle"
-                      onClick={() => togglePasswordVisibility('confirm')}
-                    >
-                      {showPassword.confirm ? "Hide" : "Show"}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="form-actions">
-                  <button type="submit" className="save-button">
-                    Update Password
-                  </button>
-                  <button 
-                    type="button" 
-                    className="cancel-button"
-                    onClick={() => {
-                      setShowPasswordForm(false);
-                      setPasswordData({
-                        currentPassword: '',
-                        newPassword: '',
-                        confirmPassword: ''
-                      });
-                      setShowPassword({
-                        current: false,
-                        new: false,
-                        confirm: false
-                      });
-                    }}
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div>
+                </form>
+              </div>
+            </>
           )}
 
           <div className="danger-zone">
@@ -505,6 +523,7 @@ const Profile = () => {
           onConfirm={handleConfirmDelete}
         />
       </div>
+      <Footer />
     </div>
   );
 };
