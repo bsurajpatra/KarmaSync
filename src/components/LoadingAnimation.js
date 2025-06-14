@@ -2,12 +2,29 @@ import React from 'react';
 
 const LoadingAnimation = ({ message = 'Loading...' }) => {
   const styles = {
+    wrapper: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)',
+      zIndex: 1000
+    },
     container: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '2rem'
+      padding: '2rem',
+      backdropFilter: 'blur(8px)',
+      borderRadius: '20px',
+      background: 'rgba(255, 255, 255, 0.1)',
+      border: '2px solid rgba(255, 255, 255, 0.2)',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)'
     },
     loadingRing: {
       position: 'relative',
@@ -53,7 +70,7 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
   };
 
   return (
-    <div style={styles.container}>
+    <div style={styles.wrapper}>
       <style>
         {`
           @keyframes rotate {
@@ -67,15 +84,17 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
           }
         `}
       </style>
-      <div style={styles.loadingRing}>
-        <div style={styles.circle}></div>
-        <div style={{...styles.circle, ...styles.circle2}}></div>
-        <div style={{...styles.circle, ...styles.circle3}}></div>
-        <div style={styles.syncIcon}>
-          🔄
+      <div style={styles.container}>
+        <div style={styles.loadingRing}>
+          <div style={styles.circle}></div>
+          <div style={{...styles.circle, ...styles.circle2}}></div>
+          <div style={{...styles.circle, ...styles.circle3}}></div>
+          <div style={styles.syncIcon}>
+            🔄
+          </div>
         </div>
+        <p style={styles.message}>{message}</p>
       </div>
-      <p style={styles.message}>{message}</p>
     </div>
   );
 };
