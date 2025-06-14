@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import config from '../config';
 import LoadingAnimation from './LoadingAnimation';
 import { forgotPassword } from '../api/authApi';
+import Footer from './Footer';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -52,7 +53,8 @@ const ForgotPassword = () => {
   return (
     <div className="auth-container">
       <div className="auth-logo-section">
-        <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
+      <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
+      <div className="auth-logo-text">KarmaSync</div>
       </div>
       <div className="auth-content">
         <div className="auth-card">
@@ -64,7 +66,8 @@ const ForgotPassword = () => {
           {error && <div className="auth-error">{error}</div>}
           {success && (
             <div className="auth-success">
-              Password reset instructions have been sent to your email
+              Password reset instructions have been sent to your email.
+              Please check your spam folder if you don't see the email in your inbox
             </div>
           )}
           
@@ -102,6 +105,7 @@ const ForgotPassword = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

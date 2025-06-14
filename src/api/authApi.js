@@ -160,7 +160,7 @@ export const deleteAccount = async () => {
   } catch (error) {
     throw error.response?.data || { message: 'Error deleting account' };
   }
-};
+}; 
 
 // Check username availability
 export const checkUsername = async (username) => {

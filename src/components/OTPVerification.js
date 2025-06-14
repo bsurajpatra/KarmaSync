@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyOTP, resendOTP } from '../api/authApi';
 import LoadingAnimation from './LoadingAnimation';
+import Footer from './Footer';
 
 const OTPVerification = () => {
   console.log('OTPVerification component rendered');
@@ -129,13 +130,7 @@ const OTPVerification = () => {
 
   if (loading) {
     return (
-      <div className="auth-container" style={{ 
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)'
-      }}>
+      <div className="auth-container">
         <LoadingAnimation message="Verifying OTP..." />
       </div>
     );
@@ -145,13 +140,14 @@ const OTPVerification = () => {
     <div className="auth-container">
       <div className="auth-logo-section">
         <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
+        <div className="auth-logo-text">KarmaSync</div>
       </div>
       <div className="auth-content">
         <div className="auth-card">
           <div className="auth-header">
             <h2>Verify Your Email</h2>
             <p className="auth-subtitle">Enter the 6-digit code sent to {userData?.email}</p>
-            <p className="auth-subtitle" style={{ fontSize: '0.9em', color: '#666' }}>
+            <p className="auth-subtitle" style={{ fontSize: '0.9em' }}>
               Please check your spam folder if you don't see the email in your inbox
             </p>
           </div>
@@ -164,17 +160,32 @@ const OTPVerification = () => {
           )}
 
           <form onSubmit={handleSubmit} className="auth-form otp-form">
-            <div className="otp-inputs">
+            <div className="otp-inputs" style={{
+              display: 'flex',
+              justifyContent: 'center',
+              gap: '12px',
+              marginBottom: '1.5rem'
+            }}>
               {otp.map((digit, index) => (
-                <div key={index} className="otp-input-group">
+                <div key={index} className="otp-input-group" style={{
+                  display: 'inline-block'
+                }}>
                   <input
                     type="text"
                     maxLength="1"
-                    className="otp-input"
+                    className="auth-input otp-input"
                     value={digit}
                     onChange={(e) => handleChange(e.target, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
                     autoFocus={index === 0}
+                    style={{
+                      width: '45px',
+                      height: '45px',
+                      textAlign: 'center',
+                      padding: '0',
+                      fontSize: '1.2rem',
+                      margin: '0'
+                    }}
                   />
                 </div>
               ))}
@@ -188,12 +199,21 @@ const OTPVerification = () => {
               {loading ? 'Verifying...' : 'Verify Email'}
             </button>
 
-            <div className="resend-otp">
+            <div className="resend-otp" style={{ textAlign: 'center', marginTop: '1rem' }}>
               <button
                 type="button"
-                className="resend-button"
+                className="auth-link"
                 onClick={handleResendOTP}
                 disabled={resendDisabled}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#ffffff',
+                  cursor: resendDisabled ? 'not-allowed' : 'pointer',
+                  opacity: resendDisabled ? 0.7 : 1,
+                  textDecoration: 'none',
+                  marginRight: '0'
+                }}
               >
                 {resendDisabled 
                   ? `Resend OTP in ${countdown}s`
@@ -203,6 +223,7 @@ const OTPVerification = () => {
           </form>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

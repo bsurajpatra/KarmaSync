@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import config from '../config';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import LoadingAnimation from './LoadingAnimation';
+import Footer from './Footer';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -104,7 +105,8 @@ const ResetPassword = () => {
   return (
     <div className="auth-container">
       <div className="auth-logo-section">
-        <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
+      <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
+      <div className="auth-logo-text">KarmaSync</div>
       </div>
       <div className="auth-content">
         <div className="auth-card">
@@ -178,6 +180,7 @@ const ResetPassword = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };
