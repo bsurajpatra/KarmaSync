@@ -138,8 +138,10 @@ const TaskOverview = () => {
             <h1>Issue Details</h1>
             {project && (
               <div className="project-info">
-                <span className="project-name">{project.title}</span>
-                <span className="project-id">#{project.shortId}</span>
+                <span className="task-id">#{task.serialNumber}</span>
+                <span className="task-date">
+                  Created: {new Date(task.createdAt).toLocaleDateString()}
+                </span>
               </div>
             )}
           </div>
@@ -284,21 +286,36 @@ const TaskOverview = () => {
             <div className="task-section">
               <h2>{task.title}</h2>
               <div className="task-meta">
-                <span className="task-id">#{task.serialNumber}</span>
-                <span className={`task-type ${task.type}`}>
-                  {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
-                </span>
-                <span className={`task-status ${task.status}`}>
-                  {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                </span>
-                <span className="task-date">
-                  Created: {new Date(task.createdAt).toLocaleDateString()}
-                </span>
-                {task.deadline && (
-                  <span className="task-deadline">
-                    Deadline: {new Date(task.deadline).toLocaleDateString()}
-                  </span>
-                )}
+                <div className="task-meta-left">
+                  <div className="task-meta-item">
+                    <span className="task-meta-label">Project Name:</span>
+                    <span className="task-meta-value">{project.title}</span>
+                  </div>
+                  <div className="task-meta-item">
+                    <span className="task-meta-label">Project ID:</span>
+                    <span className="task-meta-value">#{project.shortId}</span>
+                  </div>
+                </div>
+                <div className="task-meta-right">
+                  {task.deadline && (
+                    <div className="task-meta-item">
+                      <span className="task-meta-label">Deadline:</span>
+                      <span className="task-meta-value">{new Date(task.deadline).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  <div className="task-meta-item">
+                    <span className="task-meta-label">Type:</span>
+                    <span className={`task-meta-value task-type ${task.type}`}>
+                      {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+                    </span>
+                  </div>
+                  <div className="task-meta-item">
+                    <span className="task-meta-label">Status:</span>
+                    <span className={`task-meta-value task-status ${task.status}`}>
+                      {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                    </span>
+                  </div>
+                </div>
               </div>
               <div className="task-description">
                 <h3>Description</h3>
@@ -311,13 +328,10 @@ const TaskOverview = () => {
               <div className="comments-list">
                 {task.comments?.map(comment => (
                   <div key={comment._id} className="comment">
-                    <div className="comment-header">
-                      <span className="comment-author">{comment.author}</span>
-                      <span className="comment-date">
-                        {new Date(comment.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
                     <p className="comment-text">{comment.text}</p>
+                    <span className="comment-date">
+                      {new Date(comment.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -335,11 +349,11 @@ const TaskOverview = () => {
               </form>
             </div>
 
-            <div className="task-section danger-zone">
+            <div className="task-section task-danger-zone">
               <h3>Danger Zone</h3>
-              <div className="danger-zone-content">
-                <div className="danger-action">
-                  <div className="danger-action-info">
+              <div className="task-danger-zone-content">
+                <div className="task-danger-action">
+                  <div className="task-danger-action-info">
                     <h4>Delete this issue</h4>
                     <p>Once you delete a issue, there is no going back. Please be certain.</p>
                   </div>
