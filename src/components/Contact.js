@@ -7,6 +7,8 @@ import { Link } from 'react-router-dom';
 import "react-toastify/dist/ReactToastify.css";
 import LoadingAnimation from './LoadingAnimation';
 import { FaEnvelope, FaGithub, FaLinkedin } from 'react-icons/fa';
+import '../styles/Contact.css';
+import Footer from './Footer';
 
 const Contact = () => {
     const { user } = useAuth();
@@ -20,7 +22,6 @@ const Contact = () => {
             try {
                 const response = await getCurrentUser();
                 setUserDetails(response.data);
-                console.log("User details fetched:", response.data);
             } catch (error) {
                 console.error("Error fetching user details:", error);
                 toast.error("Failed to load user details");
@@ -36,47 +37,34 @@ const Contact = () => {
         }
 
         setLoading(true);
-        console.log("Starting email send process...");
-        console.log("Environment variables:", {
-            serviceId: process.env.REACT_APP_EMAILJS_SERVICE_ID,
-            templateId: process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
-            publicKey: process.env.REACT_APP_EMAILJS_PUBLIC_API
-        });
-        console.log("User details being used:", {
-            fullName: userDetails?.fullName || user?.fullName,
-            email: userDetails?.email || user?.email
-        });
-
         try {
             const templateParams = {
                 from_name: userDetails?.fullName || user?.fullName,
                 from_email: userDetails?.email || user?.email,
                 message: message
             };
-            console.log("Sending email with params:", templateParams);
 
-            const result = await emailjs.send(
+            await emailjs.send(
                 process.env.REACT_APP_EMAILJS_SERVICE_ID,
                 process.env.REACT_APP_EMAILJS_TEMPLATE_ID,
                 templateParams,
                 process.env.REACT_APP_EMAILJS_PUBLIC_API
             );
             
-            console.log("Email sent successfully:", result);
-            setLoading(false);
             setMessage("");
             setShowSuccessMessage(true);
             toast.success("Message sent successfully!");
         } catch (error) {
-            setLoading(false);
-            console.error("Detailed error in email sending:", {
-                error: error,
-                message: error.message,
-                text: error.text,
-                status: error.status
-            });
+            console.error("Error sending email:", error);
             toast.error("Failed to send message. Please try again.");
+        } finally {
+            setLoading(false);
         }
+    };
+
+    const handleSendAnotherMessage = () => {
+        setShowSuccessMessage(false);
+        setMessage("");
     };
 
     return (
@@ -115,17 +103,14 @@ const Contact = () => {
                         <div className="success-message">
                             <i className="fas fa-check-circle"></i>
                             <h4>Message Sent Successfully!</h4>
-                            <p>Thank you for reaching out. You can expect a reply from our team at your registered email address ({userDetails?.email || user?.email}) within 24-48 hours.</p>
-                            <p className="spam-notice">
+                            <p>
+                                Thank you for reaching out. You can expect a reply from our team at your registered email address ({userDetails?.email || user?.email}) within 24-48 hours.
+                            </p>
+                            <div className="spam-notice">
                                 <i className="fas fa-info-circle"></i>
                                 Please check your spam folder if you don't receive our response in your inbox.
-                            </p>
-                            <button 
-                                className="btn btn-primary"
-                                onClick={() => setShowSuccessMessage(false)}
-                            >
-                                Send Another Message
-                            </button>
+                            </div>
+                         
                         </div>
                     ) : (
                         <form onSubmit={submitHandler} className="contact-form">
@@ -161,6 +146,7 @@ const Contact = () => {
                 </div>
             </div>
             <ToastContainer position="bottom-right" theme="light" />
+            <Footer />
         </div>
     );
 };

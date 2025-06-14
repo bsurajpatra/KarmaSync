@@ -362,8 +362,8 @@ input[type="submit"].btn {
 }
 
 .header-cta .btn {
-  font-size: 2.2rem;
-  padding: 1.5rem 4rem;
+  font-size: 1.8rem;
+  padding: 1.2rem 3rem;
   border-radius: 50px;
   background: white;
   color: var(--primary-color);
@@ -1031,6 +1031,11 @@ footer {
   border-radius: 6px;
 }
 
+/* Password field styles */
+.password-group {
+  position: relative;
+}
+
 .password-toggle {
   position: absolute;
   right: 10px;
@@ -1038,18 +1043,43 @@ footer {
   transform: translateY(-50%);
   background: none;
   border: none;
-  color: #000000;
+  color: rgba(0, 0, 0, 0.7);
   cursor: pointer;
   padding: 0.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.3s ease;
+  z-index: 2;
+}
+
+.password-toggle:hover {
+  color: rgba(0, 0, 0, 1);
 }
 
 .password-toggle svg {
-  width: 16px;
-    height: 16px;
-  color: #000000;
+  width: 18px;
+  height: 18px;
+  color: inherit;
+}
+
+/* Hide browser's default password toggle icons */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-input-decoration,
+input[type="password"]::-webkit-input-password-toggle-button {
+  display: none !important;
+}
+
+/* Ensure password input has proper padding for the toggle button */
+.password-group .auth-input {
+  padding-right: 40px;
+}
+
+/* Remove any conflicting styles from other components */
+.password-toggle::before,
+.password-toggle::after {
+  display: none !important;
 }
 
 /* Responsive adjustments */

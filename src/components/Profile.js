@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { getCurrentUser, updateProfile, deleteAccount } from '../api/authApi';
 import LoadingAnimation from './LoadingAnimation';
 import Footer from './Footer';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import '../styles/Profile.css';
 
 // DeleteAccountModal Component
@@ -309,7 +310,7 @@ const Profile = () => {
           </button>
         </div>
       </div>
-      
+
       <div className="profile-main-content">
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">{success}</div>}
@@ -427,7 +428,9 @@ const Profile = () => {
                         onClick={() => togglePasswordVisibility('current')}
                         data-visible={showPassword.current}
                         aria-label={showPassword.current ? "Hide password" : "Show password"}
-                      />
+                      >
+                        {showPassword.current ? <FaEyeSlash /> : <FaEye />}
+                      </button>
                     </div>
                   </div>
 
@@ -448,7 +451,9 @@ const Profile = () => {
                         onClick={() => togglePasswordVisibility('new')}
                         data-visible={showPassword.new}
                         aria-label={showPassword.new ? "Hide password" : "Show password"}
-                      />
+                      >
+                        {showPassword.new ? <FaEyeSlash /> : <FaEye />}
+                      </button>
                     </div>
                   </div>
 
@@ -469,7 +474,9 @@ const Profile = () => {
                         onClick={() => togglePasswordVisibility('confirm')}
                         data-visible={showPassword.confirm}
                         aria-label={showPassword.confirm ? "Hide password" : "Show password"}
-                      />
+                      >
+                        {showPassword.confirm ? <FaEyeSlash /> : <FaEye />}
+                      </button>
                     </div>
                   </div>
 
