@@ -136,6 +136,7 @@
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
+  margin-bottom: 1rem;
   padding: 2rem;
   width: 100%;
 }
@@ -146,10 +147,10 @@
 
 .form-group label {
   display: block;
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9rem;
+  color: #ffffff;
+  font-size: 1rem;
   margin-bottom: 0.5rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }

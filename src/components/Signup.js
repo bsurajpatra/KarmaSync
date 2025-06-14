@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signup, checkUsername } from '../api/authApi';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -18,12 +18,25 @@ const Signup = () => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showDelayMessage, setShowDelayMessage] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [availabilityStatus, setAvailabilityStatus] = useState({
     username: { isChecking: false, isAvailable: null, message: '' }
   });
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => {
+        setShowDelayMessage(true);
+      }, 5000);
+    } else {
+      setShowDelayMessage(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   // Debounce function
   const debounce = (func, wait) => {
@@ -185,7 +198,20 @@ const Signup = () => {
   };
 
   if (loading) {
-    return <LoadingAnimation message="Creating your account..." />;
+    return (
+      <LoadingAnimation 
+        message={
+          <>
+            Creating your account...<br />
+            {showDelayMessage && (
+              <span style={{ fontSize: '0.9em', opacity: 0.8 }}>
+                If this is your first visit today, the server might be starting up. Please wait a moment...
+              </span>
+            )}
+          </>
+        } 
+      />
+    );
   }
 
   return (
@@ -323,7 +349,7 @@ const Signup = () => {
             <p>
               Already have an account?{' '}
               <Link to="/login" className="auth-link">
-                Login
+                Sign In
               </Link>
             </p>
             <Link to="/" className="auth-link back-link">

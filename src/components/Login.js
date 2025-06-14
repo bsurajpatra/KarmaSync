@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { login as loginApi } from '../api/authApi';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
@@ -14,8 +14,21 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showDelayMessage, setShowDelayMessage] = useState(false);
   const navigate = useNavigate();
   const { login: authLogin } = useAuth();
+
+  useEffect(() => {
+    let timer;
+    if (loading) {
+      timer = setTimeout(() => {
+        setShowDelayMessage(true);
+      }, 5000);
+    } else {
+      setShowDelayMessage(false);
+    }
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,7 +63,20 @@ const Login = () => {
   };
 
   if (loading) {
-    return <LoadingAnimation message="Signing you in..." />;
+    return (
+      <LoadingAnimation 
+        message={
+          <>
+            Signing you in...<br />
+            {showDelayMessage && (
+              <span style={{ fontSize: '0.9em', opacity: 0.8 }}>
+                If this is your first visit today, the server might be starting up. Please wait a moment...
+              </span>
+            )}
+          </>
+        } 
+      />
+    );
   }
 
   return (

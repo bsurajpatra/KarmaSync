@@ -79,6 +79,7 @@
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
+  padding-bottom: 4rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -247,6 +248,7 @@
 .project-danger-section {
   border-color: rgba(255, 0, 0, 0.3);
   margin-top: 1rem;
+  margin-bottom: 2rem;
   width: 100% !important;
   margin-left: auto !important;
   margin-right: auto !important;
