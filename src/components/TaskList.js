@@ -113,7 +113,12 @@ const TaskList = () => {
     <div className="tasks-container">
       <div className="tasks-header">
         <div className="tasks-header-content">
-          <h2>Project Issues</h2>
+          <h2 style={{ 
+            color: '#FFFFFF', 
+            fontWeight: '800',
+            fontSize: '2.5rem',
+            textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+          }}>Project Issues</h2>
           <div className="tasks-header-actions">
             <button 
               className="btn btn-primary"
@@ -157,20 +162,27 @@ const TaskList = () => {
                   {task.title}
                 </h3>
                 <div className="task-badges">
-                  <span className={`task-type ${task.type}`}>
-                    {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
-                  </span>
                   <span className={`task-status ${task.status}`}>
                     {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
                   </span>
                 </div>
               </div>
               <div className="task-meta">
-                <span className="task-date">
+                <span className="task-date" style={{ 
+                  color: '#000000', 
+                  fontWeight: '800',
+                  fontSize: '1.2rem',
+                  background: 'transparent'
+                }}>
                   Created: {new Date(task.createdAt).toLocaleDateString()}
                 </span>
                 {task.deadline && (
-                  <span className="task-deadline">
+                  <span className="task-deadline" style={{ 
+                    color: '#000000', 
+                    fontWeight: '800',
+                    fontSize: '1.2rem',
+                    background: 'transparent'
+                  }}>
                     Deadline: {new Date(task.deadline).toLocaleDateString()}
                   </span>
                 )}
