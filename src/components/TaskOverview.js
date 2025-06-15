@@ -135,11 +135,26 @@ const TaskOverview = () => {
       <div className="task-overview-header">
         <div className="task-overview-header-content">
           <div className="task-overview-header-left">
-            <h1>Issue Details</h1>
+            <h1 style={{ 
+              color: '#FFFFFF', 
+              fontWeight: '800',
+              fontSize: '2.5rem',
+              textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+            }}>Issue Details</h1>
             {project && (
               <div className="project-info">
-                <span className="task-id">#{task.serialNumber}</span>
-                <span className="task-date">
+                <span className="task-id" style={{ 
+                  color: '#FFFFFF', 
+                  fontWeight: '800',
+                  fontSize: '1.2rem',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+                }}>#{task.serialNumber}</span>
+                <span className="task-date" style={{ 
+                  color: '#FFFFFF', 
+                  fontWeight: '800',
+                  fontSize: '1.2rem',
+                  textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
+                }}>
                   Created: {new Date(task.createdAt).toLocaleDateString()}
                 </span>
               </div>
@@ -172,115 +187,129 @@ const TaskOverview = () => {
 
       <div className="task-overview-content">
         {editing ? (
-          <form onSubmit={handleSubmit} className="task-edit-form">
-            <div className="form-group">
-              <label htmlFor="title">Title</label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="form-control"
-                required
-              />
-            </div>
+          <div className="edit-modal-overlay">
+            <div className="edit-modal-container">
+              <form onSubmit={handleSubmit} className="edit-modal-form">
+                <div className="edit-modal-header">
+                  <h2>Edit Issue</h2>
+                  <button 
+                    className="modal-close"
+                    onClick={() => setEditing(false)}
+                  >
+                    ×
+                  </button>
+                </div>
+                <div className="edit-modal-body">
+                  <div className="form-group">
+                    <label htmlFor="title">Title</label>
+                    <input
+                      type="text"
+                      id="title"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      required
+                    />
+                  </div>
 
-            <div className="form-group">
-              <label htmlFor="description">Description</label>
-              <textarea
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleInputChange}
-                className="form-control"
-                rows="4"
-              />
-            </div>
+                  <div className="form-group">
+                    <label htmlFor="description">Description</label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      rows="4"
+                    />
+                  </div>
 
-            <div className="form-group">
-              <label htmlFor="type">Type</label>
-              <select
-                id="type"
-                name="type"
-                value={showCustomType ? 'custom' : formData.type}
-                onChange={handleInputChange}
-                className="form-control"
-                required
-              >
-                <option value="tech">Technical</option>
-                <option value="review">Review</option>
-                <option value="bug">Bug</option>
-                <option value="feature">Feature</option>
-                <option value="documentation">Documentation</option>
-                <option value="custom">Custom Type</option>
-              </select>
-              {showCustomType && (
-                <input
-                  type="text"
-                  name="customType"
-                  value={formData.customType}
-                  onChange={handleInputChange}
-                  className="form-control custom-type-input"
-                  placeholder="Enter custom issue type"
-                  required
-                />
-              )}
-            </div>
+                  <div className="form-group">
+                    <label htmlFor="type">Type</label>
+                    <select
+                      id="type"
+                      name="type"
+                      value={showCustomType ? 'custom' : formData.type}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      required
+                    >
+                      <option value="tech">Technical</option>
+                      <option value="review">Review</option>
+                      <option value="bug">Bug</option>
+                      <option value="feature">Feature</option>
+                      <option value="documentation">Documentation</option>
+                      <option value="custom">Custom Type</option>
+                    </select>
+                    {showCustomType && (
+                      <input
+                        type="text"
+                        name="customType"
+                        value={formData.customType}
+                        onChange={handleInputChange}
+                        className="form-control custom-type-input"
+                        placeholder="Enter custom issue type"
+                        required
+                      />
+                    )}
+                  </div>
 
-            <div className="form-group">
-              <label htmlFor="status">Status</label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-                className="form-control"
-                required
-              >
-                <option value="todo">To Do</option>
-                <option value="doing">Doing</option>
-                <option value="done">Done</option>
-                {project?.customBoards?.map(board => (
-                  <option key={board.id} value={board.id}>
-                    {board.name}
-                  </option>
-                ))}
-              </select>
-            </div>
+                  <div className="form-group">
+                    <label htmlFor="status">Status</label>
+                    <select
+                      id="status"
+                      name="status"
+                      value={formData.status}
+                      onChange={handleInputChange}
+                      className="form-control"
+                      required
+                    >
+                      <option value="todo">To Do</option>
+                      <option value="doing">Doing</option>
+                      <option value="done">Done</option>
+                      {project?.customBoards?.map(board => (
+                        <option key={board.id} value={board.id}>
+                          {board.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-            <div className="form-group">
-              <label htmlFor="deadline">Deadline</label>
-              <input
-                type="date"
-                id="deadline"
-                name="deadline"
-                value={formData.deadline}
-                onChange={handleInputChange}
-                className="form-control"
-              />
+                  <div className="form-group">
+                    <label htmlFor="deadline">Deadline</label>
+                    <input
+                      type="date"
+                      id="deadline"
+                      name="deadline"
+                      value={formData.deadline}
+                      onChange={handleInputChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+                <div className="edit-modal-actions">
+                  <button type="submit" className="btn btn-primary">Save Changes</button>
+                  <button 
+                    type="button" 
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      setEditing(false);
+                      setFormData({
+                        title: task.title,
+                        description: task.description,
+                        type: task.type,
+                        status: task.status,
+                        deadline: task.deadline
+                      });
+                    }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
             </div>
-
-            <div className="form-actions">
-              <button type="submit" className="btn btn-primary">Save Changes</button>
-              <button 
-                type="button" 
-                className="btn btn-secondary"
-                onClick={() => {
-                  setEditing(false);
-                  setFormData({
-                    title: task.title,
-                    description: task.description,
-                    type: task.type,
-                    status: task.status,
-                    deadline: task.deadline
-                  });
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
+          </div>
         ) : (
           <div className="task-details">
             <div className="task-section">
@@ -305,15 +334,20 @@ const TaskOverview = () => {
                   )}
                   <div className="task-meta-item">
                     <span className="task-meta-label">Type:</span>
-                    <span className={`task-meta-value task-type ${task.type}`}>
-                  {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
-                </span>
+                    <span className={`task-meta-value task-type ${task.type}`} style={{ color: '#FFFFFF' }}>
+                      {task.type === 'tech' ? 'Technical' :
+                       task.type === 'review' ? 'Review' :
+                       task.type === 'bug' ? 'Bug' :
+                       task.type === 'feature' ? 'Feature' :
+                       task.type === 'documentation' ? 'Documentation' :
+                       task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+                    </span>
                   </div>
                   <div className="task-meta-item">
                     <span className="task-meta-label">Status:</span>
-                    <span className={`task-meta-value task-status ${task.status}`}>
-                  {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                </span>
+                    <span className={`task-meta-value task-status ${task.status}`} style={{ color: '#FFFFFF' }}>
+                      {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                    </span>
                   </div>
                 </div>
               </div>
