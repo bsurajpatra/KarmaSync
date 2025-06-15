@@ -4,15 +4,17 @@ import { getProjectById, addCustomBoard, deleteCustomBoard } from '../api/projec
 import { getTasks, updateTaskStatus, createTask } from '../api/taskApi';
 import BoardManager from './BoardManager';
 import LoadingAnimation from './LoadingAnimation';
+import '../styles/KanbanBoard.css';
+import Footer from './Footer';
 
 const KanbanBoard = () => {
   const navigate = useNavigate();
   const { id: projectId } = useParams();
   const [project, setProject] = useState(null);
   const [boards, setBoards] = useState({
-    todo: { name: 'To Do', items: [], minimized: false },
-    doing: { name: 'Doing', items: [], minimized: false },
-    done: { name: 'Done', items: [], minimized: false }
+    todo: { name: 'To Do', items: [], compressed: false },
+    doing: { name: 'Doing', items: [], compressed: false },
+    done: { name: 'Done', items: [], compressed: false }
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -28,6 +30,7 @@ const KanbanBoard = () => {
     customType: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
+  const [newBoardName, setNewBoardName] = useState('');
 
   useEffect(() => {
     fetchProjectAndTasks();
@@ -237,9 +240,10 @@ const KanbanBoard = () => {
     }
   };
 
-  const handleBoardAdd = async (newBoard) => {
+  const handleBoardAdd = async (e) => {
+    e.preventDefault();
     try {
-      const savedBoard = await addCustomBoard(projectId, newBoard);
+      const savedBoard = await addCustomBoard(projectId, { name: newBoardName });
       setBoards(prev => ({
         ...prev,
         [savedBoard.id]: {
@@ -248,44 +252,42 @@ const KanbanBoard = () => {
         }
       }));
       setShowBoardManager(false);
+      setNewBoardName('');
     } catch (err) {
       console.error('Error adding board:', err);
       setError('Failed to add new board');
     }
   };
 
+  const isDefaultBoard = (boardId) => {
+    return ['todo', 'doing', 'done'].includes(boardId);
+  };
+
+  const canDeleteBoard = (boardId, board) => {
+    return !isDefaultBoard(boardId) && board.items.length === 0;
+  };
+
   const handleBoardDelete = async (boardId) => {
+    if (!canDeleteBoard(boardId, boards[boardId])) {
+      return;
+    }
+
     try {
       await deleteCustomBoard(projectId, boardId);
       const { [boardId]: deletedBoard, ...remainingBoards } = boards;
-      
-      // Move all issues from deleted board to 'todo'
-      const movedIssues = deletedBoard.items.map(async (issue) => {
-        await updateTaskStatus(issue._id, 'todo');
-        return { ...issue, status: 'todo' };
-      });
-      
-      await Promise.all(movedIssues);
-      
-      setBoards({
-        ...remainingBoards,
-        todo: {
-          ...remainingBoards.todo,
-          items: [...remainingBoards.todo.items, ...deletedBoard.items]
-        }
-      });
+      setBoards(remainingBoards);
     } catch (err) {
       console.error('Error deleting board:', err);
       setError('Failed to delete board');
     }
   };
 
-  const toggleBoardMinimize = (boardId) => {
+  const toggleBoardCompress = (boardId) => {
     setBoards(prev => ({
       ...prev,
       [boardId]: {
         ...prev[boardId],
-        minimized: !prev[boardId].minimized
+        compressed: !prev[boardId].compressed
       }
     }));
   };
@@ -300,7 +302,7 @@ const KanbanBoard = () => {
   const renderBoard = (boardId, board) => (
     <div 
       key={boardId}
-      className={`kanban-column ${board.minimized ? 'minimized' : ''}`}
+      className={`kanban-column ${board.compressed ? 'compressed' : ''}`}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={(e) => handleDrop(e, boardId)}
@@ -308,94 +310,136 @@ const KanbanBoard = () => {
       <div className="column-header">
         <div className="column-header-left">
           <h3>{board.name}</h3>
-          <span className="task-count">{board.items.length}</span>
+          {!board.compressed && <span className="task-count">{board.items.length}</span>}
         </div>
         <button 
-          className="minimize-button"
-          onClick={() => toggleBoardMinimize(boardId)}
-          title={board.minimized ? "Maximize" : "Minimize"}
+          className="board-compress-btn"
+          onClick={() => toggleBoardCompress(boardId)}
+          title={board.compressed ? "Expand" : "Compress"}
         >
-          <i className={`fas fa-chevron-${board.minimized ? 'down' : 'up'}`}></i>
+          <i className={`fas fa-${board.compressed ? 'expand' : 'compress'}-alt`}></i>
         </button>
       </div>
-      <div className={`task-list ${board.minimized ? 'minimized' : ''}`}>
-        {board.items.map(task => (
-          <div
-            key={task._id}
-            className="task-card"
-            draggable
-            onDragStart={(e) => handleDragStart(e, task._id, boardId)}
-            onDragEnd={handleDragEnd}
-            onClick={() => navigate(`/task/${task._id}`)}
-            style={{ cursor: 'pointer' }}
-          >
-            <h3>{task.title}</h3>
-            <p>{task.description}</p>
-            <div className="task-meta">
-              <span className={`task-type ${task.type}`}>
-                {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
-              </span>
-              {task.deadline && (
-                <span className="task-deadline">
-                  Due: {new Date(task.deadline).toLocaleDateString()}
+      {!board.compressed && (
+        <div className="task-list">
+          {board.items.map(task => (
+            <div
+              key={task._id}
+              className="task-card"
+              draggable
+              onDragStart={(e) => handleDragStart(e, task._id, boardId)}
+              onDragEnd={handleDragEnd}
+              onClick={() => navigate(`/task/${task._id}`)}
+            >
+              <h3>{task.title}</h3>
+              <p>{task.description}</p>
+              <div className="task-meta">
+                <span className={`task-type ${task.type}`}>
+                  {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
                 </span>
-              )}
+                {task.deadline && (
+                  <span className="task-deadline">
+                    Due: {new Date(task.deadline).toLocaleDateString()}
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 
   return (
     <div className="kanban-container">
-      <div className="projects-header">
-        <div className="projects-header-content">
-          <div className="projects-header-left">
+      <div className="kanban-header">
+        <div className="kanban-header-content">
+          <div className="kanban-header-left">
             <h1>{project.title} - Kanban Board</h1>
           </div>
-          <div className="projects-header-actions">
+          <div className="kanban-header-actions">
             <button 
-              className="back-to-dashboard-button"
+              className="btn btn-secondary"
               onClick={() => navigate(`/project/${projectId}/overview`)}
             >
-              <i className="fas fa-arrow-left"></i> Back to Overview
+              <i className="fas fa-arrow-left"></i> Back to Project Overview
             </button>
             <button 
               className="btn btn-secondary"
               onClick={() => navigate(`/project/${projectId}/tasks`)}
             >
-              <i className="fas fa-list"></i> View All Issues
+              <i className="fas fa-list"></i> List Issues
             </button>
             <button 
               className="btn btn-secondary"
-              onClick={() => setShowBoardManager(!showBoardManager)}
+              onClick={() => setShowBoardManager(true)}
             >
-              Manage Boards
+              <i className="fas fa-columns"></i> Manage Boards
             </button>
             <button 
               className="btn btn-primary"
               onClick={handleAddIssue}
             >
-              Add Issue
+              <i className="fas fa-plus"></i> Add Issue
             </button>
           </div>
         </div>
       </div>
 
-      {showBoardManager && (
-        <BoardManager
-          boards={boards}
-          onBoardAdd={handleBoardAdd}
-          onBoardDelete={handleBoardDelete}
-        />
-      )}
-
-        <div className="kanban-board">
-          {Object.entries(boards).map(([status, board]) => (
+      <div className="kanban-board">
+        {Object.entries(boards).map(([status, board]) => (
           renderBoard(status, board)
-          ))}
+        ))}
+      </div>
+
+      {showBoardManager && (
+        <div className="board-manager-modal">
+          <div className="board-manager-content">
+            <button 
+              className="modal-close-btn"
+              onClick={() => setShowBoardManager(false)}
+            >
+              <i className="fas fa-times"></i>
+            </button>
+            <div className="board-manager-header">
+              <h2>Manage Boards</h2>
+            </div>
+            <div className="board-list">
+              {Object.entries(boards).map(([id, board]) => (
+                <div key={id} className="board-item">
+                  <span className="board-item-name">{board.name}</span>
+                  <div className="board-item-actions">
+                    {canDeleteBoard(id, board) && (
+                      <button 
+                        className="delete-board-btn"
+                        onClick={() => handleBoardDelete(id)}
+                        title="Delete Board"
+                      >
+                        <i className="fas fa-trash"></i>
+                      </button>
+                    )}
+                    {!canDeleteBoard(id, board) && (
+                      <span className="board-status">
+                        {isDefaultBoard(id) ? 'Default Board' : 'Has Issues'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <form className="add-board-form" onSubmit={handleBoardAdd}>
+              <input
+                type="text"
+                placeholder="New board name"
+                value={newBoardName}
+                onChange={(e) => setNewBoardName(e.target.value)}
+                required
+              />
+              <button type="submit">Add Board</button>
+            </form>
+          </div>
         </div>
+      )}
 
       {showAddIssueModal && (
         <div className="modal-overlay">
@@ -544,6 +588,7 @@ const KanbanBoard = () => {
           {/* TODO: Implement issue details modal */}
         </div>
       )}
+      <Footer />
     </div>
   );
 };
