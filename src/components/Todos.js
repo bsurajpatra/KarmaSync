@@ -134,13 +134,15 @@ const Todos = () => {
       </div>
       
       <div className="todo-details">
-        <span className="todo-category">{todo.category}</span>
-        <span className={`todo-priority ${todo.priority.toLowerCase()}`}>
-          {todo.priority}
-        </span>
-        <div className="todo-due-date">
-          <i className="fas fa-calendar"></i>
-          {new Date(todo.dueDate).toLocaleDateString()}
+        <div className="todo-tags">
+          <span className="todo-category">{todo.category}</span>
+          <span className={`todo-priority ${todo.priority.toLowerCase()}`}>
+            {todo.priority}
+          </span>
+          <div className="todo-due-date">
+            <i className="fas fa-calendar"></i>
+            {new Date(todo.dueDate).toLocaleDateString()}
+          </div>
         </div>
       </div>
 
@@ -176,7 +178,7 @@ const Todos = () => {
     return (
       <div className="delete-confirmation-modal">
         <div className="delete-confirmation-content">
-          <h3>Delete Todo</h3>
+          <h3>Delete To-do</h3>
           <p>Are you sure you want to delete "{deleteConfirmation.name}"? This action cannot be undone.</p>
           <div className="delete-confirmation-actions">
             <button 
@@ -209,7 +211,7 @@ const Todos = () => {
       <div className="todos-header">
         <div className="todos-header-content">
           <div className="todos-header-left">
-            <h1>My Personal Todos</h1>
+            <h1>My Personal To-dos</h1>
             <p className="current-date">
               {new Date().toLocaleDateString('en-US', {
                 weekday: 'long',
@@ -221,7 +223,7 @@ const Todos = () => {
           </div>
           <div className="todos-header-actions">
             <button 
-              className="back-to-dashboard-button"
+              className="todo-back-btn"
               onClick={() => navigate('/dashboard')}
             >
               <i className="fas fa-arrow-left"></i> Back to Dashboard
@@ -230,7 +232,7 @@ const Todos = () => {
               className="add-todo-button"
               onClick={() => setShowForm(true)}
             >
-              <i className="fas fa-plus"></i> Add Todo
+              <i className="fas fa-plus"></i> Add To-do
             </button>
           </div>
         </div>
@@ -271,8 +273,8 @@ const Todos = () => {
             <div className="no-todos">
               {searchTerm ? (
                 <>
-                  <h3>No Matching Todos</h3>
-                  <p>No todos found matching "{searchTerm}"</p>
+                  <h3>No Matching To-dos</h3>
+                  <p>No to-dos found matching "{searchTerm}"</p>
                   <button 
                     className="clear-search-button"
                     onClick={() => setSearchTerm('')}
@@ -282,8 +284,8 @@ const Todos = () => {
                 </>
               ) : (
                 <>
-                  <h3>No Todos Found</h3>
-                  <p>Add your first todo to get started!</p>
+                  <h3>No To-dos Found</h3>
+                  <p>Add your first to-do to get started!</p>
                 </>
               )}
             </div>
