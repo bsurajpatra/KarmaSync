@@ -97,7 +97,7 @@ const Projects = () => {
     if (type === 'personal') {
       navigate('/create-personal-project');
     } else {
-      alert('Collaborative projects feature coming soon!');
+      navigate('/create-collaborative-project');
     }
     setShowTypeModal(false);
   };
@@ -179,11 +179,11 @@ const Projects = () => {
           <p>Create a project that you'll manage on your own</p>
         </div>
         <div 
-          className="project-type-option disabled"
+          className="project-type-option"
           onClick={() => handleProjectTypeSelect('collaborative')}
         >
           <h3>Collaborative Project</h3>
-          <p>Create a project and invite team members (Coming Soon)</p>
+          <p>Create a project and invite team members</p>
         </div>
       </div>
     </div>

@@ -20,12 +20,14 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
         <div className="modal-body">
           <p>Are you sure you want to log out?</p>
           <div className="modal-actions">
+            <div className="modal-buttons">
             <button className="cancel-button" onClick={onClose}>
               Cancel
             </button>
             <button className="logout-confirm-button" onClick={onConfirm}>
               Logout
             </button>
+            </div>
           </div>
         </div>
       </div>

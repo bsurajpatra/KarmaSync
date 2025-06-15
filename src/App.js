@@ -14,6 +14,7 @@ import ResetPassword from "./components/ResetPassword";
 import Projects from './components/Projects';
 import Profile from './components/Profile';
 import CreatePersonalProject from './components/CreatePersonalProject';
+import CreateCollaborativeProject from './components/CreateCollaborativeProject';
 import ProjectOverview from './components/ProjectOverview';
 import KanbanBoard from './components/KanbanBoard';
 import TaskList from './components/TaskList';
@@ -38,6 +39,7 @@ function App() {
           <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
           <Route path="/create-personal-project" element={<ProtectedRoute><CreatePersonalProject /></ProtectedRoute>} />
+          <Route path="/create-collaborative-project" element={<ProtectedRoute><CreateCollaborativeProject /></ProtectedRoute>} />
           <Route path="/project/:id/overview" element={<ProtectedRoute><ProjectOverview /></ProtectedRoute>} />
           <Route path="/project/:id/kanban" element={<ProtectedRoute><KanbanBoard /></ProtectedRoute>} />
           <Route path="/project/:id/tasks" element={<ProtectedRoute><TaskList /></ProtectedRoute>} />

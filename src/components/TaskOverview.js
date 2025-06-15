@@ -306,14 +306,14 @@ const TaskOverview = () => {
                   <div className="task-meta-item">
                     <span className="task-meta-label">Type:</span>
                     <span className={`task-meta-value task-type ${task.type}`}>
-                      {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
-                    </span>
+                  {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+                </span>
                   </div>
                   <div className="task-meta-item">
                     <span className="task-meta-label">Status:</span>
                     <span className={`task-meta-value task-status ${task.status}`}>
-                      {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                    </span>
+                  {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                </span>
                   </div>
                 </div>
               </div>
@@ -329,9 +329,9 @@ const TaskOverview = () => {
                 {task.comments?.map(comment => (
                   <div key={comment._id} className="comment">
                     <p className="comment-text">{comment.text}</p>
-                    <span className="comment-date">
-                      {new Date(comment.createdAt).toLocaleDateString()}
-                    </span>
+                      <span className="comment-date">
+                        {new Date(comment.createdAt).toLocaleDateString()}
+                      </span>
                   </div>
                 ))}
               </div>

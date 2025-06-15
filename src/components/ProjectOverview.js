@@ -267,6 +267,9 @@ const ProjectOverview = () => {
 
   if (!project) return <div className="error-message">Project not found</div>;
 
+  console.log('Project data:', project);
+  console.log('Collaborators:', project.collaborators);
+
   return (
     <div className="projects-container">
       {showDeleteConfirm && <DeleteConfirmationModal />}
@@ -464,6 +467,40 @@ const ProjectOverview = () => {
             </div>
           </div>
         </div>
+
+        {project.projectType === 'collaborative' && (
+          <div className="project-overview-section">
+            <div className="section-header">
+              <h2>Collaborators</h2>
+            </div>
+            <div className="collaborators-list">
+              <div className="collaborators-header">
+                <span className="collab-name">Name</span>
+                <span className="collab-email">Email</span>
+                <span className="collab-role">Role</span>
+              </div>
+              {project.collaborators && project.collaborators.map((collab) => {
+                console.log('Collaborator data:', collab);
+                return (
+                  <div key={collab.userId._id} className="collaborator-item">
+                    <div className="collab-name">
+                      <i className="fas fa-user"></i>
+                      <span>{collab.userId.fullName || collab.userId.username}</span>
+                    </div>
+                    <div className="collab-email">
+                      <i className="fas fa-envelope"></i>
+                      <span>{collab.userId.email}</span>
+                    </div>
+                    <div className={`collab-role ${collab.role}`}>
+                      <i className={`fas ${collab.role === 'manager' ? 'fa-user-tie' : 'fa-code'}`}></i>
+                      <span>{collab.role === 'manager' ? 'Project Manager' : 'Developer'}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="project-overview-section">
           <div className="tasks-header">
