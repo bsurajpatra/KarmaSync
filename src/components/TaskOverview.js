@@ -22,7 +22,8 @@ const TaskOverview = () => {
     type: '',
     status: '',
     deadline: '',
-    customType: ''
+    customType: '',
+    assignee: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
 
@@ -39,7 +40,8 @@ const TaskOverview = () => {
         description: taskData.description,
         type: taskData.type,
         status: taskData.status,
-        deadline: taskData.deadline
+        deadline: taskData.deadline,
+        assignee: taskData.assignee?._id || ''
       });
 
       const projectId = taskData.projectId._id || taskData.projectId;
@@ -90,8 +92,14 @@ const TaskOverview = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedTask = await updateTask(taskId, formData);
-      setTask(updatedTask);
+      const updatedTask = await updateTask(taskId, {
+        ...formData,
+        assignee: formData.assignee || task.assignee?._id || task.assignee
+      });
+      
+      // Fetch the updated task with all populated fields
+      const refreshedTask = await getTaskById(taskId);
+      setTask(refreshedTask);
       setEditing(false);
       setError('');
     } catch (err) {
@@ -287,6 +295,26 @@ const TaskOverview = () => {
                 className="form-control"
               />
             </div>
+
+            {project?.projectType === 'collaborative' && (
+              <div className="form-group">
+                <label htmlFor="assignee">Assignee</label>
+                <select
+                  id="assignee"
+                  name="assignee"
+                  value={formData.assignee}
+                  onChange={handleInputChange}
+                  className="form-control"
+                >
+                  <option value="">Select Assignee</option>
+                  {project.collaborators.map((collab) => (
+                    <option key={collab.userId._id} value={collab.userId._id}>
+                      {collab.userId.username}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
                 </div>
                 <div className="edit-modal-actions">
               <button type="submit" className="btn btn-primary">Save Changes</button>
@@ -300,7 +328,8 @@ const TaskOverview = () => {
                     description: task.description,
                     type: task.type,
                     status: task.status,
-                    deadline: task.deadline
+                    deadline: task.deadline,
+                    assignee: task.assignee?._id || ''
                   });
                 }}
               >
@@ -324,6 +353,12 @@ const TaskOverview = () => {
                     <span className="task-meta-label">Project ID:</span>
                     <span className="task-meta-value">#{project.shortId}</span>
                   </div>
+                  {project.projectType === 'collaborative' && task.assignee && (
+                    <div className="task-meta-item">
+                      <span className="task-meta-label">Assigned to:</span>
+                      <span className="task-meta-value">{task.assignee.username || task.assignee.fullName || 'Unassigned'}</span>
+                    </div>
+                  )}
                 </div>
                 <div className="task-meta-right">
                   {task.deadline && (
