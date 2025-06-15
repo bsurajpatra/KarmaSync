@@ -115,7 +115,7 @@ const Projects = () => {
           </div>
           <div className="projects-header-actions">
             <button 
-              className="back-to-dashboard-button"
+              className="projects-back-btn"
               onClick={() => navigate('/dashboard')}
             >
               <i className="fas fa-arrow-left"></i> Back to Dashboard
