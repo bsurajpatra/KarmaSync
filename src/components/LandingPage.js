@@ -42,7 +42,7 @@ const LandingPage = () => {
             <p>G Sri Krishna Sudhindra</p>
           </div>
           <div className="team-member">
-            <p>Alimillla Abhinandan</p>
+            <p>Alimilla Abhinandan</p>
           </div>
           <div className="team-member">
             <p>P Bhavya Varsha</p>

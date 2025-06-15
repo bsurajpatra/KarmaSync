@@ -98,9 +98,7 @@ const Dashboard = () => {
           <div className="message-box">
             <h2>Maximize Your Productivity</h2>
             <p>
-              KarmaSync helps you manage projects, 
-              track tasks, and collaborate seamlessly with your team. Stay organized, meet 
-              deadlines, and achieve your goals with our powerful tools and features.
+            KarmaSync helps you manage projects, track tasks, and collaborate with your team. Stay organized, meet deadlines, and achieve goals with our powerful tools and features.
             </p>
             <div className="message-footer">
               Here's what you can do:
@@ -120,7 +118,7 @@ const Dashboard = () => {
               <div className="feature-icon">
                 <i className="fas fa-tasks"></i>
               </div>
-              <h3>My Todos</h3>
+              <h3>My To-dos</h3>
               <p>Organize and track your daily tasks</p>
             </Link>
 
