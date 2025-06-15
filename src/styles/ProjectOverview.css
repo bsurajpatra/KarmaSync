@@ -775,10 +775,11 @@
 
 /* Collaborators Section Styles */
 .collaborators-list {
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
   border-radius: 15px;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .collaborators-header {
@@ -786,11 +787,18 @@
   grid-template-columns: 2fr 3fr 1.5fr;
   gap: 1rem;
   padding: 1rem 1.5rem;
-  background: rgba(255, 255, 255, 0.15);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+  background: #e8e8e8;
+  border-bottom: 1px solid #e0e0e0;
   font-weight: 700;
-  color: white;
+  color: #000;
   font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.collaborators-header span {
+  color: #000;
+  font-weight: 700;
 }
 
 .collaborator-item {
@@ -799,7 +807,7 @@
   gap: 1rem;
   padding: 1rem 1.5rem;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid #e0e0e0;
   transition: background-color 0.3s ease;
 }
 
@@ -808,7 +816,7 @@
 }
 
 .collaborator-item:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: #f0f0f0;
 }
 
 .collab-name,
@@ -817,25 +825,24 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: white;
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .collab-name {
   font-size: 1.1rem;
-  color: #ffffff;
+  color: #333;
 }
 
 .collab-email {
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #666;
 }
 
 .collab-name i,
 .collab-email i,
 .collab-role i {
   font-size: 1rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: #888;
 }
 
 .collab-role {
@@ -843,7 +850,7 @@
   border-radius: 20px;
   font-size: 0.9rem;
   justify-content: center;
-  font-weight: 700;
+  font-weight: 600;
   color: white;
 }
 
