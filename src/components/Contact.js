@@ -15,7 +15,6 @@ const Contact = () => {
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
     const [userDetails, setUserDetails] = useState(null);
-    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
@@ -52,7 +51,6 @@ const Contact = () => {
             );
             
             setMessage("");
-            setShowSuccessMessage(true);
             toast.success("Message sent successfully!");
         } catch (error) {
             console.error("Error sending email:", error);
@@ -60,11 +58,6 @@ const Contact = () => {
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleSendAnotherMessage = () => {
-        setShowSuccessMessage(false);
-        setMessage("");
     };
 
     return (
@@ -75,7 +68,7 @@ const Contact = () => {
                         <h1>Contact Us</h1>
                         <p className="contact-subtitle">Get in touch with our support team</p>
                     </div>
-                    <Link to="/dashboard" className="back-to-dashboard-button">
+                    <Link to="/dashboard" className="dashboard-back-btn">
                         <i className="fas fa-arrow-left"></i> Back to Dashboard
                     </Link>
                 </div>
@@ -99,50 +92,35 @@ const Contact = () => {
                         </div>
                     </div>
 
-                    {showSuccessMessage ? (
-                        <div className="success-message">
-                            <i className="fas fa-check-circle"></i>
-                            <h4>Message Sent Successfully!</h4>
-                            <p>
-                                Thank you for reaching out. You can expect a reply from our team at your registered email address ({userDetails?.email || user?.email}) within 24-48 hours.
-                            </p>
-                            <div className="spam-notice">
-                                <i className="fas fa-info-circle"></i>
-                                Please check your spam folder if you don't receive our response in your inbox.
-                            </div>
-                         
+                    <form onSubmit={submitHandler} className="contact-form">
+                        <div className="form-group">
+                            <label>Message</label>
+                            <textarea
+                                value={message}
+                                onChange={(e) => setMessage(e.target.value)}
+                                className="form-control"
+                                rows="5"
+                                placeholder="Write your message here..."
+                                required
+                            ></textarea>
                         </div>
-                    ) : (
-                        <form onSubmit={submitHandler} className="contact-form">
-                            <div className="form-group">
-                                <label>Message</label>
-                                <textarea
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    className="form-control"
-                                    rows="5"
-                                    placeholder="Write your message here..."
-                                    required
-                                ></textarea>
-                            </div>
 
-                            <button 
-                                type="submit" 
-                                className="btn btn-primary"
-                                disabled={loading}
-                            >
-                                {loading ? (
-                                    <>
-                                        <i className="fas fa-spinner fa-spin"></i> Sending...
-                                    </>
-                                ) : (
-                                    <>
-                                        <i className="fas fa-paper-plane"></i> Send Message
-                                    </>
-                                )}
-                            </button>
-                        </form>
-                    )}
+                        <button 
+                            type="submit" 
+                            className="btn btn-primary"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <i className="fas fa-spinner fa-spin"></i> Sending...
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-paper-plane"></i> Send Message
+                                </>
+                            )}
+                        </button>
+                    </form>
                 </div>
             </div>
             <ToastContainer position="bottom-right" theme="light" />
