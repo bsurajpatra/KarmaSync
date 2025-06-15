@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: column;
   background: linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
-  color: white;
+  color: #333;
   position: relative;
 }
 
@@ -86,11 +86,10 @@
 }
 
 .project-overview-section {
-  background: rgba(255, 255, 255, 0.15);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: white;
   border-radius: 25px;
   padding: 2rem;
-  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .section-header {
@@ -105,12 +104,12 @@
   font-size: 1.8rem;
   font-weight: 600;
   margin: 0;
-  color: white;
+  color: #333;
 }
 
 .section-edit-btn {
-  background: rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #4a90e2;
+  border: none;
   color: white;
   cursor: pointer;
   padding: 0.5rem 1rem;
@@ -120,7 +119,7 @@
 }
 
 .section-edit-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: #357abd;
   transform: translateY(-2px);
 }
 
@@ -140,7 +139,7 @@
 .project-type-status h3 {
   font-size: 1.6rem;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.9);
+  color: #333;
   margin-bottom: 1rem;
 }
 
@@ -157,32 +156,28 @@
   border: none;
 }
 
-.project-type-badge {
-  background: #FFD700;
-}
-
 .project-type-badge.personal {
-  background: #E91E63;  /* Pink */
+  background: #4a90e2;
 }
 
 .project-type-badge.collaborative {
-  background: #00BCD4;  /* Cyan */
+  background: #00c853;
 }
 
 .status-badge {
-  background: #2196F3;
+  background: #4a90e2;
 }
 
 .status-badge.active {
-  background: #4CAF50;
+  background: #00c853;
 }
 
 .status-badge.completed {
-  background: #2196F3;
+  background: #4a90e2;
 }
 
 .status-badge.archived {
-  background: #9E9E9E;
+  background: #9e9e9e;
 }
 
 /* Tasks Section Styles */
@@ -218,8 +213,8 @@
 }
 
 .total-issues {
-  background: rgba(255, 255, 255, 0.2);
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
   border-radius: 20px;
   padding: 1.5rem 3rem;
   display: flex;
@@ -227,17 +222,18 @@
   align-items: center;
   gap: 0.5rem;
   min-width: 200px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .issues-count {
   font-size: 3rem;
   font-weight: 700;
-  color: white;
+  color: #4a90e2;
 }
 
 .issues-label {
   font-size: 1.2rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #666;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -249,19 +245,52 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  background: #f8f8f8;
+  border-radius: 20px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .no-data-chart {
   width: 200px;
   height: 200px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: white;
+  color: #666;
   font-size: 1.2rem;
   font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Tasks Header Styles */
+.tasks-header h2 {
+  color: #333;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.tasks-actions .btn-primary {
+  background: #4a90e2;
+  color: white;
+}
+
+.tasks-actions .btn-primary:hover {
+  background: #357abd;
+}
+
+.tasks-actions .btn-secondary {
+  background: #e0e0e0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.tasks-actions .btn-secondary:hover {
+  background: #d0d0d0;
 }
 
 /* Danger Zone Styles */
@@ -326,10 +355,10 @@
 .edit-textarea {
   width: 100%;
   padding: 0.8rem;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #e0e0e0;
   border-radius: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: #f8f8f8;
+  color: #333;
   font-size: 1.1rem;
 }
 
@@ -338,10 +367,56 @@
   resize: vertical;
 }
 
+.edit-input:focus,
+.edit-textarea:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+  background: white;
+}
+
 .form-actions {
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.form-actions .btn {
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.form-actions .btn-primary {
+  background: #4a90e2;
+  color: white;
+}
+
+.form-actions .btn-primary:hover {
+  background: #357abd;
+}
+
+.form-actions .btn-secondary {
+  background: #e0e0e0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.form-actions .btn-secondary:hover {
+  background: #d0d0d0;
+}
+
+/* Description Text */
+.project-overview-section p {
+  color: #333;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* Button Styles */
@@ -353,26 +428,39 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .btn-primary {
-  background: #4CAF50;
+  background: #4a90e2;
   color: white;
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
+  background: #e0e0e0;
+  color: #333;
 }
 
 .btn-danger {
-  background: #ff4444;
+  background: #d32f2f;
   color: white;
 }
 
 .btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Back to Projects Button */
+.btn-secondary {
+  background: #4a90e2;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #357abd;
 }
 
 /* Modal Styles */
@@ -592,6 +680,7 @@
   }
 }
 
+/* GitHub Repository Styles */
 .github-form {
   display: flex;
   flex-direction: column;
@@ -601,23 +690,54 @@
 .github-input {
   width: 100%;
   padding: 0.8rem;
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 1px solid #e0e0e0;
   border-radius: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: #f8f8f8;
+  color: #333;
   font-size: 1.1rem;
+}
+
+.github-input:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+  background: white;
 }
 
 .github-form-actions {
   display: flex;
   gap: 1rem;
   justify-content: flex-end;
-  margin-top: 0.5rem;
+  margin-top: 1rem;
 }
 
 .github-form-actions .btn {
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  min-width: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.github-form-actions .btn-primary {
+  background: #4a90e2;
+  color: white;
+}
+
+.github-form-actions .btn-primary:hover {
+  background: #357abd;
+}
+
+.github-form-actions .btn-secondary {
+  background: #e0e0e0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.github-form-actions .btn-secondary:hover {
+  background: #d0d0d0;
 }
 
 .github-display {
@@ -627,22 +747,30 @@
 }
 
 .github-link {
-  color: white;
+  color: #4a90e2;
   text-decoration: none;
   font-size: 1.2rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-weight: 500;
 }
 
 .github-link:hover {
+  color: #357abd;
   text-decoration: underline;
 }
 
+.github-link i {
+  color: #333;
+  font-size: 1.4rem;
+}
+
 .no-github {
-  color: rgba(255, 255, 255, 0.7);
+  color: #666;
   font-size: 1.1rem;
   margin: 0;
+  font-style: italic;
 }
 
 /* Collaborators Section Styles */
