@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getTasks, createTask } from '../api/taskApi';
+import { getProjectById } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/TaskList.css';
 import Footer from './Footer';
@@ -11,6 +12,7 @@ const TaskList = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [project, setProject] = useState(null);
   const [showAddIssueModal, setShowAddIssueModal] = useState(false);
   const [issueFormData, setIssueFormData] = useState({
     title: '',
@@ -18,13 +20,24 @@ const TaskList = () => {
     type: 'tech',
     status: 'todo',
     deadline: '',
-    customType: ''
+    customType: '',
+    assignee: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
 
   useEffect(() => {
+    fetchProject();
     fetchTasks();
   }, [projectId]);
+
+  const fetchProject = async () => {
+    try {
+      const data = await getProjectById(projectId);
+      setProject(data);
+    } catch (err) {
+      console.error('Error fetching project:', err);
+    }
+  };
 
   const fetchTasks = async () => {
     try {
@@ -92,13 +105,28 @@ const TaskList = () => {
         type: 'tech',
         status: 'todo',
         deadline: '',
-        customType: ''
+        customType: '',
+        assignee: ''
       });
       setError('');
     } catch (err) {
       console.error('Error creating issue:', err);
       setError(err.message || 'Failed to create issue');
     }
+  };
+
+  const handleModalClose = () => {
+    setShowAddIssueModal(false);
+    setShowCustomType(false);
+    setIssueFormData({
+      title: '',
+      description: '',
+      type: 'tech',
+      status: 'todo',
+      deadline: '',
+      customType: '',
+      assignee: ''
+    });
   };
 
   if (loading) {
@@ -186,6 +214,16 @@ const TaskList = () => {
                     Deadline: {new Date(task.deadline).toLocaleDateString()}
                   </span>
                 )}
+                {project?.projectType === 'collaborative' && task.assignee && (
+                  <span className="task-assignee" style={{ 
+                    color: '#000000', 
+                    fontWeight: '800',
+                    fontSize: '1.2rem',
+                    background: 'transparent'
+                  }}>
+                    Assigned to: {task.assignee.username}
+                  </span>
+                )}
               </div>
             </div>
           ))}
@@ -199,18 +237,7 @@ const TaskList = () => {
               <h2>Add New Issue</h2>
               <button 
                 className="modal-close"
-                onClick={() => {
-                  setShowAddIssueModal(false);
-                  setShowCustomType(false);
-                  setIssueFormData({
-                    title: '',
-                    description: '',
-                    type: 'tech',
-                    status: 'todo',
-                    deadline: '',
-                    customType: ''
-                  });
-                }}
+                onClick={handleModalClose}
               >
                 &times;
               </button>
@@ -273,6 +300,26 @@ const TaskList = () => {
                   )}
                 </div>
 
+                {project?.projectType === 'collaborative' && (
+                  <div className="form-group">
+                    <label htmlFor="assignee">Assignee</label>
+                    <select
+                      id="assignee"
+                      name="assignee"
+                      value={issueFormData.assignee}
+                      onChange={handleIssueFormChange}
+                      className="form-control"
+                    >
+                      <option value="">Select Assignee</option>
+                      {project.collaborators.map((collab) => (
+                        <option key={collab.userId._id} value={collab.userId._id}>
+                          {collab.userId.username}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div className="form-group">
                   <label htmlFor="status">Status</label>
                   <select
@@ -307,18 +354,7 @@ const TaskList = () => {
                   <button
                     type="button"
                     className="btn btn-secondary"
-                    onClick={() => {
-                      setShowAddIssueModal(false);
-                      setShowCustomType(false);
-                      setIssueFormData({
-                        title: '',
-                        description: '',
-                        type: 'tech',
-                        status: 'todo',
-                        deadline: '',
-                        customType: ''
-                      });
-                    }}
+                    onClick={handleModalClose}
                   >
                     Cancel
                   </button>

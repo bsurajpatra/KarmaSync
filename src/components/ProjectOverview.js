@@ -36,7 +36,8 @@ const ProjectOverview = () => {
     type: 'tech',
     status: 'todo',
     deadline: '',
-    customType: ''
+    customType: '',
+    assignee: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
   const [removingCollaborator, setRemovingCollaborator] = useState(null);
@@ -332,7 +333,8 @@ const ProjectOverview = () => {
         type: 'tech',
         status: 'todo',
         deadline: '',
-        customType: ''
+        customType: '',
+        assignee: ''
       });
       setError('');
     } catch (err) {
@@ -750,7 +752,8 @@ const ProjectOverview = () => {
                     type: 'tech',
                     status: 'todo',
                     deadline: '',
-                    customType: ''
+                    customType: '',
+                    assignee: ''
                   });
                 }}
               >
@@ -815,6 +818,26 @@ const ProjectOverview = () => {
                   )}
                 </div>
 
+                {project.projectType === 'collaborative' && (
+                  <div className="form-group">
+                    <label htmlFor="assignee">Assignee</label>
+                    <select
+                      id="assignee"
+                      name="assignee"
+                      value={issueFormData.assignee}
+                      onChange={handleIssueFormChange}
+                      className="form-control"
+                    >
+                      <option value="">Select Assignee</option>
+                      {project.collaborators.map((collab) => (
+                        <option key={collab.userId._id} value={collab.userId._id}>
+                          {collab.userId.username}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div className="form-group">
                   <label htmlFor="status">Status</label>
                   <select
@@ -863,7 +886,8 @@ const ProjectOverview = () => {
                         type: 'tech',
                         status: 'todo',
                         deadline: '',
-                        customType: ''
+                        customType: '',
+                        assignee: ''
                       });
                     }}
                   >
