@@ -4,6 +4,7 @@ import { createProject } from '../api/projectApi';
 import { searchUsers } from '../api/userApi';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/CreateCollaborativeProject.css';
+import Footer from './Footer';
 
 const ROLE_TYPES = {
   MANAGER: 'manager',
@@ -137,7 +138,7 @@ const CreateCollaborativeProject = () => {
         <div className="projects-header-content">
           <div className="projects-header-left">
             <h1>Create Collaborative Project</h1>
-            <p className="projects-subtitle">Create a project and invite team members to collaborate</p>
+         
           </div>
           <button 
             className="back-to-dashboard-button"
@@ -305,6 +306,7 @@ const CreateCollaborativeProject = () => {
           </div>
         </div>
       )}
+      <Footer />
     </div>
   );
 };
