@@ -430,7 +430,7 @@ const TaskOverview = () => {
                     className="btn btn-danger"
                     onClick={() => setShowDeleteConfirm(true)}
                   >
-                    Delete Task
+                    Delete Issue
                   </button>
                 </div>
               </div>

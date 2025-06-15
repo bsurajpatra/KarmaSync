@@ -27,7 +27,8 @@ const KanbanBoard = () => {
     type: 'tech',
     status: 'todo',
     deadline: '',
-    customType: ''
+    customType: '',
+    assignee: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
@@ -121,21 +122,17 @@ const KanbanBoard = () => {
     if (sourceBoard === targetBoard) return;
 
     try {
-      // Update task status in the backend
       await updateTaskStatus(taskId, targetBoard);
 
-      // Update local state
       setBoards(prev => {
         const newBoards = { ...prev };
         const task = newBoards[sourceBoard].items.find(item => item._id === taskId);
         
         if (task) {
-          // Remove from source board
           newBoards[sourceBoard].items = newBoards[sourceBoard].items.filter(
             item => item._id !== taskId
           );
           
-          // Add to target board
           newBoards[targetBoard].items = [...newBoards[targetBoard].items, {
             ...task,
             status: targetBoard
@@ -144,8 +141,8 @@ const KanbanBoard = () => {
         
         return newBoards;
       });
-      } catch (err) {
-        console.error('Error updating task status:', err);
+    } catch (err) {
+      console.error('Error updating task status:', err);
       setError('Failed to update task status');
     }
   };
@@ -231,7 +228,8 @@ const KanbanBoard = () => {
         type: 'tech',
         status: 'todo',
         deadline: '',
-        customType: ''
+        customType: '',
+        assignee: ''
       });
       setError(''); // Clear any previous errors
     } catch (err) {
@@ -325,22 +323,38 @@ const KanbanBoard = () => {
         {board.items.map(task => (
           <div
             key={task._id}
-            className="task-card"
+            className="issue-card"
             draggable
             onDragStart={(e) => handleDragStart(e, task._id, boardId)}
             onDragEnd={handleDragEnd}
             onClick={() => navigate(`/task/${task._id}`)}
           >
-            <h3>{task.title}</h3>
-            <p>{task.description}</p>
-            <div className="task-meta">
-              <span className={`task-type ${task.type}`}>
-                {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+            <div className="issue-card__row issue-card__row--title">
+              <span className="issue-card__id">#{task.serialNumber}</span>
+              <h3>{task.title}</h3>
+            </div>
+            {project?.projectType === 'collaborative' && task.assignee && (
+              <div className="issue-card__row issue-card__row--assignee">
+                <div className="issue-card__assignee">
+                  <i className="fas fa-user"></i>
+                  <span>{task.assignee?.username || task.assignee?.fullName}</span>
+                </div>
+              </div>
+            )}
+            <div className="issue-card__row issue-card__row--meta">
+              <span className={`issue-card__type ${task.type && ['tech', 'review', 'bug', 'feature', 'documentation'].includes(task.type) ? `issue-card__type--${task.type}` : ''}`}>
+                {task.type === 'tech' ? 'Technical' :
+                 task.type === 'review' ? 'Review' :
+                 task.type === 'bug' ? 'Bug' :
+                 task.type === 'feature' ? 'Feature' :
+                 task.type === 'documentation' ? 'Documentation' :
+                 task.type ? task.type.charAt(0).toUpperCase() + task.type.slice(1) : 'Task'}
               </span>
               {task.deadline && (
-                <span className="task-deadline">
-                  Due: {new Date(task.deadline).toLocaleDateString()}
-                </span>
+                <div className="issue-card__deadline">
+                  <i className="far fa-clock"></i>
+                  <span>{new Date(task.deadline).toLocaleDateString()}</span>
+                </div>
               )}
             </div>
           </div>
@@ -457,7 +471,8 @@ const KanbanBoard = () => {
                     type: 'tech',
                     status: 'todo',
                     deadline: '',
-                    customType: ''
+                    customType: '',
+                    assignee: ''
                   });
                 }}
               >
@@ -522,6 +537,26 @@ const KanbanBoard = () => {
                   )}
                 </div>
 
+                {project?.projectType === 'collaborative' && (
+                  <div className="form-group">
+                    <label htmlFor="assignee">Assignee</label>
+                    <select
+                      id="assignee"
+                      name="assignee"
+                      value={issueFormData.assignee}
+                      onChange={handleIssueFormChange}
+                      className="form-control"
+                    >
+                      <option value="">Select Assignee</option>
+                      {project.collaborators.map((collab) => (
+                        <option key={collab.userId._id} value={collab.userId._id}>
+                          {collab.userId.username}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
                 <div className="form-group">
                   <label htmlFor="status">Status</label>
                   <select
@@ -570,7 +605,8 @@ const KanbanBoard = () => {
                         type: 'tech',
                         status: 'todo',
                         deadline: '',
-                        customType: ''
+                        customType: '',
+                        assignee: ''
                       });
                     }}
                   >
