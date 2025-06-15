@@ -92,35 +92,35 @@ const Contact = () => {
                         </div>
                     </div>
 
-                    <form onSubmit={submitHandler} className="contact-form">
-                        <div className="form-group">
-                            <label>Message</label>
-                            <textarea
-                                value={message}
-                                onChange={(e) => setMessage(e.target.value)}
-                                className="form-control"
-                                rows="5"
-                                placeholder="Write your message here..."
-                                required
-                            ></textarea>
-                        </div>
+                        <form onSubmit={submitHandler} className="contact-form">
+                            <div className="form-group">
+                                <label>Message</label>
+                                <textarea
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    className="form-control"
+                                    rows="5"
+                                    placeholder="Write your message here..."
+                                    required
+                                ></textarea>
+                            </div>
 
-                        <button 
-                            type="submit" 
-                            className="btn btn-primary"
-                            disabled={loading}
-                        >
-                            {loading ? (
-                                <>
-                                    <i className="fas fa-spinner fa-spin"></i> Sending...
-                                </>
-                            ) : (
-                                <>
-                                    <i className="fas fa-paper-plane"></i> Send Message
-                                </>
-                            )}
-                        </button>
-                    </form>
+                            <button 
+                                type="submit" 
+                                className="btn btn-primary"
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <>
+                                        <i className="fas fa-spinner fa-spin"></i> Sending...
+                                    </>
+                                ) : (
+                                    <>
+                                        <i className="fas fa-paper-plane"></i> Send Message
+                                    </>
+                                )}
+                            </button>
+                        </form>
                 </div>
             </div>
             <ToastContainer position="bottom-right" theme="light" />

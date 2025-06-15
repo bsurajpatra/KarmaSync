@@ -6,6 +6,12 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recha
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/ProjectOverview.css';
 import Footer from './Footer';
+import { searchUsers } from '../api/userApi';
+
+const ROLE_TYPES = {
+  MANAGER: 'manager',
+  DEVELOPER: 'developer'
+};
 
 const ProjectOverview = () => {
   const navigate = useNavigate();
@@ -33,6 +39,14 @@ const ProjectOverview = () => {
     customType: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
+  const [removingCollaborator, setRemovingCollaborator] = useState(null);
+  const [showAddCollaborator, setShowAddCollaborator] = useState(false);
+  const [newCollaboratorEmail, setNewCollaboratorEmail] = useState('');
+  const [newCollaboratorRole, setNewCollaboratorRole] = useState('member');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658'];
 
@@ -89,6 +103,109 @@ const ProjectOverview = () => {
       console.error('Error fetching task count:', err);
     }
   }, [id]);
+
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    async (term) => {
+      if (term.length < 2) {
+        setSearchResults([]);
+        return;
+      }
+
+      setSearchLoading(true);
+      try {
+        console.log('Searching for users with term:', term);
+        const results = await searchUsers(term);
+        console.log('Search results:', results);
+        
+        // Create a Set of existing collaborator IDs for faster lookup
+        const existingCollaboratorIds = new Set(
+          project?.collaborators.map(collab => collab.userId._id) || []
+        );
+        
+        // Filter out existing collaborators and current user
+        const filteredResults = results.filter(user => 
+          !existingCollaboratorIds.has(user._id) && // Check if user is not already a collaborator
+          user._id !== project?.createdBy._id // Filter out current user
+        );
+        
+        console.log('Filtered results:', filteredResults);
+        setSearchResults(filteredResults);
+      } catch (err) {
+        console.error('Error searching users:', err);
+        setError('Failed to search users. Please try again.');
+      } finally {
+        setSearchLoading(false);
+      }
+    },
+    [project]
+  );
+
+  // Effect for debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm) {
+        debouncedSearch(searchTerm);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, debouncedSearch]);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleAddCollaborator = (user) => {
+    setSelectedUser(user);
+    setSearchResults([]);
+    setSearchTerm('');
+  };
+
+  const handleRoleSelect = async (role) => {
+    if (selectedUser && project) {
+      try {
+        // Check if user is already a collaborator
+        const isAlreadyCollaborator = project.collaborators.some(
+          collab => collab.userId._id === selectedUser._id
+        );
+
+        if (isAlreadyCollaborator) {
+          setError('This user is already a collaborator');
+          return;
+        }
+
+        // Create new collaborator object
+        const newCollaborator = {
+          userId: selectedUser._id,
+          role: role
+        };
+
+        // Get existing collaborators excluding the project creator
+        const existingCollaborators = project.collaborators.filter(
+          collab => collab.userId._id !== project.createdBy._id
+        );
+
+        // Add new collaborator to the filtered list
+        const updatedCollaborators = [
+          ...existingCollaborators,
+          newCollaborator
+        ];
+
+        const updatedProject = await updateProject(project._id, {
+          collaborators: updatedCollaborators
+        });
+
+        setProject(updatedProject);
+        setShowAddCollaborator(false);
+        setSelectedUser(null);
+        setSearchTerm('');
+        setSearchResults([]);
+      } catch (err) {
+        setError(err.response?.data?.message || 'Failed to add collaborator');
+      }
+    }
+  };
 
   useEffect(() => {
     fetchProject();
@@ -221,6 +338,27 @@ const ProjectOverview = () => {
     } catch (err) {
       console.error('Error creating issue:', err);
       setError(err.message || 'Failed to create issue');
+    }
+  };
+
+  const handleRemoveCollaborator = async (collaboratorId) => {
+    try {
+      const updatedCollaborators = project.collaborators
+        .filter(collab => collab.userId._id !== collaboratorId)
+        .map(collab => ({
+          userId: collab.userId._id,
+          role: collab.role
+        }));
+      
+      const updatedProject = await updateProject(id, {
+        collaborators: updatedCollaborators
+      });
+      
+      setProject(updatedProject);
+      setRemovingCollaborator(null);
+    } catch (err) {
+      console.error('Error removing collaborator:', err);
+      setError(err.message || 'Failed to remove collaborator');
     }
   };
 
@@ -475,29 +613,44 @@ const ProjectOverview = () => {
             </div>
             <div className="collaborators-list">
               <div className="collaborators-header">
-                <span className="collab-name">Name</span>
-                <span className="collab-email">Email</span>
-                <span className="collab-role">Role</span>
+                <div className="collab-name">Name</div>
+                <div className="collab-email">Email</div>
+                <div className="collab-role">Role</div>
+                <div className="collab-actions">Actions</div>
               </div>
-              {project.collaborators && project.collaborators.map((collab) => {
-                console.log('Collaborator data:', collab);
-                return (
-                  <div key={collab.userId._id} className="collaborator-item">
-                    <div className="collab-name">
-                      <i className="fas fa-user"></i>
-                      <span>{collab.userId.fullName || collab.userId.username}</span>
-                    </div>
-                    <div className="collab-email">
-                      <i className="fas fa-envelope"></i>
-                      <span>{collab.userId.email}</span>
-                    </div>
-                    <div className={`collab-role ${collab.role}`}>
-                      <i className={`fas ${collab.role === 'manager' ? 'fa-user-tie' : 'fa-code'}`}></i>
-                      <span>{collab.role === 'manager' ? 'Project Manager' : 'Developer'}</span>
-                    </div>
+              {project.collaborators.map((collab) => (
+                <div key={collab.userId._id} className="collaborator-item">
+                  <div className="collab-name">
+                    <i className="fas fa-user"></i>
+                    <span>{collab.userId.fullName || collab.userId.username}</span>
                   </div>
-                );
-              })}
+                  <div className="collab-email">
+                    <i className="fas fa-envelope"></i>
+                    <span>{collab.userId.email}</span>
+                  </div>
+                  <div className={`collab-role ${collab.role}`}>
+                    <i className={`fas ${collab.role === 'manager' ? 'fa-user-tie' : 'fa-code'}`}></i>
+                    <span>{collab.role === 'manager' ? 'Project Manager' : 'Developer'}</span>
+                  </div>
+                  <div className="collab-actions">
+                    {collab.userId._id !== project.createdBy._id && (
+                      <button
+                        className="btn-remove-collaborator"
+                        onClick={() => setRemovingCollaborator(collab)}
+                      >
+                        <i className="fas fa-user-minus"></i>
+                        <span>Remove</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <div className="add-collaborator-section">
+                <button className="btn-add-collaborator" onClick={() => setShowAddCollaborator(true)}>
+                  <i className="fas fa-user-plus"></i>
+                  <span>Add Collaborator</span>
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -718,6 +871,145 @@ const ProjectOverview = () => {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {removingCollaborator && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h2>Remove Collaborator</h2>
+              <button 
+                className="modal-close"
+                onClick={() => setRemovingCollaborator(null)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>Are you sure you want to remove this collaborator from the project?</p>
+              <p className="warning-text">This action cannot be undone.</p>
+            </div>
+            <div className="modal-actions">
+              <button 
+                className="btn btn-secondary"
+                onClick={() => setRemovingCollaborator(null)}
+              >
+                Cancel
+              </button>
+              <button 
+                className="btn btn-danger"
+                onClick={() => handleRemoveCollaborator(removingCollaborator.userId._id)}
+              >
+                Remove Collaborator
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showAddCollaborator && (
+        <div className="collab-modal-overlay">
+          <div className="collab-modal">
+            <div className="collab-modal-header">
+              <h3>Add Collaborator</h3>
+              <button 
+                className="collab-modal-close" 
+                onClick={() => {
+                  setShowAddCollaborator(false);
+                  setSelectedUser(null);
+                  setSearchTerm('');
+                  setSearchResults([]);
+                }}
+              >
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+            <div className="collab-modal-content">
+              {!selectedUser ? (
+                <div className="collab-search-wrapper">
+                  <input
+                    type="text"
+                    placeholder="Search users by username or email"
+                    value={searchTerm}
+                    onChange={handleSearch}
+                    className="collab-search-field"
+                  />
+                  {searchLoading && (
+                    <div className="collab-search-loading">
+                      <LoadingAnimation message="Searching..." />
+                    </div>
+                  )}
+                  {searchResults.length > 0 && (
+                    <div className="collab-search-results">
+                      {searchResults.map(user => (
+                        <div 
+                          key={user._id} 
+                          className="collab-search-item"
+                          onClick={() => handleAddCollaborator(user)}
+                        >
+                          <div className="collab-user-info">
+                            <span className="collab-username">{user.username}</span>
+                            <span className="collab-email">{user.email}</span>
+                          </div>
+                          <i className="fas fa-chevron-right"></i>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
+                    <div className="collab-no-results">No users found</div>
+                  )}
+                </div>
+              ) : (
+                <div className="collab-role-wrapper">
+                  <div className="collab-selected-user">
+                    <h4>Selected User</h4>
+                    <div className="collab-user-details">
+                      <span className="collab-username">{selectedUser.username}</span>
+                      <span className="collab-email">{selectedUser.email}</span>
+                    </div>
+                    <button 
+                      className="collab-change-user"
+                      onClick={() => {
+                        setSelectedUser(null);
+                        setSearchTerm('');
+                      }}
+                    >
+                      <i className="fas fa-arrow-left"></i> Change User
+                    </button>
+                  </div>
+                  <div className="role-options">
+                    <button
+                      className="role-option manager"
+                      onClick={() => handleRoleSelect(ROLE_TYPES.MANAGER)}
+                    >
+                      <h4>Project Manager</h4>
+                      <p>Full access to project management</p>
+                      <ul>
+                        <li>Create, edit, and delete tasks</li>
+                        <li>Manage project details</li>
+                        <li>Manage collaborators</li>
+                        <li>Full commenting access</li>
+                      </ul>
+                    </button>
+                    <button
+                      className="role-option developer"
+                      onClick={() => handleRoleSelect(ROLE_TYPES.DEVELOPER)}
+                    >
+                      <h4>Developer</h4>
+                      <p>Task execution and updates</p>
+                      <ul>
+                        <li>View and update task status</li>
+                        <li>Comment on assigned tasks</li>
+                        <li>Limited project access</li>
+                      </ul>
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>

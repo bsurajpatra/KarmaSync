@@ -784,39 +784,28 @@
 
 .collaborators-header {
   display: grid;
-  grid-template-columns: 2fr 3fr 1.5fr;
+  grid-template-columns: 2fr 2fr 1fr 1fr;
   gap: 1rem;
-  padding: 1rem 1.5rem;
-  background: #e8e8e8;
-  border-bottom: 1px solid #e0e0e0;
-  font-weight: 700;
-  color: #000;
-  font-size: 1.1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 2px solid #e0e0e0;
 }
 
-.collaborators-header span {
-  color: #000;
-  font-weight: 700;
+.collaborators-header div {
+  color: #333;
+  font-weight: 600;
 }
 
 .collaborator-item {
   display: grid;
-  grid-template-columns: 2fr 3fr 1.5fr;
+  grid-template-columns: 2fr 2fr 1fr 1fr;
   gap: 1rem;
-  padding: 1rem 1.5rem;
-  align-items: center;
+  padding: 1rem;
   border-bottom: 1px solid #e0e0e0;
-  transition: background-color 0.3s ease;
-}
-
-.collaborator-item:last-child {
-  border-bottom: none;
-}
-
-.collaborator-item:hover {
-  background: #f0f0f0;
+  align-items: center;
 }
 
 .collab-name,
@@ -825,43 +814,93 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  color: #333;
   font-weight: 500;
 }
 
-.collab-name {
-  font-size: 1.1rem;
-  color: #333;
-}
-
-.collab-email {
-  font-size: 1rem;
-  color: #666;
-}
-
-.collab-name i,
-.collab-email i,
-.collab-role i {
-  font-size: 1rem;
-  color: #888;
-}
-
 .collab-role {
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  font-size: 0.9rem;
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
   font-weight: 600;
-  color: white;
+  min-width: 120px;
 }
 
 .collab-role.manager {
-  background: #4CAF50;
-  border: none;
+  color: #1a365d;
+  background: #90cdf4;
 }
 
 .collab-role.developer {
-  background: #2196F3;
+  color: #22543d;
+  background: #9ae6b4;
+}
+
+.collab-role i {
+  font-size: 0.9rem;
+}
+
+.collab-role span {
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.collab-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  min-width: unset;
+  border-radius: 8px;
+}
+
+.btn-danger {
+  background: #ff4444;
+  color: white;
   border: none;
+}
+
+.btn-danger:hover {
+  background: #cc0000;
+  transform: translateY(-2px);
+}
+
+/* Remove Collaborator Button Styles */
+.btn-remove-collaborator {
+  background: #ff4444;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  justify-content: center;
+}
+
+.btn-remove-collaborator:hover {
+  background: #cc0000;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-remove-collaborator i {
+  font-size: 0.9rem;
+}
+
+.btn-remove-collaborator span {
+  font-weight: 500;
 }
 
 /* Responsive styles for collaborators section */
@@ -879,11 +918,304 @@
 
   .collab-name,
   .collab-email,
-  .collab-role {
+  .collab-role,
+  .collab-actions {
     padding: 0.5rem 0;
   }
 
-  .collab-role {
+  .collab-actions {
     justify-content: flex-start;
+    padding-top: 0.5rem;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .btn-remove-collaborator {
+    width: 100%;
+    padding: 0.6rem 1rem;
+  }
+}
+
+/* Add Collaborator Button Styles */
+.add-collaborator-section {
+  padding: 1rem;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 1rem;
+}
+
+.btn-add-collaborator {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-add-collaborator:hover {
+  background: #388E3C;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-add-collaborator i {
+  font-size: 1rem;
+}
+
+.btn-add-collaborator span {
+  font-weight: 500;
+}
+
+/* Collaborator Modal Styles */
+.collab-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.collab-modal {
+  background: white;
+  border-radius: 8px;
+  width: 95%;
+  max-width: 800px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.collab-modal-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fafc;
+  border-radius: 8px 8px 0 0;
+}
+
+.collab-modal-header h3 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: #1a365d;
+}
+
+.collab-modal-close {
+  background-color: #e53e3e;
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.collab-modal-close:hover {
+  background-color: #c53030;
+  transform: scale(1.05);
+}
+
+.collab-modal-close:active {
+  transform: scale(0.95);
+}
+
+.collab-modal-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+/* Search Styles */
+.collab-search-wrapper {
+  position: relative;
+}
+
+.collab-search-field {
+  width: 100%;
+  padding: 1rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.collab-search-field:focus {
+  outline: none;
+  border-color: #4299e1;
+}
+
+.collab-search-loading {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.collab-search-results {
+  margin-top: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.collab-search-item {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.collab-search-item:hover {
+  background-color: #f7fafc;
+}
+
+.collab-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.collab-username {
+  font-weight: 600;
+  color: #2d3748;
+}
+
+.collab-email {
+  color: #718096;
+  font-size: 0.875rem;
+}
+
+.collab-no-results {
+  margin-top: 1rem;
+  text-align: center;
+  color: #718096;
+  padding: 1rem;
+}
+
+/* Role Selection Styles */
+.collab-role-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.collab-selected-user {
+  background-color: #f7fafc;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e2e8f0;
+}
+
+.collab-selected-user h4 {
+  margin: 0 0 1rem 0;
+  color: #2d3748;
+}
+
+.collab-user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.collab-change-user {
+  background: none;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.collab-change-user:hover {
+  background-color: #f7fafc;
+  border-color: #cbd5e0;
+}
+
+.collab-role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.collab-role-card {
+  padding: 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.collab-role-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.collab-role-card h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2d3748;
+}
+
+.collab-role-card p {
+  margin: 0 0 1rem 0;
+  color: #4a5568;
+}
+
+.collab-role-card ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #718096;
+}
+
+.collab-role-card.manager {
+  border-color: #90cdf4;
+}
+
+.collab-role-card.manager:hover {
+  background-color: #ebf8ff;
+}
+
+.collab-role-card.developer {
+  border-color: #9ae6b4;
+}
+
+.collab-role-card.developer:hover {
+  background-color: #f0fff4;
+}
+
+/* Responsive Styles */
+@media (max-width: 640px) {
+  .collab-modal {
+    width: 100%;
+    height: 100%;
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .collab-modal-header {
+    border-radius: 0;
+  }
+
+  .collab-role-grid {
+    grid-template-columns: 1fr;
   }
 }

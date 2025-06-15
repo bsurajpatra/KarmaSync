@@ -138,7 +138,6 @@ const CreateCollaborativeProject = () => {
         <div className="projects-header-content">
           <div className="projects-header-left">
             <h1>Create Collaborative Project</h1>
-         
           </div>
           <button 
             className="back-to-dashboard-button"

@@ -322,30 +322,30 @@ const KanbanBoard = () => {
       </div>
       {!board.compressed && (
         <div className="task-list">
-          {board.items.map(task => (
-            <div
-              key={task._id}
-              className="task-card"
-              draggable
-              onDragStart={(e) => handleDragStart(e, task._id, boardId)}
-              onDragEnd={handleDragEnd}
-              onClick={() => navigate(`/task/${task._id}`)}
-            >
-              <h3>{task.title}</h3>
-              <p>{task.description}</p>
-              <div className="task-meta">
-                <span className={`task-type ${task.type}`}>
-                  {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+        {board.items.map(task => (
+          <div
+            key={task._id}
+            className="task-card"
+            draggable
+            onDragStart={(e) => handleDragStart(e, task._id, boardId)}
+            onDragEnd={handleDragEnd}
+            onClick={() => navigate(`/task/${task._id}`)}
+          >
+            <h3>{task.title}</h3>
+            <p>{task.description}</p>
+            <div className="task-meta">
+              <span className={`task-type ${task.type}`}>
+                {task.type.charAt(0).toUpperCase() + task.type.slice(1)}
+              </span>
+              {task.deadline && (
+                <span className="task-deadline">
+                  Due: {new Date(task.deadline).toLocaleDateString()}
                 </span>
-                {task.deadline && (
-                  <span className="task-deadline">
-                    Due: {new Date(task.deadline).toLocaleDateString()}
-                  </span>
-                )}
-              </div>
+              )}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+      </div>
       )}
     </div>
   );
@@ -386,11 +386,11 @@ const KanbanBoard = () => {
         </div>
       </div>
 
-      <div className="kanban-board">
-        {Object.entries(boards).map(([status, board]) => (
+        <div className="kanban-board">
+          {Object.entries(boards).map(([status, board]) => (
           renderBoard(status, board)
-        ))}
-      </div>
+          ))}
+        </div>
 
       {showBoardManager && (
         <div className="board-manager-modal">
