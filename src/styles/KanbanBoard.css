@@ -88,6 +88,10 @@
   min-width: 420px;
   max-width: 420px;
   height: calc(100vh - 250px);
+  position: relative;
+  user-select: none;
+  cursor: grab;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .kanban-column.compressed {
@@ -119,6 +123,19 @@
 .kanban-column.dragging-over {
   background: #f8f9fa;
   border: 1px dashed #4a90e2;
+}
+
+.kanban-column.dragging-board {
+  cursor: grabbing;
+  opacity: 0.8;
+  transform: scale(1.02);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.kanban-column.board-drag-over {
+  border: 2px dashed #4a90e2;
+  background: rgba(74, 144, 226, 0.05);
 }
 
 /* Column Header */
@@ -171,7 +188,7 @@
 .task-type.documentation { background: #7b1fa2; }
 
 /* Board Compress Button */
-.board-compress-btn {
+.compress-decompress-btn {
   background: #1e1e1e;
   border: none;
   color: white;
@@ -190,17 +207,22 @@
   position: relative;
 }
 
-.board-compress-btn:hover {
+.compress-decompress-btn:hover {
   background: #333;
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.board-compress-btn i {
+.compress-decompress-btn i {
   font-size: 1.1rem;
   color: white;
   z-index: 101;
   position: relative;
+}
+
+/* Remove old class */
+.board-compress-btn {
+  display: none;
 }
 
 /* Task List */

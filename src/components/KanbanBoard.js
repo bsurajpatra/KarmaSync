@@ -32,6 +32,8 @@ const KanbanBoard = () => {
   });
   const [showCustomType, setShowCustomType] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
+  const [isDraggingBoard, setIsDraggingBoard] = useState(false);
+  const [draggedBoardId, setDraggedBoardId] = useState(null);
 
   useEffect(() => {
     fetchProjectAndTasks();
@@ -290,6 +292,52 @@ const KanbanBoard = () => {
     }));
   };
 
+  // Add board drag handlers
+  const handleBoardDragStart = (e, boardId) => {
+    setIsDraggingBoard(true);
+    setDraggedBoardId(boardId);
+    e.dataTransfer.setData('boardId', boardId);
+    e.currentTarget.classList.add('dragging-board');
+  };
+
+  const handleBoardDragEnd = (e) => {
+    setIsDraggingBoard(false);
+    setDraggedBoardId(null);
+    e.currentTarget.classList.remove('dragging-board');
+  };
+
+  const handleBoardDragOver = (e) => {
+    e.preventDefault();
+    const draggedOverBoard = e.currentTarget;
+    if (draggedOverBoard.classList.contains('kanban-column')) {
+      draggedOverBoard.classList.add('board-drag-over');
+    }
+  };
+
+  const handleBoardDragLeave = (e) => {
+    e.currentTarget.classList.remove('board-drag-over');
+  };
+
+  const handleBoardDrop = (e, targetBoardId) => {
+    e.preventDefault();
+    e.currentTarget.classList.remove('board-drag-over');
+    
+    const sourceBoardId = e.dataTransfer.getData('boardId');
+    if (sourceBoardId === targetBoardId) return;
+
+    setBoards(prev => {
+      const boardEntries = Object.entries(prev);
+      const sourceIndex = boardEntries.findIndex(([id]) => id === sourceBoardId);
+      const targetIndex = boardEntries.findIndex(([id]) => id === targetBoardId);
+      
+      const newBoardEntries = [...boardEntries];
+      const [removed] = newBoardEntries.splice(sourceIndex, 1);
+      newBoardEntries.splice(targetIndex, 0, removed);
+      
+      return Object.fromEntries(newBoardEntries);
+    });
+  };
+
   if (loading) return <LoadingAnimation message="Loading your board..." />;
 
   if (error) return <div className="error-message">{error}</div>;
@@ -301,9 +349,12 @@ const KanbanBoard = () => {
     <div 
       key={boardId}
       className={`kanban-column ${board.compressed ? 'compressed' : ''}`}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={(e) => handleDrop(e, boardId)}
+      draggable
+      onDragStart={(e) => handleBoardDragStart(e, boardId)}
+      onDragEnd={handleBoardDragEnd}
+      onDragOver={handleBoardDragOver}
+      onDragLeave={handleBoardDragLeave}
+      onDrop={(e) => handleBoardDrop(e, boardId)}
     >
       <div className="column-header">
         <div className="column-header-left">
@@ -311,7 +362,7 @@ const KanbanBoard = () => {
           {!board.compressed && <span className="task-count">{board.items.length}</span>}
         </div>
         <button 
-          className="board-compress-btn"
+          className="compress-decompress-btn"
           onClick={() => toggleBoardCompress(boardId)}
           title={board.compressed ? "Expand" : "Compress"}
         >
