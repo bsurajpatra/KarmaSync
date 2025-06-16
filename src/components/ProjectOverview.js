@@ -657,7 +657,7 @@ const ProjectOverview = () => {
                 className="manage-collab-btn"
                 onClick={() => setShowAddCollaborator(true)}
               >
-                <i className="fas fa-users-cog"></i> Manage Collaborators
+                <i className="fas fa-users-cog"></i> Remove Collaborators
               </button>
             </div>
             <div className="collaborators-list">
@@ -1021,7 +1021,7 @@ const ProjectOverview = () => {
                   className={`collab-tab ${selectedUser ? 'active' : ''}`}
                   onClick={() => setSelectedUser(project.collaborators[0]?.userId)}
                 >
-                  <i className="fas fa-user-cog"></i> Manage Existing
+                  <i className="fas fa-user-cog"></i> Remove Collaborators
                 </button>
               </div>
 
@@ -1074,23 +1074,15 @@ const ProjectOverview = () => {
                         </div>
                         <div className="collab-actions">
                           {collab.userId._id !== project.createdBy._id && (
-                            <>
-                              <button
-                                className="btn btn-secondary"
-                                onClick={() => handleRoleSelect(collab.userId, collab.role === 'manager' ? 'developer' : 'manager')}
-                              >
-                                Change Role
-                              </button>
-                              <button
-                                className="btn btn-danger"
-                                onClick={() => {
-                                  setRemovingCollaborator(collab);
-                                  setShowRemoveModal(true);
-                                }}
-                              >
-                                Remove
-                              </button>
-                            </>
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => {
+                                setRemovingCollaborator(collab);
+                                setShowRemoveModal(true);
+                              }}
+                            >
+                              Remove
+                            </button>
                           )}
                         </div>
                       </div>
