@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProjectById, updateProject, deleteProject, removeCollaborator } from '../api/projectApi';
+import { getProjectById, updateProject, deleteProject, removeCollaborator, addCollaborator } from '../api/projectApi';
 import { getTasks, createTask } from '../api/taskApi';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import LoadingAnimation from './LoadingAnimation';
@@ -50,6 +50,9 @@ const ProjectOverview = () => {
   const { user } = useAuth();
   const [showRemoveModal, setShowRemoveModal] = useState(false);
   const [removingCollaborator, setRemovingCollaborator] = useState(null);
+  const [showRoleModal, setShowRoleModal] = useState(false);
+  const [showSelfRemoveModal, setShowSelfRemoveModal] = useState(false);
+  const [isAddingCollaborator, setIsAddingCollaborator] = useState(false);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658'];
 
@@ -159,36 +162,35 @@ const ProjectOverview = () => {
     setSearchTerm(value);
   };
 
-  const handleAddCollaborator = async (user) => {
-    try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/projects/${id}/collaborators`, {
-        userId: user._id,
-        role: 'developer' // Default role
-      });
-      
-      // Update project data
-      setProject(response.data);
-      setShowAddCollaborator(false);
-      setSearchTerm('');
-      setSearchResults([]);
-      setSelectedUser(null);
-    } catch (error) {
-      console.error('Error adding collaborator:', error);
-      setError('Failed to add collaborator');
-    }
+  const handleAddCollaborator = (user) => {
+    setSelectedUser(user);
+    setShowRoleModal(true);
+    setSearchResults([]);
+    setSearchTerm('');
   };
 
-  const handleRoleSelect = async (user, newRole) => {
+  const handleRoleSelect = async (role) => {
+    if (!selectedUser) return;
+    
     try {
-      const response = await axios.put(`${process.env.REACT_APP_API_URL}/api/projects/${id}/collaborators/${user._id}`, {
-        role: newRole
-      });
+      setIsAddingCollaborator(true);
+      const collaboratorData = {
+        userId: selectedUser._id,
+        role: role
+      };
       
-      // Update project data
-      setProject(response.data);
+      await addCollaborator(id, collaboratorData);
+      // Fetch the complete project data after adding collaborator
+      await fetchProject();
+      setShowRoleModal(false);
+      setShowAddCollaborator(false);
+      setSelectedUser(null);
+      setError('');
     } catch (error) {
-      console.error('Error updating collaborator role:', error);
-      setError('Failed to update collaborator role');
+      console.error('Error adding collaborator:', error);
+      setError(error.message || 'Failed to add collaborator');
+    } finally {
+      setIsAddingCollaborator(false);
     }
   };
 
@@ -201,6 +203,7 @@ const ProjectOverview = () => {
       // Update project data
       setProject(response.project);
       setShowRemoveModal(false);
+      setShowAddCollaborator(false);
       setRemovingCollaborator(null);
     } catch (error) {
       console.error('Error removing collaborator:', error);
@@ -380,6 +383,34 @@ const ProjectOverview = () => {
     </div>
   );
 
+  const SelfRemoveModal = () => (
+    <div className="modal-overlay nested">
+      <div className="modal-content nested">
+        <div className="modal-header">
+          <h2>Cannot Remove Yourself</h2>
+          <button 
+            className="modal-close"
+            onClick={() => setShowSelfRemoveModal(false)}
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <p>You cannot remove yourself from the project.</p>
+          <p>If you wish to leave the project, please use the "Leave Project" option in the project settings.</p>
+        </div>
+        <div className="modal-actions">
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowSelfRemoveModal(false)}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   // Sort collaborators: current user first, then managers, then developers
   const getSortedCollaborators = () => {
     if (!project?.collaborators) {
@@ -446,6 +477,7 @@ const ProjectOverview = () => {
   return (
     <div className="projects-container">
       {showDeleteConfirm && <DeleteConfirmationModal />}
+      {showSelfRemoveModal && <SelfRemoveModal />}
       
       <div className="projects-header">
         <div className="projects-header-content">
@@ -620,23 +652,39 @@ const ProjectOverview = () => {
             <div>
               <h3>Project Type</h3>
               <p className="project-type">
-                <span className={`project-type-badge ${project.projectType}`}>
-                  {project.projectType.charAt(0).toUpperCase() + project.projectType.slice(1)}
-                </span>
+                {project && project.projectType ? (
+                  <span className={`project-type-badge ${project.projectType}`}>
+                    {project.projectType.charAt(0).toUpperCase() + project.projectType.slice(1)}
+                  </span>
+                ) : (
+                  <span className="project-type-badge">Unknown</span>
+                )}
               </p>
             </div>
             <div>
               <h3>Project Status</h3>
               <p className="project-status">
-                <span className={`status-badge ${project.status}`}>
-                  {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                </span>
+                {project && project.status ? (
+                  <span className={`status-badge ${project.status}`}>
+                    {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                  </span>
+                ) : (
+                  <span className="status-badge">Unknown</span>
+                )}
               </p>
             </div>
           </div>
+          {project && project.currentUserRole && (
+            <div className="your-role-section" style={{ marginTop: '1.5rem' }}>
+              <h3>Your role</h3>
+              <span className={`role-badge ${project.currentUserRole}`}>
+                {project.currentUserRole === 'manager' ? 'Project Manager' : 'Developer'}
+              </span>
+            </div>
+          )}
         </div>
 
-        {project.projectType === 'collaborative' && (
+        {project && project.projectType === 'collaborative' && (
           <div className="project-overview-section">
             <div className="section-header">
               <h2>Collaborators</h2>
@@ -658,7 +706,7 @@ const ProjectOverview = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {project.collaborators.map((collab) => (
+                  {project.collaborators && project.collaborators.map((collab) => (
                     <tr key={collab.userId._id}>
                       <td>{collab.userId.fullName || 'N/A'}</td>
                       <td>{collab.userId.username}</td>
@@ -932,8 +980,8 @@ const ProjectOverview = () => {
       )}
 
       {showRemoveModal && removingCollaborator && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <div className="modal-overlay nested">
+          <div className="modal-content nested">
             <div className="modal-header">
               <h2>Remove Collaborator</h2>
               <button 
@@ -968,7 +1016,31 @@ const ProjectOverview = () => {
               </button>
               <button 
                 className="btn btn-danger"
-                onClick={handleRemoveCollaborator}
+                onClick={() => {
+                  console.log('Current user:', user);
+                  console.log('Current collaborator:', removingCollaborator);
+                  console.log('Project:', project);
+                  
+                  if (!user) {
+                    console.log('User is null');
+                    setError('User information not available');
+                    setTimeout(() => setError(''), 3000);
+                    return;
+                  }
+                  if (removingCollaborator.userId.username === user.username) {
+                    console.log('Attempting to remove self');
+                    setShowSelfRemoveModal(true);
+                    return;
+                  }
+                  if (project.currentUserRole === 'manager') {
+                    console.log('Manager removing collaborator');
+                    handleRemoveCollaborator();
+                  } else {
+                    console.log('Non-manager attempting to remove');
+                    setError('Only Project managers can remove collaborators');
+                    setTimeout(() => setError(''), 3000);
+                  }
+                }}
               >
                 Remove Collaborator
               </button>
@@ -995,6 +1067,7 @@ const ProjectOverview = () => {
               </button>
             </div>
             <div className="collab-modal-content">
+              {error && <div className="error-message">{error}</div>}
               <div className="collab-tabs">
                 <button 
                   className={`collab-tab ${!selectedUser ? 'active' : ''}`}
@@ -1013,14 +1086,48 @@ const ProjectOverview = () => {
               {selectedUser ? (
                 <div className="collab-manage-wrapper">
                   <div className="collab-list">
-                    {project.collaborators.map((collab) => (
+                    {project.collaborators && project.collaborators.map((collab) => (
                       <div key={collab.userId._id} className="collab-manage-item">
                         <div className="collab-user-info">
+                          <span className="collab-name">{collab.userId.fullName || 'N/A'}</span>
                           <span className="collab-username">{collab.userId.username}</span>
                           <span className="collab-email">{collab.userId.email}</span>
                           <span className={`collab-role ${collab.role}`}>
                             {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
                           </span>
+                        </div>
+                        <div className="collab-actions">
+                          <button
+                            className="btn btn-danger"
+                            onClick={() => {
+                              console.log('Current user:', user);
+                              console.log('Current collaborator:', collab);
+                              console.log('Project:', project);
+                              
+                              if (!user) {
+                                console.log('User is null');
+                                setError('User information not available');
+                                setTimeout(() => setError(''), 3000);
+                                return;
+                              }
+                              if (collab.userId.username === user.username) {
+                                console.log('Attempting to remove self');
+                                setShowSelfRemoveModal(true);
+                                return;
+                              }
+                              if (project.currentUserRole === 'manager') {
+                                console.log('Manager removing collaborator');
+                                setRemovingCollaborator(collab);
+                                setShowRemoveModal(true);
+                              } else {
+                                console.log('Non-manager attempting to remove');
+                                setError('Only Project managers can remove collaborators');
+                                setTimeout(() => setError(''), 3000);
+                              }
+                            }}
+                          >
+                            <i className="fas fa-user-minus"></i> Remove
+                          </button>
                         </div>
                       </div>
                     ))}
@@ -1060,6 +1167,61 @@ const ProjectOverview = () => {
                   {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
                     <div className="collab-no-results">No users found</div>
                   )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Role Selection Modal */}
+      {showRoleModal && (
+        <div className="modal-overlay nested">
+          <div className="modal-content nested">
+            <div className="modal-header">
+              <h2>Select Role for {selectedUser?.username}</h2>
+              <button 
+                className="modal-close"
+                onClick={() => {
+                  setShowRoleModal(false);
+                  setSelectedUser(null);
+                }}
+              >
+                ×
+              </button>
+            </div>
+            <div className="modal-body">
+              {isAddingCollaborator ? (
+                <div className="loading-container">
+                  <LoadingAnimation message="Adding collaborator..." />
+                </div>
+              ) : (
+                <div className="role-options">
+                  <button
+                    className="role-option manager"
+                    onClick={() => handleRoleSelect('manager')}
+                  >
+                    <h4>Project Manager</h4>
+                    <p>Full access to project management</p>
+                    <ul>
+                      <li>Create, edit, and delete tasks</li>
+                      <li>Manage project details</li>
+                      <li>Manage collaborators</li>
+                      <li>Full commenting access</li>
+                    </ul>
+                  </button>
+                  <button
+                    className="role-option developer"
+                    onClick={() => handleRoleSelect('developer')}
+                  >
+                    <h4>Developer</h4>
+                    <p>Task execution and updates</p>
+                    <ul>
+                      <li>View and update task status</li>
+                      <li>Comment on assigned tasks</li>
+                      <li>Limited project access</li>
+                    </ul>
+                  </button>
                 </div>
               )}
             </div>

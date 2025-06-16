@@ -135,4 +135,28 @@ export const removeCollaborator = async (projectId, collaboratorId) => {
     }
     throw { message: 'Error removing collaborator' };
   }
+};
+
+// Add collaborator to project
+export const addCollaborator = async (projectId, collaboratorData) => {
+  try {
+    console.log('Making POST request to add collaborator:', { projectId, collaboratorData });
+    const response = await axios.post(`${BASE_URL}/${projectId}/collaborators`, 
+      collaboratorData,
+      {
+        headers: {
+          ...getAuthHeader(),
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    console.log('Add collaborator response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error in addCollaborator:', error.response || error);
+    if (error.response?.data) {
+      throw error.response.data;
+    }
+    throw { message: 'Error adding collaborator' };
+  }
 }; 

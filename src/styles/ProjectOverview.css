@@ -486,6 +486,12 @@
   backdrop-filter: blur(4px);
 }
 
+/* Add new style for nested modal overlay */
+.modal-overlay.nested {
+  z-index: 1100;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
 .modal-content {
   background: white;
   padding: 24px;
@@ -494,6 +500,14 @@
   max-width: 400px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   animation: modalSlideIn 0.3s ease;
+  position: relative;
+  z-index: 1001;
+}
+
+/* Add new style for nested modal content */
+.modal-content.nested {
+  z-index: 1101;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
 }
 
 @keyframes modalSlideIn {
@@ -782,50 +796,43 @@
 }
 
 .collab-manage-item {
-  display: grid;
-  grid-template-columns: 2fr 1.5fr 2fr 1fr;
-  gap: 1rem;
-  padding: 1rem;
-  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-}
-
-.collab-manage-item:last-child {
-  border-bottom: none;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 0.75rem;
 }
 
 .collab-user-info {
-  display: contents;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
 }
 
-.collab-name,
-.collab-username,
-.collab-email,
-.collab-role {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+.collab-name {
+  font-weight: 600;
   color: #333;
-  font-weight: 500;
-  font-family: inherit;
-  font-size: 1rem;
+  font-size: 1.1rem;
 }
 
 .collab-username,
 .collab-email {
   color: #666;
+  font-size: 0.9rem;
 }
 
 .collab-role {
-  text-transform: capitalize;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
   padding: 0.4rem 0.8rem;
   border-radius: 6px;
-  font-weight: 600;
-  min-width: 120px;
+  font-weight: 500;
+  font-size: 0.9rem;
+  width: fit-content;
 }
 
 .collab-role.manager {
@@ -838,30 +845,56 @@
   background: #9ae6b4;
 }
 
-/* Responsive styles for collaborators section */
-@media (max-width: 768px) {
-  .collaborators-header,
+.collab-actions {
+  margin-left: 1rem;
+}
+
+.collab-actions .btn-danger {
+  padding: 0.5rem 1rem;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.collab-actions .btn-danger:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+}
+
+.collab-actions .btn-danger:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.collab-actions .btn-danger i {
+  font-size: 0.9rem;
+}
+
+/* Responsive styles for collaborator management */
+@media (max-width: 640px) {
   .collab-manage-item {
-    grid-template-columns: 1fr;
-    gap: 0.5rem;
-    padding: 1rem;
-  }
-
-  .collaborators-header {
-    display: none;
-  }
-
-  .collab-name,
-  .collab-username,
-  .collab-email,
-  .collab-role {
-    padding: 0.5rem 0;
-  }
-
-  .collab-user-info {
-    display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .collab-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .collab-actions .btn-danger {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -1388,55 +1421,50 @@
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-}
-
-.collab-manage-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 0.75rem;
 }
 
 .collab-user-info {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  flex: 1;
 }
 
-.collab-username {
+.collab-name {
   font-weight: 600;
-  color: #2d3748;
+  color: #333;
   font-size: 1.1rem;
 }
 
+.collab-username,
 .collab-email {
-  color: #718096;
+  color: #666;
   font-size: 0.9rem;
 }
 
 .collab-role {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
   font-weight: 500;
+  font-size: 0.9rem;
+  width: fit-content;
 }
 
 .collab-role.manager {
-  background: #e3f2fd;
-  color: #1976d2;
+  color: #1a365d;
+  background: #90cdf4;
 }
 
 .collab-role.developer {
-  background: #f3e5f5;
-  color: #7b1fa2;
+  color: #22543d;
+  background: #9ae6b4;
 }
 
 .collab-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  margin-left: 1rem;
 }
 
 .collab-actions .btn-danger {
@@ -1467,6 +1495,25 @@
 
 .collab-actions .btn-danger i {
   font-size: 0.9rem;
+}
+
+/* Responsive styles for collaborator management */
+@media (max-width: 640px) {
+  .collab-manage-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .collab-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .collab-actions .btn-danger {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Update modal styles */
@@ -1592,5 +1639,133 @@
   .collaborators-table th,
   .collaborators-table td {
     padding: 0.75rem;
+  }
+}
+
+.your-role-section {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.your-role-section h3 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  border-radius: 15px;
+  font-weight: 700;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: white;
+  border: none;
+}
+
+.role-badge.manager {
+  background: #4a90e2;
+}
+
+.role-badge.developer {
+  background: #00c853;
+}
+
+/* Error Message Styles */
+.error-message {
+  background-color: #fee2e2;
+  color: #991b1b;
+  padding: 1rem;
+  border-radius: 8px;
+  margin: 1rem 0;
+  font-weight: 500;
+  text-align: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.collab-modal-content .error-message {
+  position: sticky;
+  top: 0;
+  z-index: 1002;
+  margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+  border-radius: 0;
+  border-bottom: 1px solid #fecaca;
+}
+
+/* Role Selection Modal Styles */
+.role-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.role-option {
+  padding: 1.5rem;
+  border: 2px solid #e2e8f0;
+  border-radius: 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: white;
+  width: 100%;
+}
+
+.role-option:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.role-option h4 {
+  margin: 0 0 0.5rem 0;
+  color: #2d3748;
+  font-size: 1.2rem;
+}
+
+.role-option p {
+  margin: 0 0 1rem 0;
+  color: #4a5568;
+}
+
+.role-option ul {
+  margin: 0;
+  padding-left: 1.5rem;
+  color: #718096;
+}
+
+.role-option.manager {
+  border-color: #90cdf4;
+}
+
+.role-option.manager:hover {
+  background-color: #ebf8ff;
+}
+
+.role-option.developer {
+  border-color: #9ae6b4;
+}
+
+.role-option.developer:hover {
+  background-color: #f0fff4;
+}
+
+/* Responsive styles for role selection */
+@media (max-width: 640px) {
+  .role-options {
+    grid-template-columns: 1fr;
   }
 }
