@@ -674,7 +674,7 @@ const ProjectOverview = () => {
               </p>
             </div>
           </div>
-          {project && project.currentUserRole && (
+          {project && project.projectType === 'collaborative' && project.currentUserRole && (
             <div className="your-role-section" style={{ marginTop: '1.5rem' }}>
               <h3>Your role</h3>
               <span className={`role-badge ${project.currentUserRole}`}>

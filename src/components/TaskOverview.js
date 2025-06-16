@@ -397,10 +397,19 @@ const TaskOverview = () => {
               <div className="comments-list">
                 {task.comments?.map(comment => (
                   <div key={comment._id} className="comment">
-                    <p className="comment-text">{comment.text}</p>
-                      <span className="comment-date">
-                        {new Date(comment.createdAt).toLocaleDateString()}
-                      </span>
+                    <div className="comment-content">
+                      <div className="comment-header">
+                        {project.projectType === 'collaborative' && (
+                          <span className="comment-author">
+                            {comment.user?.username || 'Unknown User'}
+                          </span>
+                        )}
+                        <span className="comment-date">
+                          {new Date(comment.createdAt).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="comment-text">{comment.text}</p>
+                    </div>
                   </div>
                 ))}
               </div>
