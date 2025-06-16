@@ -26,9 +26,8 @@ const LandingPage = () => {
         <div className="about-content">
           <h2>About KarmaSync</h2>
           <p>
-          Karma Sync is a modern, lightweight project management tool built for teams and individuals to stay organized, productive, and in sync. Whether you're working solo or managing a group project, Karma Sync helps you plan tasks, track progress, and collaborate effectively — all in one streamlined dashboard.
-
-In addition to project management, Karma Sync includes a dedicated personal to-do manager to help you stay on top of your daily goals. Create, prioritize, and organize your everyday tasks — from work and study to health and custom routines — all in one place, designed to boost your personal productivity.          </p>
+          Karma Sync is a lightweight project and task management tool for individuals and teams. Plan projects, track progress, and collaborate effortlessly. It also includes a personal to-do manager to organize daily tasks, prioritize goals, and boost productivity — all from one clean dashboard.
+                   </p>
         </div>
       </section>
 
