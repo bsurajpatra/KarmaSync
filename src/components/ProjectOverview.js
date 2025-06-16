@@ -53,6 +53,8 @@ const ProjectOverview = () => {
   const [showRoleModal, setShowRoleModal] = useState(false);
   const [showSelfRemoveModal, setShowSelfRemoveModal] = useState(false);
   const [isAddingCollaborator, setIsAddingCollaborator] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658'];
 
@@ -197,6 +199,12 @@ const ProjectOverview = () => {
   const handleRemoveCollaborator = async () => {
     if (!removingCollaborator) return;
     
+    if (!project?.currentUserRole) {
+      setErrorMessage('Unable to verify user role. Please try again.');
+      setShowErrorModal(true);
+      return;
+    }
+    
     try {
       const response = await removeCollaborator(id, removingCollaborator.userId._id);
       
@@ -207,7 +215,8 @@ const ProjectOverview = () => {
       setRemovingCollaborator(null);
     } catch (error) {
       console.error('Error removing collaborator:', error);
-      setError('Failed to remove collaborator');
+      setErrorMessage('Failed to remove collaborator');
+      setShowErrorModal(true);
     }
   };
 
@@ -465,6 +474,80 @@ const ProjectOverview = () => {
     return currentUserRole === 'manager';
   };
 
+  // Add Error Modal Component
+  const ErrorModal = () => (
+    <div className="modal-overlay">
+      <div className="modal-content error-modal">
+        <div className="modal-header">
+          <h2>Access Denied</h2>
+          <button 
+            className="modal-close"
+            onClick={() => setShowErrorModal(false)}
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="error-icon">
+            <i className="fas fa-exclamation-circle"></i>
+          </div>
+          <p className="error-message">{errorMessage}</p>
+        </div>
+        <div className="modal-actions">
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowErrorModal(false)}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Update error handling functions
+  const handleEditClick = (action) => {
+    if (!project?.currentUserRole) {
+      setErrorMessage('Unable to verify user role. Please try again.');
+      setShowErrorModal(true);
+      return false;
+    }
+    if (project.currentUserRole !== 'manager') {
+      setErrorMessage('Only Project Managers can edit project details');
+      setShowErrorModal(true);
+      return false;
+    }
+    return true;
+  };
+
+  const handleDeleteClick = () => {
+    if (!project?.currentUserRole) {
+      setErrorMessage('Unable to verify user role. Please try again.');
+      setShowErrorModal(true);
+      return;
+    }
+    if (project.currentUserRole !== 'manager') {
+      setErrorMessage('Only Project Managers can delete the project');
+      setShowErrorModal(true);
+      return;
+    }
+    setShowDeleteConfirm(true);
+  };
+
+  const handleCollaboratorClick = () => {
+    if (!project?.currentUserRole) {
+      setErrorMessage('Unable to verify user role. Please try again.');
+      setShowErrorModal(true);
+      return;
+    }
+    if (project.currentUserRole !== 'manager') {
+      setErrorMessage('Only Project Managers can manage collaborators');
+      setShowErrorModal(true);
+      return;
+    }
+    setShowAddCollaborator(true);
+  };
+
   if (loading) return <LoadingAnimation message="Loading project details..." />;
 
   if (error) return <div className="error-message">{error}</div>;
@@ -476,6 +559,7 @@ const ProjectOverview = () => {
 
   return (
     <div className="projects-container">
+      {showErrorModal && <ErrorModal />}
       {showDeleteConfirm && <DeleteConfirmationModal />}
       {showSelfRemoveModal && <SelfRemoveModal />}
       
@@ -512,7 +596,7 @@ const ProjectOverview = () => {
                   {project.title}
                   <button 
                     className="edit-title-btn"
-                    onClick={() => setEditingTitle(true)}
+                    onClick={() => handleEditClick('title') && setEditingTitle(true)}
                   >
                     Edit
                   </button>
@@ -555,7 +639,7 @@ const ProjectOverview = () => {
             {!editingDescription && (
               <button 
                 className="section-edit-btn"
-                onClick={() => setEditingDescription(true)}
+                onClick={() => handleEditClick('description') && setEditingDescription(true)}
               >
                 Edit
               </button>
@@ -596,7 +680,7 @@ const ProjectOverview = () => {
               {!editingGithub && (
                 <button 
                   className="section-edit-btn"
-                  onClick={() => setEditingGithub(true)}
+                  onClick={() => handleEditClick('github') && setEditingGithub(true)}
                 >
                   {project.githubLink ? 'Edit' : 'Add'}
                 </button>
@@ -690,7 +774,7 @@ const ProjectOverview = () => {
               <h2>Collaborators</h2>
               <button 
                 className="manage-collab-btn"
-                onClick={() => setShowAddCollaborator(true)}
+                onClick={handleCollaboratorClick}
               >
                 <i className="fas fa-users-cog"></i> Manage Collaborators
               </button>
@@ -795,7 +879,7 @@ const ProjectOverview = () => {
             </div>
             <button 
               className="btn btn-danger"
-              onClick={() => setShowDeleteConfirm(true)}
+              onClick={handleDeleteClick}
             >
               Delete Project
             </button>
@@ -1023,8 +1107,8 @@ const ProjectOverview = () => {
                   
                   if (!user) {
                     console.log('User is null');
-                    setError('User information not available');
-                    setTimeout(() => setError(''), 3000);
+                    setErrorMessage('User information not available');
+                    setShowErrorModal(true);
                     return;
                   }
                   if (removingCollaborator.userId.username === user.username) {
@@ -1037,8 +1121,8 @@ const ProjectOverview = () => {
                     handleRemoveCollaborator();
                   } else {
                     console.log('Non-manager attempting to remove');
-                    setError('Only Project managers can remove collaborators');
-                    setTimeout(() => setError(''), 3000);
+                    setErrorMessage('Only Project managers can remove collaborators');
+                    setShowErrorModal(true);
                   }
                 }}
               >
@@ -1106,8 +1190,8 @@ const ProjectOverview = () => {
                               
                               if (!user) {
                                 console.log('User is null');
-                                setError('User information not available');
-                                setTimeout(() => setError(''), 3000);
+                                setErrorMessage('User information not available');
+                                setShowErrorModal(true);
                                 return;
                               }
                               if (collab.userId.username === user.username) {
@@ -1121,8 +1205,8 @@ const ProjectOverview = () => {
                                 setShowRemoveModal(true);
                               } else {
                                 console.log('Non-manager attempting to remove');
-                                setError('Only Project managers can remove collaborators');
-                                setTimeout(() => setError(''), 3000);
+                                setErrorMessage('Only Project managers can remove collaborators');
+                                setShowErrorModal(true);
                               }
                             }}
                           >
