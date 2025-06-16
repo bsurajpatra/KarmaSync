@@ -199,12 +199,6 @@ const ProjectOverview = () => {
   const handleRemoveCollaborator = async () => {
     if (!removingCollaborator) return;
     
-    if (!project?.currentUserRole) {
-      setErrorMessage('Unable to verify user role. Please try again.');
-      setShowErrorModal(true);
-      return;
-    }
-    
     try {
       const response = await removeCollaborator(id, removingCollaborator.userId._id);
       
@@ -215,8 +209,7 @@ const ProjectOverview = () => {
       setRemovingCollaborator(null);
     } catch (error) {
       console.error('Error removing collaborator:', error);
-      setErrorMessage('Failed to remove collaborator');
-      setShowErrorModal(true);
+      setError('Failed to remove collaborator');
     }
   };
 
@@ -507,11 +500,6 @@ const ProjectOverview = () => {
 
   // Update error handling functions
   const handleEditClick = (action) => {
-    if (!project?.currentUserRole) {
-      setErrorMessage('Unable to verify user role. Please try again.');
-      setShowErrorModal(true);
-      return false;
-    }
     if (project.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can edit project details');
       setShowErrorModal(true);
@@ -521,11 +509,6 @@ const ProjectOverview = () => {
   };
 
   const handleDeleteClick = () => {
-    if (!project?.currentUserRole) {
-      setErrorMessage('Unable to verify user role. Please try again.');
-      setShowErrorModal(true);
-      return;
-    }
     if (project.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can delete the project');
       setShowErrorModal(true);
@@ -535,11 +518,6 @@ const ProjectOverview = () => {
   };
 
   const handleCollaboratorClick = () => {
-    if (!project?.currentUserRole) {
-      setErrorMessage('Unable to verify user role. Please try again.');
-      setShowErrorModal(true);
-      return;
-    }
     if (project.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can manage collaborators');
       setShowErrorModal(true);

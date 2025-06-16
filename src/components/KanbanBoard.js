@@ -32,6 +32,8 @@ const KanbanBoard = () => {
   });
   const [showCustomType, setShowCustomType] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     fetchProjectAndTasks();
@@ -352,6 +354,63 @@ const KanbanBoard = () => {
     }));
   };
 
+  // Add Error Modal Component
+  const ErrorModal = () => (
+    <div className="modal-overlay">
+      <div className="modal-content error-modal">
+        <div className="modal-header">
+          <h2>Access Denied</h2>
+          <button 
+            className="modal-close"
+            onClick={() => {
+              setShowErrorModal(false);
+              setErrorMessage('');
+            }}
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="error-icon">
+            <i className="fas fa-exclamation-circle"></i>
+          </div>
+          <p className="error-message">{errorMessage}</p>
+        </div>
+        <div className="modal-actions">
+          <button 
+            className="btn btn-secondary"
+            onClick={() => {
+              setShowErrorModal(false);
+              setErrorMessage('');
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Add permission check for managing boards
+  const handleManageBoardsClick = () => {
+    if (project?.currentUserRole !== 'manager') {
+      setErrorMessage('Only Project Managers can manage boards');
+      setShowErrorModal(true);
+      return;
+    }
+    setShowBoardManager(true);
+  };
+
+  // Add permission check for adding issues
+  const handleAddIssueClick = () => {
+    if (project?.currentUserRole !== 'manager') {
+      setErrorMessage('Only Project Managers can add issues');
+      setShowErrorModal(true);
+      return;
+    }
+    setShowAddIssueModal(true);
+  };
+
   if (loading) return <LoadingAnimation message="Loading your board..." />;
 
   if (error) return <div className="error-message">{error}</div>;
@@ -430,6 +489,7 @@ const KanbanBoard = () => {
 
   return (
     <div className="kanban-container">
+      {showErrorModal && <ErrorModal />}
       <div className="kanban-header">
         <div className="kanban-header-content">
           <div className="kanban-header-left">
@@ -450,13 +510,13 @@ const KanbanBoard = () => {
             </button>
             <button 
               className="btn btn-secondary"
-              onClick={() => setShowBoardManager(true)}
+              onClick={handleManageBoardsClick}
             >
               <i className="fas fa-columns"></i> Manage Boards
             </button>
             <button 
               className="btn btn-primary"
-              onClick={handleAddIssue}
+              onClick={handleAddIssueClick}
             >
               <i className="fas fa-plus"></i> Add Issue
             </button>

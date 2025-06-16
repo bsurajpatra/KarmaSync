@@ -28,6 +28,8 @@ const TaskOverview = () => {
   const [showCustomType, setShowCustomType] = useState(false);
   const [isEditingStatus, setIsEditingStatus] = useState(false);
   const [newStatus, setNewStatus] = useState('');
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     fetchTaskAndProject();
@@ -147,6 +149,51 @@ const TaskOverview = () => {
     }
   };
 
+  const ErrorModal = () => (
+    <div className="modal-overlay">
+      <div className="modal-content error-modal">
+        <div className="modal-header">
+          <h2>Access Denied</h2>
+          <button 
+            className="modal-close"
+            onClick={() => {
+              setShowErrorModal(false);
+              setErrorMessage('');
+            }}
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="error-icon">
+            <i className="fas fa-exclamation-circle"></i>
+          </div>
+          <p className="error-message">{errorMessage}</p>
+        </div>
+        <div className="modal-actions">
+          <button 
+            className="btn btn-secondary"
+            onClick={() => {
+              setShowErrorModal(false);
+              setErrorMessage('');
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const handleEditClick = () => {
+    if (project?.currentUserRole !== 'manager') {
+      setErrorMessage('Only Project Managers can edit issues');
+      setShowErrorModal(true);
+      return;
+    }
+    setEditing(true);
+  };
+
   if (loading) return <LoadingAnimation message="Loading task details..." />;
 
   if (error) return <div className="error-message">{error}</div>;
@@ -154,6 +201,7 @@ const TaskOverview = () => {
 
   return (
     <div className="task-overview-container">
+      {showErrorModal && <ErrorModal />}
       <div className="task-overview-header">
         <div className="task-overview-header-content">
           <div className="task-overview-header-left">
@@ -198,7 +246,7 @@ const TaskOverview = () => {
             {!editing && (
               <button 
                 className="btn btn-primary"
-                onClick={() => setEditing(true)}
+                onClick={handleEditClick}
               >
                 <i className="fas fa-edit"></i> Edit Issue
               </button>

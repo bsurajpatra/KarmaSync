@@ -14,6 +14,8 @@ const TaskList = () => {
   const [error, setError] = useState('');
   const [project, setProject] = useState(null);
   const [showAddIssueModal, setShowAddIssueModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const [issueFormData, setIssueFormData] = useState({
     title: '',
     description: '',
@@ -167,6 +169,51 @@ const TaskList = () => {
     });
   };
 
+  const ErrorModal = () => (
+    <div className="modal-overlay">
+      <div className="modal-content error-modal">
+        <div className="modal-header">
+          <h2>Access Denied</h2>
+          <button 
+            className="modal-close"
+            onClick={() => {
+              setShowErrorModal(false);
+              setErrorMessage('');
+            }}
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <div className="error-icon">
+            <i className="fas fa-exclamation-circle"></i>
+          </div>
+          <p className="error-message">{errorMessage}</p>
+        </div>
+        <div className="modal-actions">
+          <button 
+            className="btn btn-secondary"
+            onClick={() => {
+              setShowErrorModal(false);
+              setErrorMessage('');
+            }}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const handleAddIssueClick = () => {
+    if (project?.currentUserRole !== 'manager') {
+      setErrorMessage('Only Project Managers can add issues');
+      setShowErrorModal(true);
+      return;
+    }
+    setShowAddIssueModal(true);
+  };
+
   if (loading) {
     return <LoadingAnimation message="Loading your tasks..." />;
   }
@@ -177,6 +224,7 @@ const TaskList = () => {
 
   return (
     <div className="tasks-container">
+      {showErrorModal && <ErrorModal />}
       <div className="tasks-header">
         <div className="tasks-header-content">
           <h2 style={{ 
@@ -188,7 +236,7 @@ const TaskList = () => {
           <div className="tasks-header-actions">
             <button 
               className="btn btn-primary"
-              onClick={() => setShowAddIssueModal(true)}
+              onClick={handleAddIssueClick}
             >
               <i className="fas fa-plus"></i> Add Issue
             </button>
