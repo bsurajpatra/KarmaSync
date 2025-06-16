@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyOTP, resendOTP } from '../api/authApi';
 import LoadingAnimation from './LoadingAnimation';
 import Footer from './Footer';
+import '../styles/OTPVerfication.css';
 
 const OTPVerification = () => {
   console.log('OTPVerification component rendered');
@@ -104,7 +105,7 @@ const OTPVerification = () => {
       }, 2000);
     } catch (err) {
       console.error('OTP verification error:', err);
-      setError(err.message || 'Invalid OTP. Please try again.');
+      setError('Wrong OTP entered try again');
     } finally {
       setLoading(false);
     }
@@ -133,55 +134,40 @@ const OTPVerification = () => {
   }
 
   return (
-    <div className="auth-container">
-      <div className="auth-logo-section">
-        <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
-        <div className="auth-logo-text">KarmaSync</div>
+    <div className="otp-container">
+      <div className="otp-logo-section">
+        <img src="/logo.png" alt="KarmaSync Logo" className="otp-logo" />
+        <div className="otp-logo-text">KarmaSync</div>
       </div>
-      <div className="auth-content">
-        <div className="auth-card">
-          <div className="auth-header">
+      <div className="otp-content">
+        <div className="otp-card">
+          <div className="otp-header">
             <h2>Verify Your Email</h2>
-            <p className="auth-subtitle">Enter the 6-digit code sent to {userData?.email}</p>
-            <p className="auth-subtitle" style={{ fontSize: '0.9em' }}>
+            <p className="otp-subtitle">Enter the 6-digit code sent to {userData?.email}</p>
+            <p className="otp-subtitle" style={{ fontSize: '0.9em' }}>
               Please check your spam folder if you don't see the email in your inbox
             </p>
           </div>
 
-          {error && <div className="auth-error">{error}</div>}
+          {error && <div className="otp-message error">{error}</div>}
           {success && (
-            <div className="auth-success">
-              Email verified successfully! Redirecting to login...
+            <div className="otp-message success">
+              OTP Verified Successfully, redirecting to Login
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="auth-form otp-form">
-            <div className="otp-inputs" style={{
-              display: 'flex',
-              justifyContent: 'center',
-              gap: '12px',
-              marginBottom: '1.5rem'
-            }}>
+          <form onSubmit={handleSubmit} className="otp-form">
+            <div className="otp-inputs">
               {otp.map((digit, index) => (
-                <div key={index} className="otp-input-group" style={{
-                  display: 'inline-block'
-                }}>
+                <div key={index} className="otp-input-group">
                   <input
                     type="text"
                     maxLength="1"
-                    className="auth-input otp-input"
+                    className="otp-input"
                     value={digit}
                     onChange={(e) => handleChange(e.target, index)}
                     onKeyDown={(e) => handleKeyDown(e, index)}
                     autoFocus={index === 0}
-                    style={{
-                      width: '45px',
-                      height: '45px',
-                      textAlign: 'center',
-                      padding: '0',
-                      fontSize: '1.2rem',
-                      margin: '0'
-                    }}
                   />
                 </div>
               ))}
@@ -189,27 +175,18 @@ const OTPVerification = () => {
 
             <button 
               type="submit" 
-              className="auth-button"
+              className="otp-button"
               disabled={loading || success}
             >
               {loading ? 'Verifying...' : 'Verify Email'}
             </button>
 
-            <div className="resend-otp" style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <div className="otp-resend">
               <button
                 type="button"
-                className="auth-link"
+                className="otp-resend-button"
                 onClick={handleResendOTP}
                 disabled={resendDisabled}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  color: '#ffffff',
-                  cursor: resendDisabled ? 'not-allowed' : 'pointer',
-                  opacity: resendDisabled ? 0.7 : 1,
-                  textDecoration: 'none',
-                  marginRight: '0'
-                }}
               >
                 {resendDisabled 
                   ? `Resend OTP in ${countdown}s`
