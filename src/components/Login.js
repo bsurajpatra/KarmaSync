@@ -5,6 +5,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
 import LoadingAnimation from './LoadingAnimation';
 import Footer from './Footer';
+import '../styles/Login.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -36,6 +37,8 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -44,17 +47,20 @@ const Login = () => {
     setLoading(true);
 
     try {
-      console.log('Attempting login with:', { identifier: formData.identifier });
       const response = await loginApi(formData);
-      console.log('Login successful:', response);
-      
       await authLogin(response.user, response.token);
-      console.log('Login successful, redirecting to dashboard');
-      
       navigate('/dashboard');
     } catch (error) {
-      console.error('Login error:', error);
-      setError(error.message || 'An error occurred during login');
+      // Handle specific error cases
+      if (error.message === 'User not found') {
+        setError('No account found with this email or username');
+      } else if (error.message === 'Invalid password') {
+        setError('Incorrect password');
+      } else if (error.message === 'Email not verified') {
+        setError('Please verify your email before logging in');
+      } else {
+        setError(error.message || 'An error occurred during login');
+      }
     } finally {
       setLoading(false);
     }
@@ -90,7 +96,7 @@ const Login = () => {
             <p className="auth-subtitle">Sign in to continue your productivity journey</p>
           </div>
           
-          {error && <div className="auth-error">{error}</div>}
+          {error && <div className="signup-message error">{error}</div>}
           
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
