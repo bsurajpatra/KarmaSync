@@ -1,3 +1,10 @@
+if (process.env.NODE_ENV === 'production') {
+  console.log = () => {};
+  console.info = () => {};
+  console.warn = () => {};
+  // keep console.error to show real errors
+}
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
