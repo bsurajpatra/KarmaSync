@@ -32,8 +32,6 @@ const KanbanBoard = () => {
   });
   const [showCustomType, setShowCustomType] = useState(false);
   const [newBoardName, setNewBoardName] = useState('');
-  const [isDraggingBoard, setIsDraggingBoard] = useState(false);
-  const [draggedBoardId, setDraggedBoardId] = useState(null);
 
   useEffect(() => {
     fetchProjectAndTasks();
@@ -96,56 +94,118 @@ const KanbanBoard = () => {
 
   // Add drag and drop handlers
   const handleDragStart = (e, taskId, sourceBoard) => {
+    e.stopPropagation(); // Prevent event bubbling
     e.dataTransfer.setData('taskId', taskId);
     e.dataTransfer.setData('sourceBoard', sourceBoard);
     e.target.classList.add('dragging');
   };
 
   const handleDragEnd = (e) => {
+    e.stopPropagation(); // Prevent event bubbling
     e.target.classList.remove('dragging');
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
+    e.stopPropagation(); // Prevent event bubbling
     e.currentTarget.classList.add('dragging-over');
   };
 
   const handleDragLeave = (e) => {
+    e.preventDefault();
+    e.stopPropagation(); // Prevent event bubbling
     e.currentTarget.classList.remove('dragging-over');
   };
 
   const handleDrop = async (e, targetBoard) => {
     e.preventDefault();
+    e.stopPropagation();
     e.currentTarget.classList.remove('dragging-over');
     
     const taskId = e.dataTransfer.getData('taskId');
     const sourceBoard = e.dataTransfer.getData('sourceBoard');
     
-    if (sourceBoard === targetBoard) return;
+    // Get the drop position
+    const dropY = e.clientY;
+    const taskList = e.currentTarget;
+    const taskElements = Array.from(taskList.children);
+    
+    // Calculate the drop position more precisely
+    let dropIndex = -1;
+    for (let i = 0; i < taskElements.length; i++) {
+      const rect = taskElements[i].getBoundingClientRect();
+      const cardMiddle = rect.top + rect.height / 2;
+      
+      if (dropY < cardMiddle) {
+        dropIndex = i;
+        break;
+      }
+    }
+    
+    // If we're at the end of the list
+    if (dropIndex === -1) {
+      dropIndex = taskElements.length;
+    }
 
     try {
-      await updateTaskStatus(taskId, targetBoard);
-
-      setBoards(prev => {
-        const newBoards = { ...prev };
-        const task = newBoards[sourceBoard].items.find(item => item._id === taskId);
-        
-        if (task) {
-          newBoards[sourceBoard].items = newBoards[sourceBoard].items.filter(
-            item => item._id !== taskId
-          );
+      if (sourceBoard === targetBoard) {
+        // Reorder within the same board
+        setBoards(prev => {
+          const newBoards = { ...prev };
+          const board = newBoards[targetBoard];
+          const taskIndex = board.items.findIndex(item => item._id === taskId);
           
-          newBoards[targetBoard].items = [...newBoards[targetBoard].items, {
-            ...task,
-            status: targetBoard
-          }];
-        }
-        
-        return newBoards;
-      });
+          if (taskIndex === -1) return prev;
+          
+          const task = board.items[taskIndex];
+          const newItems = [...board.items];
+          
+          // Remove the task from its current position
+          newItems.splice(taskIndex, 1);
+          
+          // Adjust the drop index if we're moving the task down
+          const adjustedDropIndex = taskIndex < dropIndex ? dropIndex - 1 : dropIndex;
+          
+          // Insert at the new position
+          newItems.splice(adjustedDropIndex, 0, task);
+          
+          return {
+            ...prev,
+            [targetBoard]: {
+              ...board,
+              items: newItems
+            }
+          };
+        });
+      } else {
+        // Move to different board
+        await updateTaskStatus(taskId, targetBoard);
+
+        setBoards(prev => {
+          const newBoards = { ...prev };
+          const task = newBoards[sourceBoard].items.find(item => item._id === taskId);
+          
+          if (task) {
+            newBoards[sourceBoard].items = newBoards[sourceBoard].items.filter(
+              item => item._id !== taskId
+            );
+            
+            // Insert at the specific position in the target board
+            const newItems = [...newBoards[targetBoard].items];
+            newItems.splice(dropIndex, 0, {
+              ...task,
+              status: targetBoard
+            });
+            
+            newBoards[targetBoard].items = newItems;
+          }
+          
+          return newBoards;
+        });
+      }
     } catch (err) {
-      console.error('Error updating task status:', err);
-      setError('Failed to update task status');
+      console.error('Error updating task:', err);
+      setError('Failed to update task');
     }
   };
 
@@ -292,52 +352,6 @@ const KanbanBoard = () => {
     }));
   };
 
-  // Add board drag handlers
-  const handleBoardDragStart = (e, boardId) => {
-    setIsDraggingBoard(true);
-    setDraggedBoardId(boardId);
-    e.dataTransfer.setData('boardId', boardId);
-    e.currentTarget.classList.add('dragging-board');
-  };
-
-  const handleBoardDragEnd = (e) => {
-    setIsDraggingBoard(false);
-    setDraggedBoardId(null);
-    e.currentTarget.classList.remove('dragging-board');
-  };
-
-  const handleBoardDragOver = (e) => {
-    e.preventDefault();
-    const draggedOverBoard = e.currentTarget;
-    if (draggedOverBoard.classList.contains('kanban-column')) {
-      draggedOverBoard.classList.add('board-drag-over');
-    }
-  };
-
-  const handleBoardDragLeave = (e) => {
-    e.currentTarget.classList.remove('board-drag-over');
-  };
-
-  const handleBoardDrop = (e, targetBoardId) => {
-    e.preventDefault();
-    e.currentTarget.classList.remove('board-drag-over');
-    
-    const sourceBoardId = e.dataTransfer.getData('boardId');
-    if (sourceBoardId === targetBoardId) return;
-
-    setBoards(prev => {
-      const boardEntries = Object.entries(prev);
-      const sourceIndex = boardEntries.findIndex(([id]) => id === sourceBoardId);
-      const targetIndex = boardEntries.findIndex(([id]) => id === targetBoardId);
-      
-      const newBoardEntries = [...boardEntries];
-      const [removed] = newBoardEntries.splice(sourceIndex, 1);
-      newBoardEntries.splice(targetIndex, 0, removed);
-      
-      return Object.fromEntries(newBoardEntries);
-    });
-  };
-
   if (loading) return <LoadingAnimation message="Loading your board..." />;
 
   if (error) return <div className="error-message">{error}</div>;
@@ -349,12 +363,6 @@ const KanbanBoard = () => {
     <div 
       key={boardId}
       className={`kanban-column ${board.compressed ? 'compressed' : ''}`}
-      draggable
-      onDragStart={(e) => handleBoardDragStart(e, boardId)}
-      onDragEnd={handleBoardDragEnd}
-      onDragOver={handleBoardDragOver}
-      onDragLeave={handleBoardDragLeave}
-      onDrop={(e) => handleBoardDrop(e, boardId)}
     >
       <div className="column-header">
         <div className="column-header-left">
@@ -370,47 +378,52 @@ const KanbanBoard = () => {
         </button>
       </div>
       {!board.compressed && (
-        <div className="task-list">
-        {board.items.map(task => (
-          <div
-            key={task._id}
-            className="issue-card"
-            draggable
-            onDragStart={(e) => handleDragStart(e, task._id, boardId)}
-            onDragEnd={handleDragEnd}
-            onClick={() => navigate(`/task/${task._id}`)}
-          >
-            <div className="issue-card__row issue-card__row--title">
-              <span className="issue-card__id">#{task.serialNumber}</span>
-              <h3>{task.title}</h3>
-            </div>
-            {project?.projectType === 'collaborative' && task.assignee && (
-              <div className="issue-card__row issue-card__row--assignee">
-                <div className="issue-card__assignee">
-                  <i className="fas fa-user"></i>
-                  <span>{task.assignee?.username || task.assignee?.fullName}</span>
-                </div>
+        <div 
+          className="task-list"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={(e) => handleDrop(e, boardId)}
+        >
+          {board.items.map(task => (
+            <div
+              key={task._id}
+              className="issue-card"
+              draggable
+              onDragStart={(e) => handleDragStart(e, task._id, boardId)}
+              onDragEnd={handleDragEnd}
+              onClick={() => navigate(`/task/${task._id}`)}
+            >
+              <div className="issue-card__row issue-card__row--title">
+                <span className="issue-card__id">#{task.serialNumber}</span>
+                <h3>{task.title}</h3>
               </div>
-            )}
-            <div className="issue-card__row issue-card__row--meta">
-              <span className={`issue-card__type ${task.type && ['tech', 'review', 'bug', 'feature', 'documentation'].includes(task.type) ? `issue-card__type--${task.type}` : ''}`}>
-                {task.type === 'tech' ? 'Technical' :
-                 task.type === 'review' ? 'Review' :
-                 task.type === 'bug' ? 'Bug' :
-                 task.type === 'feature' ? 'Feature' :
-                 task.type === 'documentation' ? 'Documentation' :
-                 task.type ? task.type.charAt(0).toUpperCase() + task.type.slice(1) : 'Task'}
-              </span>
-              {task.deadline && (
-                <div className="issue-card__deadline">
-                  <i className="far fa-clock"></i>
-                  <span>{new Date(task.deadline).toLocaleDateString()}</span>
+              {project?.projectType === 'collaborative' && task.assignee && (
+                <div className="issue-card__row issue-card__row--assignee">
+                  <div className="issue-card__assignee">
+                    <i className="fas fa-user"></i>
+                    <span>{task.assignee?.username || task.assignee?.fullName}</span>
+                  </div>
                 </div>
               )}
+              <div className="issue-card__row issue-card__row--meta">
+                <span className={`issue-card__type ${task.type && ['tech', 'review', 'bug', 'feature', 'documentation'].includes(task.type) ? `issue-card__type--${task.type}` : ''}`}>
+                  {task.type === 'tech' ? 'Technical' :
+                   task.type === 'review' ? 'Review' :
+                   task.type === 'bug' ? 'Bug' :
+                   task.type === 'feature' ? 'Feature' :
+                   task.type === 'documentation' ? 'Documentation' :
+                   task.type ? task.type.charAt(0).toUpperCase() + task.type.slice(1) : 'Task'}
+                </span>
+                {task.deadline && (
+                  <div className="issue-card__deadline">
+                    <i className="far fa-clock"></i>
+                    <span>{new Date(task.deadline).toLocaleDateString()}</span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       )}
     </div>
   );
@@ -532,18 +545,38 @@ const KanbanBoard = () => {
             </div>
             <div className="modal-body">
               <form onSubmit={handleIssueFormSubmit} className="issue-form">
-                <div className="form-group">
-                  <label htmlFor="title">Title</label>
-                  <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={issueFormData.title}
-                    onChange={handleIssueFormChange}
-                    required
-                    className="form-control"
-                    placeholder="Enter issue title"
-                  />
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="title">Title</label>
+                    <input
+                      type="text"
+                      id="title"
+                      name="title"
+                      value={issueFormData.title}
+                      onChange={handleIssueFormChange}
+                      required
+                      className="form-control"
+                      placeholder="Enter issue title"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="type">Type</label>
+                    <select
+                      id="type"
+                      name="type"
+                      value={showCustomType ? 'custom' : issueFormData.type}
+                      onChange={handleIssueFormChange}
+                      className="form-control"
+                    >
+                      <option value="tech">Technical</option>
+                      <option value="review">Review</option>
+                      <option value="bug">Bug</option>
+                      <option value="feature">Feature</option>
+                      <option value="documentation">Documentation</option>
+                      <option value="custom">Custom Type</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className="form-group">
@@ -554,30 +587,51 @@ const KanbanBoard = () => {
                     value={issueFormData.description}
                     onChange={handleIssueFormChange}
                     className="form-control"
-                    rows="3"
+                    rows="2"
                     placeholder="Enter issue description"
                   />
                 </div>
 
-                <div className="form-group">
-                  <label htmlFor="type">Type</label>
-                  <select
-                    id="type"
-                    name="type"
-                    value={showCustomType ? 'custom' : issueFormData.type}
-                    onChange={handleIssueFormChange}
-                    className="form-control"
-                  >
-                    <option value="tech">Technical</option>
-                    <option value="review">Review</option>
-                    <option value="bug">Bug</option>
-                    <option value="feature">Feature</option>
-                    <option value="documentation">Documentation</option>
-                    <option value="custom">Custom Type</option>
-                  </select>
-                  {showCustomType && (
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="status">Status</label>
+                    <select
+                      id="status"
+                      name="status"
+                      value={issueFormData.status}
+                      onChange={handleIssueFormChange}
+                      className="form-control"
+                    >
+                      <option value="todo">To Do</option>
+                      <option value="doing">Doing</option>
+                      <option value="done">Done</option>
+                      {project?.customBoards?.map(board => (
+                        <option key={board.id} value={board.id}>
+                          {board.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="deadline">Deadline</label>
+                    <input
+                      type="date"
+                      id="deadline"
+                      name="deadline"
+                      value={issueFormData.deadline}
+                      onChange={handleIssueFormChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+
+                {showCustomType && (
+                  <div className="form-group">
+                    <label htmlFor="customType">Custom Type</label>
                     <input
                       type="text"
+                      id="customType"
                       name="customType"
                       value={issueFormData.customType}
                       onChange={handleIssueFormChange}
@@ -585,8 +639,8 @@ const KanbanBoard = () => {
                       placeholder="Enter custom issue type"
                       required
                     />
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {project?.projectType === 'collaborative' && (
                   <div className="form-group">
@@ -607,38 +661,6 @@ const KanbanBoard = () => {
                     </select>
                   </div>
                 )}
-
-                <div className="form-group">
-                  <label htmlFor="status">Status</label>
-                  <select
-                    id="status"
-                    name="status"
-                    value={issueFormData.status}
-                    onChange={handleIssueFormChange}
-                    className="form-control"
-                  >
-                    <option value="todo">To Do</option>
-                    <option value="doing">Doing</option>
-                    <option value="done">Done</option>
-                    {project?.customBoards?.map(board => (
-                      <option key={board.id} value={board.id}>
-                        {board.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
-                  <label htmlFor="deadline">Deadline</label>
-                  <input
-                    type="date"
-                    id="deadline"
-                    name="deadline"
-                    value={issueFormData.deadline}
-                    onChange={handleIssueFormChange}
-                    className="form-control"
-                  />
-                </div>
 
                 <div className="modal-actions">
                   <button type="submit" className="btn btn-primary">

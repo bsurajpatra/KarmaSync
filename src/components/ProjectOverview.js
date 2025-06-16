@@ -7,6 +7,8 @@ import LoadingAnimation from './LoadingAnimation';
 import '../styles/ProjectOverview.css';
 import Footer from './Footer';
 import { searchUsers } from '../api/userApi';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
 
 const ROLE_TYPES = {
   MANAGER: 'manager',
@@ -48,6 +50,8 @@ const ProjectOverview = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [searchLoading, setSearchLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const { user } = useAuth();
+  const [showRemoveModal, setShowRemoveModal] = useState(false);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658'];
 
@@ -343,24 +347,28 @@ const ProjectOverview = () => {
     }
   };
 
-  const handleRemoveCollaborator = async (collaboratorId) => {
+  const handleRemoveCollaborator = async () => {
+    if (!removingCollaborator) return;
+    
     try {
-      const updatedCollaborators = project.collaborators
-        .filter(collab => collab.userId._id !== collaboratorId)
-        .map(collab => ({
-          userId: collab.userId._id,
-          role: collab.role
-        }));
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/projects/${id}/collaborators/remove`,
+        { collaboratorId: removingCollaborator.userId._id },
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
       
-      const updatedProject = await updateProject(id, {
-        collaborators: updatedCollaborators
-      });
-      
-      setProject(updatedProject);
+      setProject(response.data.project);
       setRemovingCollaborator(null);
-    } catch (err) {
-      console.error('Error removing collaborator:', err);
-      setError(err.message || 'Failed to remove collaborator');
+      setShowRemoveModal(false);
+      setError('');
+    } catch (error) {
+      console.error('Error removing collaborator:', error);
+      setError(error.response?.data?.message || 'Error removing collaborator');
+      setShowRemoveModal(false);
     }
   };
 
@@ -400,6 +408,66 @@ const ProjectOverview = () => {
       </div>
     </div>
   );
+
+  // Sort collaborators: current user first, then managers, then developers
+  const getSortedCollaborators = () => {
+    if (!project?.collaborators) {
+      console.log('No collaborators data available');
+      return [];
+    }
+    
+    if (!user?._id) {
+      console.log('User data not loaded yet, returning unsorted list');
+      return project.collaborators;
+    }
+    
+    console.log('Current user:', user);
+    console.log('All collaborators:', project.collaborators);
+    
+    const sorted = [...project.collaborators].sort((a, b) => {
+      // Current user always comes first
+      if (a.userId._id.toString() === user._id.toString()) return -1;
+      if (b.userId._id.toString() === user._id.toString()) return 1;
+      
+      // Then sort by role (managers before developers)
+      if (a.role === 'manager' && b.role !== 'manager') return -1;
+      if (a.role !== 'manager' && b.role === 'manager') return 1;
+      
+      // If both are managers or both are developers, sort by name
+      return (a.userId.fullName || a.userId.username).localeCompare(b.userId.fullName || b.userId.username);
+    });
+    
+    console.log('Sorted result:', sorted);
+    return sorted;
+  };
+
+  // Check if user can remove a collaborator
+  const canRemoveCollaborator = (collaborator) => {
+    if (!project?.collaborators || !user?._id) {
+      console.log('No project or user data available');
+      return false;
+    }
+    
+    // User cannot remove themselves
+    if (collaborator.userId._id.toString() === user._id.toString()) {
+      console.log('Cannot remove self');
+      return false;
+    }
+    
+    // User cannot remove the project creator
+    if (collaborator.userId._id.toString() === project.createdBy._id.toString()) {
+      console.log('Cannot remove project creator');
+      return false;
+    }
+    
+    // Check if current user is a manager
+    const currentUserRole = project.collaborators.find(
+      c => c.userId._id.toString() === user._id.toString()
+    )?.role;
+    
+    console.log('Current user role:', currentUserRole);
+    return currentUserRole === 'manager';
+  };
 
   if (loading) return <LoadingAnimation message="Loading project details..." />;
 
@@ -616,43 +684,30 @@ const ProjectOverview = () => {
             <div className="collaborators-list">
               <div className="collaborators-header">
                 <div className="collab-name">Name</div>
+                <div className="collab-username">Username</div>
                 <div className="collab-email">Email</div>
                 <div className="collab-role">Role</div>
-                <div className="collab-actions">Actions</div>
               </div>
-              {project.collaborators.map((collab) => (
-                <div key={collab.userId._id} className="collaborator-item">
+              {getSortedCollaborators().map((collaborator) => (
+                <div key={collaborator.userId._id} className="collaborator-item">
                   <div className="collab-name">
                     <i className="fas fa-user"></i>
-                    <span>{collab.userId.fullName || collab.userId.username}</span>
+                    <span>{collaborator.userId.fullName || 'N/A'}</span>
+                  </div>
+                  <div className="collab-username">
+                    <i className="fas fa-at"></i>
+                    <span>{collaborator.userId.username || 'N/A'}</span>
                   </div>
                   <div className="collab-email">
                     <i className="fas fa-envelope"></i>
-                    <span>{collab.userId.email}</span>
+                    <span>{collaborator.userId.email}</span>
                   </div>
-                  <div className={`collab-role ${collab.role}`}>
-                    <i className={`fas ${collab.role === 'manager' ? 'fa-user-tie' : 'fa-code'}`}></i>
-                    <span>{collab.role === 'manager' ? 'Project Manager' : 'Developer'}</span>
-                  </div>
-                  <div className="collab-actions">
-                    {collab.userId._id !== project.createdBy._id && (
-                      <button
-                        className="btn-remove-collaborator"
-                        onClick={() => setRemovingCollaborator(collab)}
-                      >
-                        <i className="fas fa-user-minus"></i>
-                        <span>Remove</span>
-                      </button>
-                    )}
+                  <div className={`collab-role ${collaborator.role}`}>
+                    <i className={`fas ${collaborator.role === 'manager' ? 'fa-user-tie' : 'fa-code'}`}></i>
+                    <span>{collaborator.role === 'manager' ? 'Project Manager' : 'Developer'}</span>
                   </div>
                 </div>
               ))}
-              <div className="add-collaborator-section">
-                <button className="btn-add-collaborator" onClick={() => setShowAddCollaborator(true)}>
-                  <i className="fas fa-user-plus"></i>
-                  <span>Add Collaborator</span>
-                </button>
-              </div>
             </div>
           </div>
         )}
@@ -738,7 +793,7 @@ const ProjectOverview = () => {
 
       {showAddIssueModal && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content issue-modal">
             <div className="modal-header">
               <h2>Add New Issue</h2>
               <button 
@@ -762,6 +817,7 @@ const ProjectOverview = () => {
             </div>
             <div className="modal-body">
               <form onSubmit={handleIssueFormSubmit} className="issue-form">
+                <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="title">Title</label>
                   <input
@@ -775,20 +831,6 @@ const ProjectOverview = () => {
                     placeholder="Enter issue title"
                   />
                 </div>
-
-                <div className="form-group">
-                  <label htmlFor="description">Description</label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={issueFormData.description}
-                    onChange={handleIssueFormChange}
-                    className="form-control"
-                    rows="1"
-                    placeholder="Enter issue description"
-                  />
-                </div>
-
                 <div className="form-group">
                   <label htmlFor="type">Type</label>
                   <select
@@ -805,39 +847,25 @@ const ProjectOverview = () => {
                     <option value="documentation">Documentation</option>
                     <option value="custom">Custom Type</option>
                   </select>
-                  {showCustomType && (
-                    <input
-                      type="text"
-                      name="customType"
-                      value={issueFormData.customType}
-                      onChange={handleIssueFormChange}
-                      className="form-control custom-type-input"
-                      placeholder="Enter custom issue type"
-                      required
-                    />
-                  )}
+                  </div>
                 </div>
 
-                {project.projectType === 'collaborative' && (
+                <div className="form-row">
                   <div className="form-group">
-                    <label htmlFor="assignee">Assignee</label>
-                    <select
-                      id="assignee"
-                      name="assignee"
-                      value={issueFormData.assignee}
+                    <label htmlFor="description">Description</label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={issueFormData.description}
                       onChange={handleIssueFormChange}
                       className="form-control"
-                    >
-                      <option value="">Select Assignee</option>
-                      {project.collaborators.map((collab) => (
-                        <option key={collab.userId._id} value={collab.userId._id}>
-                          {collab.userId.username}
-                        </option>
-                      ))}
-                    </select>
+                      rows="2"
+                      placeholder="Enter issue description"
+                    />
                   </div>
-                )}
+                </div>
 
+                <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="status">Status</label>
                   <select
@@ -857,7 +885,6 @@ const ProjectOverview = () => {
                     ))}
                   </select>
                 </div>
-
                 <div className="form-group">
                   <label htmlFor="deadline">Deadline</label>
                   <input
@@ -868,7 +895,47 @@ const ProjectOverview = () => {
                     onChange={handleIssueFormChange}
                     className="form-control"
                   />
+                  </div>
                 </div>
+
+                {project.projectType === 'collaborative' && (
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="assignee">Assignee</label>
+                      <select
+                        id="assignee"
+                        name="assignee"
+                        value={issueFormData.assignee}
+                        onChange={handleIssueFormChange}
+                        className="form-control"
+                      >
+                        <option value="">Select Assignee</option>
+                        {project.collaborators.map((collab) => (
+                          <option key={collab.userId._id} value={collab.userId._id}>
+                            {collab.userId.username}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {showCustomType && (
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="customType">Custom Type</label>
+                      <input
+                        type="text"
+                        name="customType"
+                        value={issueFormData.customType}
+                        onChange={handleIssueFormChange}
+                        className="form-control custom-type-input"
+                        placeholder="Enter custom issue type"
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="modal-actions">
                   <button type="submit" className="btn btn-primary">
@@ -900,34 +967,28 @@ const ProjectOverview = () => {
         </div>
       )}
 
-      {removingCollaborator && (
+      {showRemoveModal && removingCollaborator && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <div className="modal-header">
-              <h2>Remove Collaborator</h2>
-              <button 
-                className="modal-close"
-                onClick={() => setRemovingCollaborator(null)}
-              >
-                ×
-              </button>
-            </div>
-            <div className="modal-body">
-              <p>Are you sure you want to remove this collaborator from the project?</p>
-              <p className="warning-text">This action cannot be undone.</p>
-            </div>
+            <h3>Remove Collaborator</h3>
+            <p>
+              Are you sure you want to remove {removingCollaborator.userId.fullName || removingCollaborator.userId.username} from this project?
+            </p>
             <div className="modal-actions">
               <button 
-                className="btn btn-secondary"
-                onClick={() => setRemovingCollaborator(null)}
-              >
-                Cancel
-              </button>
-              <button 
-                className="btn btn-danger"
-                onClick={() => handleRemoveCollaborator(removingCollaborator.userId._id)}
+                className="remove-collab-confirm-btn"
+                onClick={handleRemoveCollaborator}
               >
                 Remove Collaborator
+              </button>
+              <button 
+                className="cancel-btn"
+                onClick={() => {
+                  setShowRemoveModal(false);
+                  setRemovingCollaborator(null);
+                }}
+              >
+                Cancel
               </button>
             </div>
           </div>

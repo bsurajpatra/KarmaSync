@@ -232,7 +232,7 @@ const TaskList = () => {
 
       {showAddIssueModal && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content issue-modal">
             <div className="modal-header">
               <h2>Add New Issue</h2>
               <button 
@@ -244,6 +244,7 @@ const TaskList = () => {
             </div>
             <div className="modal-body">
               <form onSubmit={handleIssueFormSubmit} className="issue-form">
+                <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="title">Title</label>
                   <input
@@ -257,20 +258,6 @@ const TaskList = () => {
                     placeholder="Enter issue title"
                   />
                 </div>
-
-                <div className="form-group">
-                  <label htmlFor="description">Description</label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    value={issueFormData.description}
-                    onChange={handleIssueFormChange}
-                    className="form-control"
-                    rows="3"
-                    placeholder="Enter issue description"
-                  />
-                </div>
-
                 <div className="form-group">
                   <label htmlFor="type">Type</label>
                   <select
@@ -287,39 +274,25 @@ const TaskList = () => {
                     <option value="documentation">Documentation</option>
                     <option value="custom">Custom Type</option>
                   </select>
-                  {showCustomType && (
-                    <input
-                      type="text"
-                      name="customType"
-                      value={issueFormData.customType}
-                      onChange={handleIssueFormChange}
-                      className="form-control custom-type-input"
-                      placeholder="Enter custom issue type"
-                      required
-                    />
-                  )}
+                  </div>
                 </div>
 
-                {project?.projectType === 'collaborative' && (
+                <div className="form-row">
                   <div className="form-group">
-                    <label htmlFor="assignee">Assignee</label>
-                    <select
-                      id="assignee"
-                      name="assignee"
-                      value={issueFormData.assignee}
+                    <label htmlFor="description">Description</label>
+                    <textarea
+                      id="description"
+                      name="description"
+                      value={issueFormData.description}
                       onChange={handleIssueFormChange}
                       className="form-control"
-                    >
-                      <option value="">Select Assignee</option>
-                      {project.collaborators.map((collab) => (
-                        <option key={collab.userId._id} value={collab.userId._id}>
-                          {collab.userId.username}
-                        </option>
-                      ))}
-                    </select>
+                      rows="2"
+                      placeholder="Enter issue description"
+                    />
                   </div>
-                )}
+                </div>
 
+                <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="status">Status</label>
                   <select
@@ -334,7 +307,6 @@ const TaskList = () => {
                     <option value="done">Done</option>
                   </select>
                 </div>
-
                 <div className="form-group">
                   <label htmlFor="deadline">Deadline</label>
                   <input
@@ -346,6 +318,46 @@ const TaskList = () => {
                     className="form-control"
                   />
                 </div>
+                </div>
+
+                {project?.projectType === 'collaborative' && (
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="assignee">Assignee</label>
+                      <select
+                        id="assignee"
+                        name="assignee"
+                        value={issueFormData.assignee}
+                        onChange={handleIssueFormChange}
+                        className="form-control"
+                      >
+                        <option value="">Select Assignee</option>
+                        {project.collaborators.map((collab) => (
+                          <option key={collab.userId._id} value={collab.userId._id}>
+                            {collab.userId.username}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                )}
+
+                {showCustomType && (
+                  <div className="form-row">
+                    <div className="form-group">
+                      <label htmlFor="customType">Custom Type</label>
+                      <input
+                        type="text"
+                        name="customType"
+                        value={issueFormData.customType}
+                        onChange={handleIssueFormChange}
+                        className="form-control custom-type-input"
+                        placeholder="Enter custom issue type"
+                        required
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="modal-actions">
                   <button type="submit" className="btn btn-primary">

@@ -244,12 +244,11 @@
 .modal-content {
   background: #ffffff;
   color: #1e1e1e;
-  border-radius: 16px;
-  padding: 2rem;
+  border-radius: 8px;
   width: 90%;
   max-width: 600px;
   z-index: 1000;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   animation: fadeInScale 0.3s ease;
 }
 
@@ -264,79 +263,165 @@
   }
 }
 
-.modal-header {
+.issue-modal .modal-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px 8px 0 0;
 }
 
-.modal-header h2 {
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: #1e1e1e;
+.issue-modal .modal-header h2 {
+  font-size: 1.25rem;
   margin: 0;
+  color: #333;
+  font-weight: 600;
 }
 
-.modal-close {
-  background: transparent;
+.issue-modal .modal-close {
+  background: none;
   border: none;
   font-size: 1.5rem;
-  color: #999;
+  color: #666;
   cursor: pointer;
-  transition: color 0.2s ease;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: color 0.2s;
 }
 
-.modal-close:hover {
+.issue-modal .modal-close:hover {
   color: #333;
 }
 
-/* Form Styles */
+.issue-modal .modal-body {
+  padding: 1rem;
+}
+
 .issue-form {
   display: flex;
   flex-direction: column;
-  gap: 1.2rem;
+  gap: 0.75rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-row:has(.form-group:only-child) {
+  grid-template-columns: 1fr;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.25rem;
 }
 
 .form-group label {
-  font-weight: 600;
-  color: #333;
-  font-size: 0.9rem;
-}
-
-.form-control {
-  padding: 0.6rem 0.8rem;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  transition: all 0.3s ease;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #00c853;
-  box-shadow: 0 0 0 2px rgba(0, 200, 83, 0.1);
-}
-
-.custom-type-input {
-  margin-top: 0.5rem;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 0.8rem;
-  margin-top: 0.8rem;
-}
-
-.modal-actions .btn {
-  padding: 0.6rem 1.2rem;
   font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.form-group .form-control {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  background: #fff;
+}
+
+.form-group .form-control:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+  outline: none;
+}
+
+.form-group textarea.form-control {
+  resize: vertical;
+  min-height: 50px;
+  max-height: 100px;
+  line-height: 1.4;
+}
+
+.form-group select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1em;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+.form-group select.form-control:hover {
+  border-color: #4a90e2;
+}
+
+.form-group input[type="date"].form-control {
+  cursor: pointer;
+}
+
+.form-group input[type="date"].form-control::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 0.25rem;
+  margin-right: -0.25rem;
+}
+
+.issue-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.issue-modal .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  min-width: 90px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.issue-modal .btn-primary {
+  background: #4a90e2;
+  color: white;
+  border: none;
+}
+
+.issue-modal .btn-primary:hover {
+  background: #357abd;
+  transform: translateY(-1px);
+}
+
+.issue-modal .btn-secondary {
+  background: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.issue-modal .btn-secondary:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
+}
+
+/* Custom Type Input Styles */
+.custom-type-input {
+  font-family: monospace;
+  letter-spacing: 0.5px;
 }
 
 /* Error Message */
@@ -416,5 +501,31 @@
   .task-meta {
     flex-direction: column;
     gap: 0.5rem;
+  }
+}
+
+/* Responsive styles for issue modal */
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .issue-modal {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .issue-modal .modal-header {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .issue-modal .modal-body {
+    padding: 0.75rem;
+  }
+
+  .issue-modal .btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    min-width: 80px;
   }
 }

@@ -90,8 +90,6 @@
   height: calc(100vh - 250px);
   position: relative;
   user-select: none;
-  cursor: grab;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .kanban-column.compressed {
@@ -118,24 +116,6 @@
 
 .kanban-column.compressed .task-list {
   display: none;
-}
-
-.kanban-column.dragging-over {
-  background: #f8f9fa;
-  border: 1px dashed #4a90e2;
-}
-
-.kanban-column.dragging-board {
-  cursor: grabbing;
-  opacity: 0.8;
-  transform: scale(1.02);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
-
-.kanban-column.board-drag-over {
-  border: 2px dashed #4a90e2;
-  background: rgba(74, 144, 226, 0.05);
 }
 
 /* Column Header */
@@ -235,25 +215,15 @@
   gap: 1rem;
   scrollbar-width: thin;
   scrollbar-color: #4a90e2 #f0f0f0;
+  min-height: 100px;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
-/* Custom Scrollbar Styles */
-.task-list::-webkit-scrollbar {
-  width: 8px;
-}
-
-.task-list::-webkit-scrollbar-track {
-  background: #f0f0f0;
-  border-radius: 4px;
-}
-
-.task-list::-webkit-scrollbar-thumb {
-  background: #4a90e2;
-  border-radius: 4px;
-}
-
-.task-list::-webkit-scrollbar-thumb:hover {
-  background: #357abd;
+.task-list.dragging-over {
+  background-color: rgba(74, 144, 226, 0.1);
+  border: 2px dashed #4a90e2;
+  border-radius: 8px;
 }
 
 /* Issue Card */
@@ -270,16 +240,44 @@
   flex-direction: column;
   gap: 0.8rem;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  user-select: none;
+  position: relative;
 }
 
 .issue-card:hover {
   border-color: #4a90e2;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .issue-card.dragging {
   cursor: grabbing;
   opacity: 0.8;
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  background: #f8f9fa;
+}
+
+.issue-card.dragging * {
+  pointer-events: none;
+}
+
+/* Add a placeholder for the dragged card */
+.task-list.dragging-over::after {
+  content: '';
+  height: 2px;
+  background: #4a90e2;
+  margin: 0.5rem 0;
+  border-radius: 2px;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
 }
 
 .issue-card__row {
@@ -557,4 +555,232 @@
 
 .add-board-form button:hover {
   background: #357abd;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-content {
+  background: #ffffff;
+  color: #1e1e1e;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 80vh;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  animation: fadeInScale 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-header h2 {
+  font-size: 1.25rem;
+  margin: 0;
+  color: #333;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: #666;
+  cursor: pointer;
+  padding: 0.25rem;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-body {
+  padding: 1rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.issue-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-row:has(.form-group:only-child) {
+  grid-template-columns: 1fr;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.form-group label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #555;
+  margin-bottom: 0.25rem;
+}
+
+.form-group .form-control {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  background: #fff;
+}
+
+.form-group .form-control:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+  outline: none;
+}
+
+.form-group textarea.form-control {
+  resize: vertical;
+  min-height: 40px;
+  max-height: 60px;
+  line-height: 1.4;
+}
+
+.form-group select.form-control {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1em;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+.form-group select.form-control:hover {
+  border-color: #4a90e2;
+}
+
+.form-group input[type="date"].form-control {
+  cursor: pointer;
+}
+
+.form-group input[type="date"].form-control::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  padding: 0.25rem;
+  margin-right: -0.25rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e0e0e0;
+}
+
+.modal-actions .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  min-width: 90px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.modal-actions .btn-primary {
+  background: #4a90e2;
+  color: white;
+  border: none;
+}
+
+.modal-actions .btn-primary:hover {
+  background: #357abd;
+  transform: translateY(-1px);
+}
+
+.modal-actions .btn-secondary {
+  background: #f8f9fa;
+  color: #333;
+  border: 1px solid #ddd;
+}
+
+.modal-actions .btn-secondary:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
+}
+
+/* Custom Type Input Styles */
+.custom-type-input {
+  font-family: monospace;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive styles for issue modal */
+@media (max-width: 640px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .modal-header {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .modal-body {
+    padding: 0.75rem;
+  }
+
+  .modal-actions .btn {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    min-width: 80px;
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
