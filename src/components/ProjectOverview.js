@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProjectById, updateProject, deleteProject, removeCollaborator, addCollaborator } from '../api/projectApi';
+import { getProjectById, updateProject, deleteProject, removeCollaborator, addCollaborator, leaveProject } from '../api/projectApi';
 import { getTasks, createTask } from '../api/taskApi';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import LoadingAnimation from './LoadingAnimation';
@@ -55,6 +55,7 @@ const ProjectOverview = () => {
   const [isAddingCollaborator, setIsAddingCollaborator] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658'];
 
@@ -526,6 +527,57 @@ const ProjectOverview = () => {
     setShowAddCollaborator(true);
   };
 
+  // Add leave project handler
+  const handleLeaveProject = async () => {
+    try {
+      await leaveProject(id);
+      navigate('/projects');
+    } catch (err) {
+      console.error('Error leaving project:', err);
+      setShowLeaveConfirm(false); // Close the leave confirmation modal first
+      setErrorMessage(err.message || 'Failed to leave project');
+      setShowErrorModal(true);
+    }
+  };
+
+  // Add Leave Confirmation Modal
+  const LeaveConfirmationModal = () => (
+    <div className="modal-overlay">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>Leave Project</h2>
+          <button 
+            className="modal-close"
+            onClick={() => setShowLeaveConfirm(false)}
+          >
+            ×
+          </button>
+        </div>
+        <div className="modal-body">
+          <p>Are you sure you want to leave this project?</p>
+          <p className="warning-text">You will no longer have access to this project. You can only rejoin if invited by a project manager.</p>
+          <div className="project-to-leave">
+            <strong>Project:</strong> {project?.title}
+          </div>
+        </div>
+        <div className="modal-actions">
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowLeaveConfirm(false)}
+          >
+            Cancel
+          </button>
+          <button 
+            className="btn btn-danger"
+            onClick={handleLeaveProject}
+          >
+            Leave Project
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
   if (loading) return <LoadingAnimation message="Loading project details..." />;
 
   if (error) return <div className="error-message">{error}</div>;
@@ -540,6 +592,7 @@ const ProjectOverview = () => {
       {showErrorModal && <ErrorModal />}
       {showDeleteConfirm && <DeleteConfirmationModal />}
       {showSelfRemoveModal && <SelfRemoveModal />}
+      {showLeaveConfirm && <LeaveConfirmationModal />}
       
       <div className="projects-header">
         <div className="projects-header-content">
@@ -851,16 +904,34 @@ const ProjectOverview = () => {
         <div className="project-overview-section project-danger-section">
           <h2>Danger Zone</h2>
           <div className="project-danger-content">
-            <div className="project-danger-info">
-              <h3>Delete this project</h3>
-              <p>Once you delete a project, there is no going back. Please be certain.</p>
+            <div className="project-danger-actions">
+              {project?.projectType === 'collaborative' && project?.currentUserRole && (
+                <div className="project-danger-action leave-action">
+                  <div className="project-danger-action-info">
+                    <h3>Leave this project</h3>
+                    <p>You will no longer have access to this project. You can only rejoin if invited by a project manager.</p>
+                  </div>
+                  <button 
+                    className="btn btn-warning"
+                    onClick={() => setShowLeaveConfirm(true)}
+                  >
+                    Leave Project
+                  </button>
+                </div>
+              )}
+              <div className="project-danger-action delete-action">
+                <div className="project-danger-action-info">
+                  <h3>Delete this project</h3>
+                  <p>Once you delete a project, there is no going back. Please be certain.</p>
+                </div>
+                <button 
+                  className="btn btn-danger"
+                  onClick={handleDeleteClick}
+                >
+                  Delete Project
+                </button>
+              </div>
             </div>
-            <button 
-              className="btn btn-danger"
-              onClick={handleDeleteClick}
-            >
-              Delete Project
-            </button>
           </div>
         </div>
       </div>

@@ -159,4 +159,21 @@ export const addCollaborator = async (projectId, collaboratorData) => {
     }
     throw { message: 'Error adding collaborator' };
   }
+};
+
+export const leaveProject = async (projectId) => {
+  try {
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/api/projects/${projectId}/leave`,
+      {},
+      {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error.response?.data || error.message;
+  }
 }; 

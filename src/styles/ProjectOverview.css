@@ -303,53 +303,106 @@
 
 /* Danger Zone Styles */
 .project-danger-section {
-  border-color: rgba(255, 0, 0, 0.3);
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-  width: 100% !important;
-  margin-left: auto !important;
-  margin-right: auto !important;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.5rem;
 }
 
 .project-danger-section h2 {
-  color: #ff4444;
-  font-size: 1.8rem;
+  color: #1f2937;
+  font-size: 1.5rem;
+  font-weight: 600;
   margin-bottom: 1.5rem;
 }
 
 .project-danger-content {
+  width: 100%;
+}
+
+.project-danger-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.project-danger-action {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
-  background: rgba(255, 0, 0, 0.1);
-  border-radius: 15px;
-  width: 100%;
-  min-height: 100px;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  transition: all 0.2s ease;
 }
 
-.project-danger-info {
+.project-danger-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.leave-action {
+  border-left: 4px solid #f59e0b;
+}
+
+.delete-action {
+  border-left: 4px solid #ef4444;
+}
+
+.project-danger-action-info {
   flex: 1;
-  max-width: 70%;
+  padding-right: 1rem;
 }
 
-.project-danger-info h3 {
-  color: #ff4444;
-  margin: 0 0 0.75rem 0;
-  font-size: 1.4rem;
+.project-danger-action-info h3 {
+  color: #1f2937;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }
 
-.project-danger-info p {
-  color: rgba(255, 255, 255, 0.9);
+.project-danger-action-info p {
+  color: #6b7280;
+  font-size: 0.875rem;
   margin: 0;
-  font-size: 1.1rem;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
-.project-danger-section .btn-danger {
-  min-width: 150px;
-  margin-left: 2rem;
-  padding: 0.8rem 1.5rem;
+.btn-warning {
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  text-align: center;
+}
+
+.btn-warning:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}
+
+.btn-danger {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  text-align: center;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+  transform: translateY(-1px);
 }
 
 /* Form Styles */
@@ -449,11 +502,6 @@
 .btn-secondary {
   background: #e0e0e0;
   color: #333;
-}
-
-.btn-danger {
-  background: #d32f2f;
-  color: white;
 }
 
 .btn:hover {
@@ -1916,4 +1964,52 @@
 
 .error-modal {
   animation: errorShake 0.5s ease-in-out;
+}
+
+.btn-warning {
+  background-color: #f59e0b;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-warning:hover {
+  background-color: #d97706;
+  transform: translateY(-1px);
+}
+
+.project-danger-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  background-color: #fff;
+}
+
+.project-danger-action:last-child {
+  margin-bottom: 0;
+}
+
+.project-danger-action-info {
+  flex: 1;
+}
+
+.project-danger-action-info h3 {
+  color: #1f2937;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.project-danger-action-info p {
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
 }
