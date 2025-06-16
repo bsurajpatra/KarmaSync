@@ -5,6 +5,7 @@ import config from '../config';
 import LoadingAnimation from './LoadingAnimation';
 import { forgotPassword } from '../api/authApi';
 import Footer from './Footer';
+import '../styles/ForgotPassword.css';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -32,7 +33,11 @@ const ForgotPassword = () => {
       console.error('Error status:', error.response?.status);
       console.error('Error message:', error.message);
       
-      setError(error.response?.data?.message || 'Failed to process request. Please try again.');
+      if (error.response?.status === 404) {
+        setError('Account does not exist. Please create an account.');
+      } else {
+        setError(error.response?.data?.message || 'Failed to process request. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -41,32 +46,31 @@ const ForgotPassword = () => {
   if (loading) return <LoadingAnimation message="Processing your request..." />;
 
   return (
-    <div className="auth-container">
-      <div className="auth-logo-section">
-      <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
-      <div className="auth-logo-text">KarmaSync</div>
+    <div className="forgot-container">
+      <div className="forgot-logo-section">
+        <img src="/logo.png" alt="KarmaSync Logo" className="forgot-logo" />
+        <div className="forgot-logo-text">KarmaSync</div>
       </div>
-      <div className="auth-content">
-        <div className="auth-card">
-          <div className="auth-header">
+      <div className="forgot-content">
+        <div className="forgot-card">
+          <div className="forgot-header">
             <h2>Forgot Password</h2>
-            <p className="auth-subtitle">Enter your email to reset your password</p>
+            <p className="forgot-subtitle">Enter your email to reset your password</p>
           </div>
           
-          {error && <div className="auth-error">{error}</div>}
+          {error && <div className="forgot-message error">{error}</div>}
           {success && (
-            <div className="auth-success">
-              Password reset instructions have been sent to your email.
-              Please check your spam folder if you don't see the email in your inbox
+            <div className="forgot-message success">
+              Password reset link sent to your mail, and please check your spam folder if you don't see the email in your inbox
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="auth-form">
+          <form onSubmit={handleSubmit} className="forgot-form">
             <div className="form-group">
               <input
                 type="email"
                 required
-                className="auth-input"
+                className="forgot-input"
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -75,21 +79,21 @@ const ForgotPassword = () => {
             
             <button 
               type="submit" 
-              className="auth-button"
+              className="forgot-button"
               disabled={loading}
             >
               {loading ? 'Sending...' : 'Reset Password'}
             </button>
           </form>
           
-          <div className="auth-footer">
+          <div className="forgot-footer">
             <p>
               Remember your password?{' '}
-              <Link to="/login" className="auth-link">
+              <Link to="/login" className="forgot-link">
                 Login
               </Link>
             </p>
-            <Link to="/" className="auth-link back-link">
+            <Link to="/" className="forgot-link forgot-back-link">
               Back to Home
             </Link>
           </div>

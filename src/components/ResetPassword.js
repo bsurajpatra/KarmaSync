@@ -6,6 +6,7 @@ import config from '../config';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import LoadingAnimation from './LoadingAnimation';
 import Footer from './Footer';
+import '../styles/ResetPassword.css';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
@@ -64,7 +65,11 @@ const ResetPassword = () => {
       }, 3000);
     } catch (error) {
       console.error('Reset password error:', error);
-      setError(error.response?.data?.message || 'Error resetting password');
+      if (error.response?.status === 400 && error.response?.data?.message?.includes('same as old password')) {
+        setError('New password cannot be the same as your old password');
+      } else {
+        setError(error.response?.data?.message || 'Error resetting password');
+      }
     } finally {
       setLoading(false);
     }
@@ -72,15 +77,15 @@ const ResetPassword = () => {
 
   if (!token) {
     return (
-      <div className="auth-container">
-        <div className="auth-content">
-          <div className="auth-card">
-            <div className="auth-error">Invalid reset token</div>
-            <div className="auth-footer">
-              <Link to="/forgot-password" className="auth-link">
+      <div className="reset-container">
+        <div className="reset-content">
+          <div className="reset-card">
+            <div className="reset-message error">Invalid reset token</div>
+            <div className="reset-footer">
+              <Link to="/forgot-password" className="reset-link">
                 Request a new password reset
               </Link>
-              <Link to="/login" className="auth-link">
+              <Link to="/login" className="reset-link">
                 Back to Login
               </Link>
             </div>
@@ -93,32 +98,32 @@ const ResetPassword = () => {
   if (loading) return <LoadingAnimation message="Resetting your password..." />;
 
   return (
-    <div className="auth-container">
-      <div className="auth-logo-section">
-      <img src="/logo.png" alt="KarmaSync Logo" className="auth-logo" />
-      <div className="auth-logo-text">KarmaSync</div>
+    <div className="reset-container">
+      <div className="reset-logo-section">
+        <img src="/logo.png" alt="KarmaSync Logo" className="reset-logo" />
+        <div className="reset-logo-text">KarmaSync</div>
       </div>
-      <div className="auth-content">
-        <div className="auth-card">
-          <div className="auth-header">
+      <div className="reset-content">
+        <div className="reset-card">
+          <div className="reset-header">
             <h2>Reset Password</h2>
-            <p className="auth-subtitle">Enter your new password</p>
+            <p className="reset-subtitle">Enter your new password</p>
           </div>
           
-          {error && <div className="auth-error">{error}</div>}
+          {error && <div className="reset-message error">{error}</div>}
           {success && (
-            <div className="auth-success">
-              Password reset successful! Redirecting to login...
+            <div className="reset-message success">
+              Password reset successful, redirecting to login
             </div>
           )}
           
-          <form onSubmit={handleSubmit} className="auth-form">
+          <form onSubmit={handleSubmit} className="reset-form">
             <div className="form-group password-group">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 required
-                className="auth-input"
+                className="reset-input"
                 placeholder="New Password"
                 value={formData.password}
                 onChange={handleChange}
@@ -137,7 +142,7 @@ const ResetPassword = () => {
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
                 required
-                className="auth-input"
+                className="reset-input"
                 placeholder="Confirm New Password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
@@ -153,18 +158,18 @@ const ResetPassword = () => {
             
             <button 
               type="submit" 
-              className="auth-button"
+              className="reset-button"
               disabled={loading || success}
             >
               {loading ? 'Resetting Password...' : 'Reset Password'}
             </button>
           </form>
           
-          <div className="auth-footer">
-            <Link to="/login" className="auth-link">
+          <div className="reset-footer">
+            <Link to="/login" className="reset-link">
               Back to Login
             </Link>
-            <Link to="/" className="auth-link back-link">
+            <Link to="/" className="reset-link reset-back-link">
               Back to Home
             </Link>
           </div>
