@@ -42,10 +42,16 @@ const TaskList = () => {
   const fetchTasks = async () => {
     try {
       const data = await getTasks(projectId);
+      console.log('Fetched tasks data:', data);
       setTasks(data);
       setError('');
     } catch (err) {
       console.error('Error fetching tasks:', err);
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
       setError('Failed to load tasks');
     } finally {
       setLoading(false);
@@ -54,6 +60,7 @@ const TaskList = () => {
 
   const handleIssueFormChange = (e) => {
     const { name, value } = e.target;
+    console.log('Form field changed:', { name, value });
     
     if (name === 'type') {
       if (value === 'custom') {
@@ -77,6 +84,16 @@ const TaskList = () => {
         type: validatedValue,
         customType: validatedValue
       }));
+    } else if (name === 'assignee') {
+      console.log('Assignee changed to:', value);
+      setIssueFormData(prev => {
+        const newData = {
+          ...prev,
+          assignee: value || null
+        };
+        console.log('Updated form data:', newData);
+        return newData;
+      });
     } else {
       setIssueFormData(prev => ({
         ...prev,
@@ -88,13 +105,29 @@ const TaskList = () => {
   const handleIssueFormSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log('Form Data before submission:', issueFormData);
+      console.log('Selected assignee:', issueFormData.assignee);
+      
+      // Ensure we're sending the correct assignee data
       const taskData = {
-        ...issueFormData,
-        projectId
+        title: issueFormData.title,
+        description: issueFormData.description,
+        type: issueFormData.type,
+        status: issueFormData.status,
+        deadline: issueFormData.deadline,
+        projectId: projectId,
+        assignee: issueFormData.assignee || null
       };
+      
+      console.log('Task Data being sent to server:', taskData);
 
       const newIssue = await createTask(taskData);
-      setTasks(prev => [...prev, newIssue]);
+      console.log('Response from server after task creation:', newIssue);
+      
+      // Fetch the updated task list to ensure we have the correct assignee data
+      const updatedTasks = await getTasks(projectId);
+      console.log('Updated tasks after creation:', updatedTasks);
+      setTasks(updatedTasks);
       
       // Reset form and close modal
       setShowAddIssueModal(false);
@@ -111,6 +144,11 @@ const TaskList = () => {
       setError('');
     } catch (err) {
       console.error('Error creating issue:', err);
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
       setError(err.message || 'Failed to create issue');
     }
   };
@@ -177,56 +215,45 @@ const TaskList = () => {
         </div>
       ) : (
         <div className="tasks-list">
-          {tasks.map(task => (
-            <div 
-              key={task._id} 
-              className="task-item"
-              onClick={() => navigate(`/task/${task._id}`)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className="task-item-header">
-                <h3>
-                  <span className="task-id">#{task.serialNumber}</span>
-                  {task.title}
-                </h3>
-                <div className="task-badges">
-                  <span className={`task-status ${task.status}`}>
-                    {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+          {tasks.map(task => {
+            console.log('Rendering task:', task);
+            console.log('Task assignee:', task.assignee);
+            return (
+              <div 
+                key={task._id} 
+                className="task-item"
+                onClick={() => navigate(`/task/${task._id}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="task-item-header">
+                  <h3>
+                    <span className="task-id">#{task.serialNumber}</span>
+                    {task.title}
+                  </h3>
+                  <div className="task-badges">
+                    <span className={`task-status ${task.status}`}>
+                      {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                    </span>
+                  </div>
+                </div>
+                <div className="task-meta">
+                  <span className="task-date">
+                    Created: {new Date(task.createdAt).toLocaleDateString()}
                   </span>
+                  {task.deadline && (
+                    <span className="task-deadline">
+                      Deadline: {new Date(task.deadline).toLocaleDateString()}
+                    </span>
+                  )}
+                  {project?.projectType === 'collaborative' && task.assignee && (
+                    <span className="task-assignee">
+                      Assigned to: {task.assignee.username || task.assignee.fullName || 'Unassigned'}
+                    </span>
+                  )}
                 </div>
               </div>
-              <div className="task-meta">
-                <span className="task-date" style={{ 
-                  color: '#000000', 
-                  fontWeight: '800',
-                  fontSize: '1.2rem',
-                  background: 'transparent'
-                }}>
-                  Created: {new Date(task.createdAt).toLocaleDateString()}
-                </span>
-                {task.deadline && (
-                  <span className="task-deadline" style={{ 
-                    color: '#000000', 
-                    fontWeight: '800',
-                    fontSize: '1.2rem',
-                    background: 'transparent'
-                  }}>
-                    Deadline: {new Date(task.deadline).toLocaleDateString()}
-                  </span>
-                )}
-                {project?.projectType === 'collaborative' && task.assignee && (
-                  <span className="task-assignee" style={{ 
-                    color: '#000000', 
-                    fontWeight: '800',
-                    fontSize: '1.2rem',
-                    background: 'transparent'
-                  }}>
-                    Assigned to: {task.assignee.username}
-                  </span>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -332,11 +359,14 @@ const TaskList = () => {
                         className="form-control"
                       >
                         <option value="">Select Assignee</option>
-                        {project.collaborators.map((collab) => (
-                          <option key={collab.userId._id} value={collab.userId._id}>
-                            {collab.userId.username}
-                          </option>
-                        ))}
+                        {project.collaborators.map((collab) => {
+                          console.log('Collaborator:', collab);
+                          return (
+                            <option key={collab.userId._id} value={collab.userId._id}>
+                              {collab.userId.username}
+                            </option>
+                          );
+                        })}
                       </select>
                     </div>
                   </div>
