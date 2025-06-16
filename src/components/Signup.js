@@ -4,9 +4,9 @@ import { signup, checkUsername } from '../api/authApi';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import LoadingAnimation from './LoadingAnimation';
 import Footer from './Footer';
+import '../styles/Signup.css';
 
 const Signup = () => {
-  console.log('Signup component rendered');
   const [formData, setFormData] = useState({
     fullName: '',
     username: '',
@@ -37,8 +37,6 @@ const Signup = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log('Input changed:', { field: name, value });
-    
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -51,17 +49,12 @@ const Signup = () => {
   };
 
   const validateUsername = (username) => {
-    console.log('Validating username:', username);
     const regex = /^[a-zA-Z0-9_-]+$/;
     return regex.test(username);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submission started');
-    console.log('Form data:', formData);
-
-    // Reset errors
     setError('');
     setFieldErrors({});
 
@@ -89,15 +82,12 @@ const Signup = () => {
       errors.confirmPassword = 'Passwords do not match';
     }
 
-    console.log('Validation errors:', errors);
     if (Object.keys(errors).length > 0) {
-      console.log('Form validation failed');
       setFieldErrors(errors);
       return;
     }
 
     setLoading(true);
-    console.log('Starting signup process...');
 
     try {
       // Check username availability before proceeding with signup
@@ -117,31 +107,23 @@ const Signup = () => {
         email: formData.email,
         password: formData.password
       };
-      console.log('Signup request payload:', signupData);
 
       const response = await signup(signupData);
-      console.log('Signup response:', response);
-      
       setSuccess(true);
-      console.log('Setting success state to true');
 
-      console.log('Preparing to navigate to OTP verification');
-      const navigationData = {
-        state: { 
-          userData: {
-            email: formData.email,
-            username: formData.username
+      // Navigate to OTP verification after a short delay
+      setTimeout(() => {
+        navigate('/verify-otp', {
+          state: {
+            userData: {
+              email: formData.email,
+              username: formData.username
+            }
           }
-        }
-      };
-      console.log('Navigation data:', navigationData);
-
-      navigate('/verify-otp', navigationData);
-      console.log('Navigation triggered');
+        });
+      }, 1500);
 
     } catch (err) {
-      console.error('Signup error:', err);
-      
       if (err.message === 'Email already registered' || err.message === 'Username already exists') {
         setError('User with this email or username already exists, proceed to sign in');
       } else if (err.message) {
@@ -150,7 +132,6 @@ const Signup = () => {
         setError('An unexpected error occurred during signup');
       }
     } finally {
-      console.log('Signup process completed');
       setLoading(false);
     }
   };
@@ -187,9 +168,7 @@ const Signup = () => {
 
           {error && (
             <div className="signup-message error">
-              {error.includes('already exists') 
-                ? 'User with this email or username already exists, proceed to sign in' 
-                : error}
+              {error}
             </div>
           )}
           {success && (
