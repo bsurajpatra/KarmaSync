@@ -29,12 +29,20 @@ if (token) {
 // Login user
 export const login = async (credentials) => {
   try {
-    const response = await axios.post('/api/auth/login', credentials);
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/api/auth/login`,
+      credentials,
+      {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }
+    );
     const { token, user } = response.data;
     setAuthToken(token);
     return { user, token };
   } catch (error) {
-    throw error.response?.data || { message: 'Error logging in' };
+    throw error.response?.data || error.message;
   }
 };
 

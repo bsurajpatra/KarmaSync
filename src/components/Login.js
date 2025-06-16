@@ -8,7 +8,7 @@ import Footer from './Footer';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
+    identifier: '',
     password: ''
   });
   const [error, setError] = useState('');
@@ -44,15 +44,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      console.log('Attempting login with:', { email: formData.email });
+      console.log('Attempting login with:', { identifier: formData.identifier });
       const response = await loginApi(formData);
       console.log('Login successful:', response);
       
-      // Use the login function from AuthContext with both user data and token
       await authLogin(response.user, response.token);
       console.log('Login successful, redirecting to dashboard');
       
-      // Redirect to dashboard
       navigate('/dashboard');
     } catch (error) {
       console.error('Login error:', error);
@@ -97,12 +95,13 @@ const Login = () => {
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
               <input
-                type="email"
-                name="email"
+                type="text"
+                name="identifier"
                 className="auth-input"
-                placeholder="Email"
-                value={formData.email}
+                placeholder="Email or Username"
+                value={formData.identifier}
                 onChange={handleChange}
+                required
               />
             </div>
             
@@ -114,6 +113,7 @@ const Login = () => {
                 placeholder="Password"
                 value={formData.password}
                 onChange={handleChange}
+                required
               />
               <button
                 type="button"
