@@ -1,7 +1,14 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://karmasync-backend.vercel.app';
 
 const config = {
-    API_URL: API_BASE_URL
+    API_URL: API_BASE_URL,
+    API_CONFIG: {
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        mode: 'cors'
+    }
 };
  
 export { API_BASE_URL };

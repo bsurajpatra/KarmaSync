@@ -188,4 +188,19 @@ export const checkEmail = async (email) => {
   } catch (error) {
     throw error.response?.data || { message: 'Error checking email availability' };
   }
+};
+
+// Check server connection status
+export const checkServerStatus = async () => {
+  try {
+    const response = await fetch(`${config.API_URL}/api/health`, {
+      ...config.API_CONFIG,
+      method: 'GET'
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Server status check failed:', error);
+    throw new Error('Unable to connect to server');
+  }
 }; 
