@@ -288,7 +288,7 @@ const CreateCollaborativeProject = () => {
                 <p>Task execution and updates</p>
                 <ul>
                   <li>View and update task status</li>
-                  <li>Comment on assigned tasks</li>
+                  <li>Comment on any tasks tasks</li>
                   <li>Limited project access</li>
                 </ul>
               </button>
