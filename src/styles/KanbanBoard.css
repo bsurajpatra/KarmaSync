@@ -221,9 +221,12 @@
 }
 
 .task-list.dragging-over {
-  background-color: rgba(74, 144, 226, 0.1);
-  border: 2px dashed #4a90e2;
-  border-radius: 8px;
+  background-color: transparent;
+  border: none;
+}
+
+.task-list.dragging-over::after {
+  display: none;
 }
 
 /* Issue Card */
@@ -262,22 +265,6 @@
 
 .issue-card.dragging * {
   pointer-events: none;
-}
-
-/* Add a placeholder for the dragged card */
-.task-list.dragging-over::after {
-  content: '';
-  height: 2px;
-  background: #4a90e2;
-  margin: 0.5rem 0;
-  border-radius: 2px;
-  animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 0.5; }
-  50% { opacity: 1; }
-  100% { opacity: 0.5; }
 }
 
 .issue-card__row {
