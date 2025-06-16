@@ -111,7 +111,7 @@ export const updateCustomBoard = async (projectId, boardId, boardData) => {
 export const deleteCustomBoard = async (projectId, boardId) => {
   const response = await axios.delete(`${BASE_URL}/${projectId}/boards/${boardId}`);
   return response.data;
-};
+}; 
 
 // Remove collaborator from project
 export const removeCollaborator = async (projectId, collaboratorId) => {

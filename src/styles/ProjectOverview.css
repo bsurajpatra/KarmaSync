@@ -1503,12 +1503,12 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
-  }
+}
 
   .collab-actions {
     margin-left: 0;
     width: 100%;
-  }
+}
 
   .collab-actions .btn-danger {
     width: 100%;
@@ -1633,7 +1633,7 @@
   .collaborators-table {
     display: block;
     overflow-x: auto;
-    white-space: nowrap;
+  white-space: nowrap;
   }
   
   .collaborators-table th,

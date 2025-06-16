@@ -65,7 +65,7 @@ export const createTask = async (taskData) => {
 // Update task status
 export const updateTaskStatus = async (id, status) => {
   try {
-    console.log('Making PATCH request to /api/tasks/' + id + '/status with status:', status);
+    console.log('Making PATCH request to /api/tasks/' + id + ' with status:', status);
     const response = await axios.patch(`${BASE_URL}/${id}`, { status }, {
       headers: getAuthHeader()
     });

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTaskById, updateTask, deleteTask, addTaskComment } from '../api/taskApi';
+import { getTaskById, updateTask, deleteTask, addTaskComment, updateTaskStatus } from '../api/taskApi';
 import { getProjectById } from '../api/projectApi';
 import LoadingAnimation from './LoadingAnimation';
 import '../styles/TaskOverview.css';
@@ -26,6 +26,8 @@ const TaskOverview = () => {
     assignee: ''
   });
   const [showCustomType, setShowCustomType] = useState(false);
+  const [isEditingStatus, setIsEditingStatus] = useState(false);
+  const [newStatus, setNewStatus] = useState('');
 
   useEffect(() => {
     fetchTaskAndProject();
@@ -130,6 +132,18 @@ const TaskOverview = () => {
     } catch (err) {
       console.error('Error adding comment:', err);
       setError(err.message || 'Failed to add comment');
+    }
+  };
+
+  const handleStatusChange = async (newStatus) => {
+    try {
+      const updatedTask = await updateTaskStatus(taskId, newStatus);
+      setTask(updatedTask);
+      setIsEditingStatus(false);
+      setError('');
+    } catch (err) {
+      console.error('Error updating status:', err);
+      setError(err.message || 'Failed to update status');
     }
   };
 
@@ -264,27 +278,6 @@ const TaskOverview = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="status">Status</label>
-              <select
-                id="status"
-                name="status"
-                value={formData.status}
-                onChange={handleInputChange}
-                className="form-control"
-                required
-              >
-                <option value="todo">To Do</option>
-                <option value="doing">Doing</option>
-                <option value="done">Done</option>
-                {project?.customBoards?.map(board => (
-                  <option key={board.id} value={board.id}>
-                    {board.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group">
               <label htmlFor="deadline">Deadline</label>
               <input
                 type="date"
@@ -380,9 +373,53 @@ const TaskOverview = () => {
                   </div>
                   <div className="task-meta-item">
                     <span className="task-meta-label">Status:</span>
-                    <span className={`task-meta-value task-status ${task.status}`} style={{ color: '#FFFFFF' }}>
-                  {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                </span>
+                    {isEditingStatus ? (
+                      <div className="status-edit-container">
+                        <select
+                          value={newStatus}
+                          onChange={(e) => setNewStatus(e.target.value)}
+                          className="status-select"
+                        >
+                          <option value="todo">To Do</option>
+                          <option value="doing">Doing</option>
+                          <option value="done">Done</option>
+                          {project?.customBoards?.map(board => (
+                            <option key={board.id} value={board.id}>
+                              {board.name}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="status-edit-actions">
+                          <button 
+                            className="btn btn-sm btn-primary"
+                            onClick={() => handleStatusChange(newStatus)}
+                          >
+                            Set
+                          </button>
+                          <button 
+                            className="btn btn-sm btn-secondary"
+                            onClick={() => setIsEditingStatus(false)}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="status-display">
+                        <span className={`task-meta-value task-status ${task.status}`}>
+                          {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                        </span>
+                        <button 
+                          className="btn btn-sm btn-link"
+                          onClick={() => {
+                            setIsEditingStatus(true);
+                            setNewStatus(task.status);
+                          }}
+                        >
+                          Change
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

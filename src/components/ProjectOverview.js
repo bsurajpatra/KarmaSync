@@ -653,9 +653,9 @@ const ProjectOverview = () => {
               <h3>Project Type</h3>
               <p className="project-type">
                 {project && project.projectType ? (
-                  <span className={`project-type-badge ${project.projectType}`}>
-                    {project.projectType.charAt(0).toUpperCase() + project.projectType.slice(1)}
-                  </span>
+                <span className={`project-type-badge ${project.projectType}`}>
+                  {project.projectType.charAt(0).toUpperCase() + project.projectType.slice(1)}
+                </span>
                 ) : (
                   <span className="project-type-badge">Unknown</span>
                 )}
@@ -665,9 +665,9 @@ const ProjectOverview = () => {
               <h3>Project Status</h3>
               <p className="project-status">
                 {project && project.status ? (
-                  <span className={`status-badge ${project.status}`}>
-                    {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
-                  </span>
+                <span className={`status-badge ${project.status}`}>
+                  {project.status.charAt(0).toUpperCase() + project.status.slice(1)}
+                </span>
                 ) : (
                   <span className="status-badge">Unknown</span>
                 )}
@@ -717,7 +717,7 @@ const ProjectOverview = () => {
                         </span>
                       </td>
                     </tr>
-                  ))}
+              ))}
                 </tbody>
               </table>
             </div>
@@ -1169,7 +1169,7 @@ const ProjectOverview = () => {
                   )}
                 </div>
               )}
-            </div>
+                        </div>
           </div>
         </div>
       )}
@@ -1180,21 +1180,21 @@ const ProjectOverview = () => {
           <div className="modal-content nested">
             <div className="modal-header">
               <h2>Select Role for {selectedUser?.username}</h2>
-              <button 
+                              <button
                 className="modal-close"
-                onClick={() => {
+                                onClick={() => {
                   setShowRoleModal(false);
                   setSelectedUser(null);
-                }}
-              >
+                                }}
+                              >
                 ×
-              </button>
-            </div>
+                              </button>
+                        </div>
             <div className="modal-body">
               {isAddingCollaborator ? (
                 <div className="loading-container">
                   <LoadingAnimation message="Adding collaborator..." />
-                </div>
+                      </div>
               ) : (
                 <div className="role-options">
                   <button
