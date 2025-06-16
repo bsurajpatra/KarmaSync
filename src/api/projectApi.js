@@ -111,4 +111,28 @@ export const updateCustomBoard = async (projectId, boardId, boardData) => {
 export const deleteCustomBoard = async (projectId, boardId) => {
   const response = await axios.delete(`${BASE_URL}/${projectId}/boards/${boardId}`);
   return response.data;
+};
+
+// Remove collaborator from project
+export const removeCollaborator = async (projectId, collaboratorId) => {
+  try {
+    console.log('Making POST request to remove collaborator:', { projectId, collaboratorId });
+    const response = await axios.post(`${BASE_URL}/${projectId}/collaborators/remove`, 
+      { collaboratorId },
+      {
+        headers: {
+          ...getAuthHeader(),
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+    console.log('Remove collaborator response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error in removeCollaborator:', error.response || error);
+    if (error.response?.data) {
+      throw error.response.data;
+    }
+    throw { message: 'Error removing collaborator' };
+  }
 }; 

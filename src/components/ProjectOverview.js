@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getProjectById, updateProject, deleteProject } from '../api/projectApi';
+import { getProjectById, updateProject, deleteProject, removeCollaborator } from '../api/projectApi';
 import { getTasks, createTask } from '../api/taskApi';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import LoadingAnimation from './LoadingAnimation';
@@ -196,12 +196,10 @@ const ProjectOverview = () => {
     if (!removingCollaborator) return;
     
     try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/api/projects/${id}/collaborators/${removingCollaborator.userId._id}`
-      );
+      const response = await removeCollaborator(id, removingCollaborator.userId._id);
       
       // Update project data
-      setProject(response.data);
+      setProject(response.project);
       setShowRemoveModal(false);
       setRemovingCollaborator(null);
     } catch (error) {
@@ -427,12 +425,6 @@ const ProjectOverview = () => {
       return false;
     }
     
-    // User cannot remove the project creator
-    if (collaborator.userId._id.toString() === project.createdBy._id.toString()) {
-      console.log('Cannot remove project creator');
-      return false;
-    }
-    
     // Check if current user is a manager
     const currentUserRole = project.collaborators.find(
       c => c.userId._id.toString() === user._id.toString()
@@ -519,12 +511,7 @@ const ProjectOverview = () => {
             >
               <i className="fas fa-columns"></i> Kanban Board
             </button>
-            <button 
-              className="btn btn-danger"
-              onClick={() => setShowDeleteConfirm(true)}
-            >
-              <i className="fas fa-trash"></i> Delete Project
-            </button>
+            
           </div>
         </div>
       </div>
@@ -657,36 +644,34 @@ const ProjectOverview = () => {
                 className="manage-collab-btn"
                 onClick={() => setShowAddCollaborator(true)}
               >
-                <i className="fas fa-users-cog"></i> Remove Collaborators
+                <i className="fas fa-users-cog"></i> Manage Collaborators
               </button>
             </div>
             <div className="collaborators-list">
-              <div className="collaborators-header">
-                <div className="collab-name">Name</div>
-                <div className="collab-username">Username</div>
-                <div className="collab-email">Email</div>
-                <div className="collab-role">Role</div>
-              </div>
-              {getSortedCollaborators().map((collaborator) => (
-                <div key={collaborator.userId._id} className="collaborator-item">
-                  <div className="collab-name">
-                    <i className="fas fa-user"></i>
-                    <span>{collaborator.userId.fullName || 'N/A'}</span>
-                  </div>
-                  <div className="collab-username">
-                    <i className="fas fa-at"></i>
-                    <span>{collaborator.userId.username || 'N/A'}</span>
-                  </div>
-                  <div className="collab-email">
-                    <i className="fas fa-envelope"></i>
-                    <span>{collaborator.userId.email}</span>
-                  </div>
-                  <div className={`collab-role ${collaborator.role}`}>
-                    <i className={`fas ${collaborator.role === 'manager' ? 'fa-user-tie' : 'fa-code'}`}></i>
-                    <span>{collaborator.role === 'manager' ? 'Project Manager' : 'Developer'}</span>
-                  </div>
-                </div>
-              ))}
+              <table className="collaborators-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {project.collaborators.map((collab) => (
+                    <tr key={collab.userId._id}>
+                      <td>{collab.userId.fullName || 'N/A'}</td>
+                      <td>{collab.userId.username}</td>
+                      <td>{collab.userId.email}</td>
+                      <td>
+                        <span className={`collab-role ${collab.role}`}>
+                          {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
@@ -1025,7 +1010,23 @@ const ProjectOverview = () => {
                 </button>
               </div>
 
-              {!selectedUser ? (
+              {selectedUser ? (
+                <div className="collab-manage-wrapper">
+                  <div className="collab-list">
+                    {project.collaborators.map((collab) => (
+                      <div key={collab.userId._id} className="collab-manage-item">
+                        <div className="collab-user-info">
+                          <span className="collab-username">{collab.userId.username}</span>
+                          <span className="collab-email">{collab.userId.email}</span>
+                          <span className={`collab-role ${collab.role}`}>
+                            {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
                 <div className="collab-search-wrapper">
                   <input
                     type="text"
@@ -1059,35 +1060,6 @@ const ProjectOverview = () => {
                   {searchTerm.length >= 2 && !searchLoading && searchResults.length === 0 && (
                     <div className="collab-no-results">No users found</div>
                   )}
-                </div>
-              ) : (
-                <div className="collab-manage-wrapper">
-                  <div className="collab-list">
-                    {project.collaborators.map((collab) => (
-                      <div key={collab.userId._id} className="collab-manage-item">
-                        <div className="collab-user-info">
-                          <span className="collab-username">{collab.userId.username}</span>
-                          <span className="collab-email">{collab.userId.email}</span>
-                          <span className={`collab-role ${collab.role}`}>
-                            {collab.role === 'manager' ? 'Project Manager' : 'Developer'}
-                          </span>
-                        </div>
-                        <div className="collab-actions">
-                          {collab.userId._id !== project.createdBy._id && (
-                            <button
-                              className="btn btn-danger"
-                              onClick={() => {
-                                setRemovingCollaborator(collab);
-                                setShowRemoveModal(true);
-                              }}
-                            >
-                              Remove
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
               )}
             </div>
