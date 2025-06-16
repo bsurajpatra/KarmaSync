@@ -86,7 +86,11 @@ body {
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
 }
 
 /* Button Styles */
@@ -970,42 +974,44 @@ footer {
   margin-right: 0;
 }
 
-.auth-error {
-  background-color: rgba(255, 255, 255, 0.1);
+/* Form message styles */
+.signup-message {
   color: #ffffff;
-  font-weight: 600;
-  padding: 1rem;
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.auth-success {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
-  font-weight: 600;
-    padding: 1rem;
-  border-radius: 10px;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.info-message {
-  color: #ffffff;
-  font-weight: 600;
   font-size: 0.9rem;
   margin-top: 0.25rem;
-  display: flex;
-  align-items: center;
-    gap: 0.5rem;
-  background-color: transparent;
-  padding: 0.5rem;
-  border-radius: 6px;
+  padding: 0.25rem 0;
+  display: block;
+  line-height: 1.2;
+  background: transparent;
   border: none;
+  font-weight: 600;
+}
+
+.signup-message.error {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.signup-message.success {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Remove old message styles */
+.auth-error,
+.auth-success,
+.error-message,
+.info-message {
+  display: none;
+}
+
+/* Form group spacing */
+.form-group {
+  margin-bottom: 0.75rem;
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
 }
 
 /* Password field styles */

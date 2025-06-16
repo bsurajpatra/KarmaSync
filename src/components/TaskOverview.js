@@ -455,8 +455,8 @@ const TaskOverview = () => {
                     ) : (
                       <div className="status-display">
                         <span className={`task-meta-value task-status ${task.status}`}>
-                          {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
-                        </span>
+                  {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
+                </span>
                         <button 
                           className="btn btn-sm btn-link"
                           onClick={() => {
@@ -489,9 +489,9 @@ const TaskOverview = () => {
                             {comment.user?.username || 'Unknown User'}
                           </span>
                         )}
-                        <span className="comment-date">
-                          {new Date(comment.createdAt).toLocaleDateString()}
-                        </span>
+                      <span className="comment-date">
+                        {new Date(comment.createdAt).toLocaleDateString()}
+                      </span>
                       </div>
                       <p className="comment-text">{comment.text}</p>
                     </div>

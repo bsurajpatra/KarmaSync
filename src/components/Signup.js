@@ -21,9 +21,6 @@ const Signup = () => {
   const [showDelayMessage, setShowDelayMessage] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [availabilityStatus, setAvailabilityStatus] = useState({
-    username: { isChecking: false, isAvailable: null, message: '' }
-  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,50 +35,7 @@ const Signup = () => {
     return () => clearTimeout(timer);
   }, [loading]);
 
-  // Debounce function
-  const debounce = (func, wait) => {
-    let timeout;
-    return (...args) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func(...args), wait);
-    };
-  };
-
-  // Check username availability
-  const checkUsernameAvailability = async (username) => {
-    if (!username || username.length < 3) return;
-    
-    setAvailabilityStatus(prev => ({
-      ...prev,
-      username: { ...prev.username, isChecking: true }
-    }));
-
-    try {
-      const response = await checkUsername(username);
-      setAvailabilityStatus(prev => ({
-        ...prev,
-        username: {
-          isChecking: false,
-          isAvailable: response.available,
-          message: response.message
-        }
-      }));
-    } catch (error) {
-      setAvailabilityStatus(prev => ({
-        ...prev,
-        username: {
-          isChecking: false,
-          isAvailable: false,
-          message: error.message
-        }
-      }));
-    }
-  };
-
-  // Debounced check function
-  const debouncedCheckUsername = debounce(checkUsernameAvailability, 500);
-
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     console.log('Input changed:', { field: name, value });
     
@@ -94,11 +48,6 @@ const Signup = () => {
       ...prev,
       [name]: ''
     }));
-
-    // Trigger username availability check
-    if (name === 'username' && value.length >= 3) {
-      debouncedCheckUsername(value);
-    }
   };
 
   const validateUsername = (username) => {
@@ -125,8 +74,6 @@ const Signup = () => {
       errors.username = 'Username is required';
     } else if (!validateUsername(formData.username)) {
       errors.username = 'Username can only contain letters, numbers, underscores, and hyphens';
-    } else if (!availabilityStatus.username.isAvailable) {
-      errors.username = availabilityStatus.username.message;
     }
     if (!formData.email.trim()) {
       errors.email = 'Email is required';
@@ -153,6 +100,17 @@ const Signup = () => {
     console.log('Starting signup process...');
 
     try {
+      // Check username availability before proceeding with signup
+      const usernameCheck = await checkUsername(formData.username);
+      if (!usernameCheck.available) {
+        setFieldErrors(prev => ({
+          ...prev,
+          username: usernameCheck.message
+        }));
+        setLoading(false);
+        return;
+      }
+
       const signupData = {
         fullName: formData.fullName,
         username: formData.username,
@@ -184,8 +142,8 @@ const Signup = () => {
     } catch (err) {
       console.error('Signup error:', err);
       
-      if (err.message === 'Email already registered') {
-        setError('An account with this email already exists. Proceed for login instead.');
+      if (err.message === 'Email already registered' || err.message === 'Username already exists') {
+        setError('User with this email or username already exists, proceed to sign in');
       } else if (err.message) {
         setError(err.message);
       } else {
@@ -228,20 +186,20 @@ const Signup = () => {
           </div>
 
           {error && (
-            <div className="auth-error">
-              {error.includes('Please login') 
-                ? 'An account with this email already exists. Proceed for login instead.' 
+            <div className="signup-message error">
+              {error.includes('already exists') 
+                ? 'User with this email or username already exists, proceed to sign in' 
                 : error}
             </div>
           )}
           {success && (
-            <div className="auth-success">
+            <div className="signup-message success">
               Account created successfully! Redirecting to verification...
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="auth-form">
-            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
+            <div className="form-group">
               <input
                 type="text"
                 name="fullName"
@@ -251,11 +209,11 @@ const Signup = () => {
                 onChange={handleChange}
               />
               {fieldErrors.fullName && (
-                <div className="error-message">{fieldErrors.fullName}</div>
+                <div className="signup-message error">{fieldErrors.fullName}</div>
               )}
             </div>
 
-            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
+            <div className="form-group">
               <input
                 type="text"
                 name="username"
@@ -264,23 +222,12 @@ const Signup = () => {
                 value={formData.username}
                 onChange={handleChange}
               />
-              {availabilityStatus.username.isChecking ? (
-                <div style={{ color: '#ffffff', fontSize: '0.9rem', marginTop: '0.25rem' }}>
-                  Checking username availability...
-                </div>
-              ) : availabilityStatus.username.message && (
-                <div style={{ color: '#ffffff', fontSize: '0.9rem', marginTop: '0.25rem' }}>
-                  {availabilityStatus.username.message}
-                </div>
-              )}
               {fieldErrors.username && (
-                <div style={{ color: '#ffffff', fontSize: '0.9rem', marginTop: '0.25rem' }}>
-                  {fieldErrors.username}
-                </div>
+                <div className="signup-message error">{fieldErrors.username}</div>
               )}
             </div>
 
-            <div className="form-group" style={{ marginBottom: '0.75rem' }}>
+            <div className="form-group">
               <input
                 type="email"
                 name="email"
@@ -290,11 +237,11 @@ const Signup = () => {
                 onChange={handleChange}
               />
               {fieldErrors.email && (
-                <div className="error-message">{fieldErrors.email}</div>
+                <div className="signup-message error">{fieldErrors.email}</div>
               )}
             </div>
 
-            <div className="form-group password-group" style={{ marginBottom: '0.75rem' }}>
+            <div className="form-group password-group">
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
@@ -311,11 +258,11 @@ const Signup = () => {
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
               {fieldErrors.password && (
-                <div className="error-message">{fieldErrors.password}</div>
+                <div className="signup-message error">{fieldErrors.password}</div>
               )}
             </div>
 
-            <div className="form-group password-group" style={{ marginBottom: '0.75rem' }}>
+            <div className="form-group password-group">
               <input
                 type={showConfirmPassword ? "text" : "password"}
                 name="confirmPassword"
@@ -332,7 +279,7 @@ const Signup = () => {
                 {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
               {fieldErrors.confirmPassword && (
-                <div className="error-message">{fieldErrors.confirmPassword}</div>
+                <div className="signup-message error">{fieldErrors.confirmPassword}</div>
               )}
             </div>
 

@@ -652,14 +652,14 @@
   }
   to {
     opacity: 1;
-  }
+}
 }
 
 @keyframes modalSlideIn {
   from {
     opacity: 0;
     transform: translateY(-30px);
-  }
+}
   to {
     opacity: 1;
     transform: translateY(0);
@@ -674,39 +674,39 @@
 
   .edit-modal-container {
     width: 95%;
-  }
+}
 
   .edit-modal-form {
     padding: 1.25rem;
     gap: 1rem;
-  }
+}
 
   .edit-modal-body {
     grid-template-columns: 1fr;
-    gap: 1rem;
+  gap: 1rem;
   }
 
   .edit-modal-body .form-group:nth-child(1),
   .edit-modal-body .form-group:nth-child(2) {
     grid-column: span 1;
-  }
+}
 
   .edit-modal-actions {
     flex-direction: column;
     gap: 0.75rem;
-  }
+}
 
   .edit-modal-actions .btn {
     width: 100%;
     padding: 0.7rem 1rem;
-  }
+}
 }
 
 @media (max-height: 700px) {
   .edit-modal-overlay {
     align-items: flex-start;
     padding-top: 2rem;
-  }
+}
 
   .edit-modal-container {
     max-height: calc(100vh - 4rem);

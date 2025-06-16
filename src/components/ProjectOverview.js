@@ -947,15 +947,15 @@ const ProjectOverview = () => {
               )}
               <div className="project-danger-action delete-action">
                 <div className="project-danger-action-info">
-                  <h3>Delete this project</h3>
-                  <p>Once you delete a project, there is no going back. Please be certain.</p>
-                </div>
-                <button 
-                  className="btn btn-danger"
+              <h3>Delete this project</h3>
+              <p>Once you delete a project, there is no going back. Please be certain.</p>
+            </div>
+            <button 
+              className="btn btn-danger"
                   onClick={handleDeleteClick}
-                >
-                  Delete Project
-                </button>
+            >
+              Delete Project
+            </button>
               </div>
             </div>
           </div>
