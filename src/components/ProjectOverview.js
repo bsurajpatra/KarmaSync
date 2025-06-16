@@ -203,11 +203,16 @@ const ProjectOverview = () => {
     try {
       const response = await removeCollaborator(id, removingCollaborator.userId._id);
       
-      // Update project data
+      // Update project data with the new response
       setProject(response.project);
+      
+      // Close modals
       setShowRemoveModal(false);
       setShowAddCollaborator(false);
       setRemovingCollaborator(null);
+      
+      // Refresh project data to ensure all states are updated
+      await fetchProject();
     } catch (error) {
       console.error('Error removing collaborator:', error);
       setError('Failed to remove collaborator');
@@ -501,6 +506,12 @@ const ProjectOverview = () => {
 
   // Update error handling functions
   const handleEditClick = (action) => {
+    // Allow all actions for personal projects
+    if (project.projectType === 'personal') {
+      return true;
+    }
+    
+    // For collaborative projects, check manager role
     if (project.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can edit project details');
       setShowErrorModal(true);
@@ -510,6 +521,13 @@ const ProjectOverview = () => {
   };
 
   const handleDeleteClick = () => {
+    // Allow deletion for personal projects
+    if (project.projectType === 'personal') {
+      setShowDeleteConfirm(true);
+      return;
+    }
+    
+    // For collaborative projects, check manager role
     if (project.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can delete the project');
       setShowErrorModal(true);
@@ -519,6 +537,14 @@ const ProjectOverview = () => {
   };
 
   const handleCollaboratorClick = () => {
+    // Only show collaborator management for collaborative projects
+    if (project.projectType === 'personal') {
+      setErrorMessage('Personal projects do not have collaborators');
+      setShowErrorModal(true);
+      return;
+    }
+    
+    // For collaborative projects, check manager role
     if (project.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can manage collaborators');
       setShowErrorModal(true);
@@ -1150,29 +1176,31 @@ const ProjectOverview = () => {
               <button 
                 className="btn btn-danger"
                 onClick={() => {
-                  console.log('Current user:', user);
-                  console.log('Current collaborator:', removingCollaborator);
-                  console.log('Project:', project);
-                  
-                  if (!user) {
-                    console.log('User is null');
-                    setErrorMessage('User information not available');
+                  // Check if user is loaded
+                  if (!user || !user._id) {
+                    setErrorMessage('Please wait while we load your user information');
                     setShowErrorModal(true);
                     return;
                   }
-                  if (removingCollaborator.userId.username === user.username) {
-                    console.log('Attempting to remove self');
+
+                  // Check if current user is the project creator or a manager
+                  const isCreator = project.createdBy._id === user._id;
+                  const isManager = project.currentUserRole === 'manager';
+                  
+                  if (!isCreator && !isManager) {
+                    setErrorMessage('Only Project Managers can remove collaborators');
+                    setShowErrorModal(true);
+                    return;
+                  }
+
+                  // Check if trying to remove self
+                  if (removingCollaborator.userId._id === user._id) {
                     setShowSelfRemoveModal(true);
                     return;
                   }
-                  if (project.currentUserRole === 'manager') {
-                    console.log('Manager removing collaborator');
-                    handleRemoveCollaborator();
-                  } else {
-                    console.log('Non-manager attempting to remove');
-                    setErrorMessage('Only Project managers can remove collaborators');
-                    setShowErrorModal(true);
-                  }
+
+                  // Proceed with removal
+                  handleRemoveCollaborator();
                 }}
               >
                 Remove Collaborator
@@ -1233,30 +1261,32 @@ const ProjectOverview = () => {
                           <button
                             className="btn btn-danger"
                             onClick={() => {
-                              console.log('Current user:', user);
-                              console.log('Current collaborator:', collab);
-                              console.log('Project:', project);
-                              
-                              if (!user) {
-                                console.log('User is null');
-                                setErrorMessage('User information not available');
+                              // Check if user is loaded
+                              if (!user || !user._id) {
+                                setErrorMessage('Please wait while we load your user information');
                                 setShowErrorModal(true);
                                 return;
                               }
-                              if (collab.userId.username === user.username) {
-                                console.log('Attempting to remove self');
+
+                              // Check if current user is the project creator or a manager
+                              const isCreator = project.createdBy._id === user._id;
+                              const isManager = project.currentUserRole === 'manager';
+                              
+                              if (!isCreator && !isManager) {
+                                setErrorMessage('Only Project Managers can remove collaborators');
+                                setShowErrorModal(true);
+                                return;
+                              }
+
+                              // Check if trying to remove self
+                              if (collab.userId._id === user._id) {
                                 setShowSelfRemoveModal(true);
                                 return;
                               }
-                              if (project.currentUserRole === 'manager') {
-                                console.log('Manager removing collaborator');
-                                setRemovingCollaborator(collab);
-                                setShowRemoveModal(true);
-                              } else {
-                                console.log('Non-manager attempting to remove');
-                                setErrorMessage('Only Project managers can remove collaborators');
-                                setShowErrorModal(true);
-                              }
+
+                              // Proceed with removal
+                              setRemovingCollaborator(collab);
+                              setShowRemoveModal(true);
                             }}
                           >
                             <i className="fas fa-user-minus"></i> Remove
@@ -1351,7 +1381,7 @@ const ProjectOverview = () => {
                     <p>Task execution and updates</p>
                     <ul>
                       <li>View and update task status</li>
-                      <li>Comment on assigned tasks</li>
+                      <li>Full commenting access</li>
                       <li>Limited project access</li>
                     </ul>
                   </button>
