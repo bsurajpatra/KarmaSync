@@ -37,7 +37,6 @@ const Login = () => {
       ...prev,
       [name]: value
     }));
-    // Clear error when user starts typing
     if (error) setError('');
   };
 
@@ -51,7 +50,6 @@ const Login = () => {
       await authLogin(response.user, response.token);
       navigate('/dashboard');
     } catch (error) {
-      // Handle specific error cases
       if (error.message === 'User not found') {
         setError('No account found with this email or username');
       } else if (error.message === 'Invalid password') {

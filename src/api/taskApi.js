@@ -2,7 +2,6 @@ import axios from 'axios';
 import config from '../config';
 import { API_BASE_URL } from '../config';
 
-// Get auth token from localStorage
 const getAuthHeader = () => {
   const token = localStorage.getItem('token');
   console.log('Auth token:', token ? 'Present' : 'Missing');
@@ -11,7 +10,6 @@ const getAuthHeader = () => {
 
 const BASE_URL = `${config.API_URL}/api/tasks`;
 
-// Get all tasks for a project
 export const getTasks = async (projectId) => {
   try {
     console.log('Making GET request to /api/tasks for project:', projectId);
@@ -40,7 +38,6 @@ export const getTaskById = async (id) => {
   }
 };
 
-// Create new task
 export const createTask = async (taskData) => {
   try {
     console.log('Making POST request to /api/tasks with data:', taskData);
@@ -62,7 +59,6 @@ export const createTask = async (taskData) => {
   }
 };
 
-// Update task status
 export const updateTaskStatus = async (id, status) => {
   try {
     console.log('Making PATCH request to /api/tasks/' + id + ' with status:', status);
@@ -80,7 +76,6 @@ export const updateTaskStatus = async (id, status) => {
       config: error.config
     });
     
-    // Throw a more detailed error
     throw new Error(
       error.response?.data?.message || 
       error.message || 
@@ -89,7 +84,6 @@ export const updateTaskStatus = async (id, status) => {
   }
 };
 
-// Update task details
 export const updateTask = async (id, taskData) => {
   try {
     console.log('Making PUT request to /api/tasks/' + id + ' with data:', taskData);
@@ -104,7 +98,6 @@ export const updateTask = async (id, taskData) => {
   }
 };
 
-// Delete task
 export const deleteTask = async (id) => {
   try {
     console.log('Making DELETE request to /api/tasks/' + id);
@@ -119,7 +112,6 @@ export const deleteTask = async (id) => {
   }
 };
 
-// Add comment to task
 export const addTaskComment = async (taskId, comment) => {
   try {
     console.log('Making POST request to /api/tasks/' + taskId + '/comments with data:', comment);

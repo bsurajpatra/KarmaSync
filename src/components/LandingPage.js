@@ -5,7 +5,6 @@ import Footer from './Footer';
 const LandingPage = () => {
   return (
     <div className="landing-page">
-      {/* Header Section */}
       <section className="landing-header">
         <div className="header-text">
           <h1 className="app-title">KarmaSync</h1>
@@ -21,7 +20,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* About Section */}
       <section className="landing-about">
         <div className="about-content">
           <h2>About KarmaSync</h2>
@@ -31,7 +29,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Team Section */}
       <section className="landing-team">
         <h2>Our Team</h2>
         <div className="team-members">

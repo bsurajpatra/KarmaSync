@@ -110,7 +110,6 @@ const TaskList = () => {
       console.log('Form Data before submission:', issueFormData);
       console.log('Selected assignee:', issueFormData.assignee);
       
-      // Ensure we're sending the correct assignee data
       const taskData = {
         title: issueFormData.title,
         description: issueFormData.description,
@@ -126,12 +125,10 @@ const TaskList = () => {
       const newIssue = await createTask(taskData);
       console.log('Response from server after task creation:', newIssue);
       
-      // Fetch the updated task list to ensure we have the correct assignee data
       const updatedTasks = await getTasks(projectId);
       console.log('Updated tasks after creation:', updatedTasks);
       setTasks(updatedTasks);
       
-      // Reset form and close modal
       setShowAddIssueModal(false);
       setShowCustomType(false);
       setIssueFormData({

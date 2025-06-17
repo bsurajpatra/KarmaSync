@@ -6,7 +6,6 @@ const ProtectedRoute = ({ children }) => {
   const { token } = useAuth();
 
   if (!token) {
-    // Redirect to login if there's no token
     return <Navigate to="/login" replace />;
   }
 

@@ -1,7 +1,6 @@
 import axios from 'axios';
 import config from '../config';
 
-// Get auth token from localStorage
 const getAuthHeader = () => {
   const token = localStorage.getItem('token');
   console.log('Auth token:', token ? 'Present' : 'Missing');
@@ -10,7 +9,6 @@ const getAuthHeader = () => {
 
 const BASE_URL = `${config.API_URL}/api/projects`;
 
-// Get all projects
 export const getProjects = async () => {
   try {
     console.log('Making GET request to /api/projects');
@@ -25,7 +23,6 @@ export const getProjects = async () => {
   }
 };
 
-// Get project by ID
 export const getProjectById = async (id) => {
   try {
     console.log('Making GET request to /api/projects/' + id);
@@ -40,7 +37,6 @@ export const getProjectById = async (id) => {
   }
 };
 
-// Create new project
 export const createProject = async (projectData) => {
   try {
     console.log('Making POST request to /api/projects with data:', projectData);
@@ -64,7 +60,6 @@ export const createProject = async (projectData) => {
   }
 };
 
-// Update project
 export const updateProject = async (id, projectData) => {
   try {
     console.log('Making PUT request to /api/projects/' + id + ' with data:', projectData);
@@ -85,7 +80,6 @@ export const updateProject = async (id, projectData) => {
   }
 };
 
-// Delete project
 export const deleteProject = async (projectId) => {
   try {
     const response = await axios.delete(`${BASE_URL}/${projectId}`);
@@ -97,7 +91,6 @@ export const deleteProject = async (projectId) => {
   }
 };
 
-// Custom board management
 export const addCustomBoard = async (projectId, boardData) => {
   const response = await axios.post(`${BASE_URL}/${projectId}/boards`, boardData);
   return response.data;
@@ -113,7 +106,6 @@ export const deleteCustomBoard = async (projectId, boardId) => {
   return response.data;
 }; 
 
-// Remove collaborator from project
 export const removeCollaborator = async (projectId, collaboratorId) => {
   try {
     console.log('Making POST request to remove collaborator:', { projectId, collaboratorId });
@@ -137,7 +129,6 @@ export const removeCollaborator = async (projectId, collaboratorId) => {
   }
 };
 
-// Add collaborator to project
 export const addCollaborator = async (projectId, collaboratorData) => {
   try {
     console.log('Making POST request to add collaborator:', { projectId, collaboratorData });

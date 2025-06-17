@@ -48,7 +48,6 @@ const KanbanBoard = () => {
 
       setProject(projectData);
       
-      // Initialize boards with default structure
       const groupedTasks = {
         todo: { 
           name: 'To Do',
@@ -64,7 +63,6 @@ const KanbanBoard = () => {
         }
       };
 
-      // Add custom boards if they exist
       if (projectData.customBoards) {
         projectData.customBoards.forEach(board => {
           groupedTasks[board.id] = {
@@ -74,12 +72,10 @@ const KanbanBoard = () => {
         });
       }
 
-      // Distribute tasks to their respective boards
       tasksData.forEach(task => {
         if (groupedTasks[task.status]) {
           groupedTasks[task.status].items.push(task);
         } else {
-          // If task status doesn't match any board, put it in todo
           groupedTasks.todo.items.push(task);
         }
       });
@@ -94,7 +90,6 @@ const KanbanBoard = () => {
     }
   };
 
-  // Add drag and drop handlers
   const handleDragStart = (e, taskId, sourceBoard) => {
     e.stopPropagation(); // Prevent event bubbling
     e.dataTransfer.setData('taskId', taskId);
@@ -103,19 +98,19 @@ const KanbanBoard = () => {
   };
 
   const handleDragEnd = (e) => {
-    e.stopPropagation(); // Prevent event bubbling
+    e.stopPropagation();
     e.target.classList.remove('dragging');
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
-    e.stopPropagation(); // Prevent event bubbling
+    e.stopPropagation(); 
     e.currentTarget.classList.add('dragging-over');
   };
 
   const handleDragLeave = (e) => {
     e.preventDefault();
-    e.stopPropagation(); // Prevent event bubbling
+    e.stopPropagation();
     e.currentTarget.classList.remove('dragging-over');
   };
 
@@ -127,12 +122,10 @@ const KanbanBoard = () => {
     const taskId = e.dataTransfer.getData('taskId');
     const sourceBoard = e.dataTransfer.getData('sourceBoard');
     
-    // Get the drop position
     const dropY = e.clientY;
     const taskList = e.currentTarget;
     const taskElements = Array.from(taskList.children);
     
-    // Calculate the drop position more precisely
     let dropIndex = -1;
     for (let i = 0; i < taskElements.length; i++) {
       const rect = taskElements[i].getBoundingClientRect();
@@ -144,14 +137,12 @@ const KanbanBoard = () => {
       }
     }
     
-    // If we're at the end of the list
     if (dropIndex === -1) {
       dropIndex = taskElements.length;
     }
 
     try {
       if (sourceBoard === targetBoard) {
-        // Reorder within the same board
         setBoards(prev => {
           const newBoards = { ...prev };
           const board = newBoards[targetBoard];
@@ -162,13 +153,10 @@ const KanbanBoard = () => {
           const task = board.items[taskIndex];
           const newItems = [...board.items];
           
-          // Remove the task from its current position
           newItems.splice(taskIndex, 1);
           
-          // Adjust the drop index if we're moving the task down
           const adjustedDropIndex = taskIndex < dropIndex ? dropIndex - 1 : dropIndex;
           
-          // Insert at the new position
           newItems.splice(adjustedDropIndex, 0, task);
           
           return {
@@ -180,7 +168,6 @@ const KanbanBoard = () => {
           };
         });
       } else {
-        // Move to different board
         await updateTaskStatus(taskId, targetBoard);
 
         setBoards(prev => {
@@ -192,7 +179,6 @@ const KanbanBoard = () => {
               item => item._id !== taskId
             );
             
-            // Insert at the specific position in the target board
             const newItems = [...newBoards[targetBoard].items];
             newItems.splice(dropIndex, 0, {
               ...task,
@@ -255,7 +241,6 @@ const KanbanBoard = () => {
   const handleIssueFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Prepare the task data
       const taskData = {
         title: issueFormData.title,
         description: issueFormData.description,
@@ -265,16 +250,15 @@ const KanbanBoard = () => {
         projectId: projectId
       };
 
-      console.log('Creating task with data:', taskData); // Debug log
+      console.log('Creating task with data:', taskData); 
 
       const newIssue = await createTask(taskData);
-      console.log('Created task:', newIssue); // Debug log
+      console.log('Created task:', newIssue); 
 
       if (!newIssue) {
         throw new Error('Failed to create task - no response from server');
       }
 
-      // Update the correct board with the new issue
       setBoards(prev => ({
         ...prev,
         [issueFormData.status]: {
@@ -283,7 +267,6 @@ const KanbanBoard = () => {
         }
       }));
 
-      // Reset form and close modal
       setShowAddIssueModal(false);
       setShowCustomType(false);
       setIssueFormData({
@@ -295,7 +278,7 @@ const KanbanBoard = () => {
         customType: '',
         assignee: ''
       });
-      setError(''); // Clear any previous errors
+      setError(''); 
     } catch (err) {
       console.error('Error creating issue:', err);
       setError(err.message || 'Failed to create issue. Please try again.');
@@ -354,7 +337,6 @@ const KanbanBoard = () => {
     }));
   };
 
-  // Add Error Modal Component
   const ErrorModal = () => (
     <div className="modal-overlay">
       <div className="modal-content error-modal">
@@ -391,7 +373,6 @@ const KanbanBoard = () => {
     </div>
   );
 
-  // Add permission check for managing boards
   const handleManageBoardsClick = () => {
     if (project?.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can manage boards');
@@ -401,7 +382,6 @@ const KanbanBoard = () => {
     setShowBoardManager(true);
   };
 
-  // Add permission check for adding issues
   const handleAddIssueClick = () => {
     if (project?.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can add issues');
@@ -417,7 +397,6 @@ const KanbanBoard = () => {
 
   if (!project) return <div className="error-message">Project not found</div>;
 
-  // Update the board rendering to use native drag and drop
   const renderBoard = (boardId, board) => (
     <div 
       key={boardId}
@@ -754,7 +733,6 @@ const KanbanBoard = () => {
 
       {selectedIssue && (
         <div className="task-modal">
-          {/* TODO: Implement issue details modal */}
         </div>
       )}
       <Footer />

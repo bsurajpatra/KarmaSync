@@ -85,19 +85,16 @@ const ProjectOverview = () => {
       setTasks(tasksData);
       setTaskCount(tasksData.length);
 
-      // Calculate board statistics
       const boardCounts = {
         todo: { name: 'To Do', value: 0 },
         doing: { name: 'Doing', value: 0 },
         done: { name: 'Done', value: 0 }
       };
 
-      // Count tasks for each default board
       tasksData.forEach(task => {
         if (boardCounts[task.status]) {
           boardCounts[task.status].value++;
         } else {
-          // Handle custom boards
           boardCounts[task.status] = {
             name: task.status.charAt(0).toUpperCase() + task.status.slice(1),
             value: 1
@@ -105,7 +102,6 @@ const ProjectOverview = () => {
         }
       });
 
-      // Convert to array format for the pie chart
       const stats = Object.values(boardCounts).filter(board => board.value > 0);
       setBoardStats(stats);
     } catch (err) {
@@ -113,7 +109,6 @@ const ProjectOverview = () => {
     }
   }, [id]);
 
-  // Debounced search function
   const debouncedSearch = useCallback(
     async (term) => {
       if (!term || term.length < 2) {
@@ -133,7 +128,6 @@ const ProjectOverview = () => {
           }
         });
         
-        // Filter out users who are already collaborators
         const filteredResults = response.data.filter(user => 
           !project.collaborators.some(collab => collab.userId._id === user._id)
         );
@@ -149,7 +143,6 @@ const ProjectOverview = () => {
     [project]
   );
 
-  // Effect for debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
       if (searchTerm) {
@@ -183,7 +176,6 @@ const ProjectOverview = () => {
       };
       
       await addCollaborator(id, collaboratorData);
-      // Fetch the complete project data after adding collaborator
       await fetchProject();
       setShowRoleModal(false);
       setShowAddCollaborator(false);
@@ -203,15 +195,12 @@ const ProjectOverview = () => {
     try {
       const response = await removeCollaborator(id, removingCollaborator.userId._id);
       
-      // Update project data with the new response
       setProject(response.project);
       
-      // Close modals
       setShowRemoveModal(false);
       setShowAddCollaborator(false);
       setRemovingCollaborator(null);
       
-      // Refresh project data to ensure all states are updated
       await fetchProject();
     } catch (error) {
       console.error('Error removing collaborator:', error);
@@ -316,11 +305,9 @@ const ProjectOverview = () => {
 
       const newIssue = await createTask(taskData);
       
-      // Update tasks list and count
       setTasks(prev => [...prev, newIssue]);
       setTaskCount(prev => prev + 1);
       
-      // Update board stats
       setBoardStats(prev => {
         const newStats = [...prev];
         const boardIndex = newStats.findIndex(board => board.name === issueFormData.status);
@@ -335,7 +322,6 @@ const ProjectOverview = () => {
         return newStats;
       });
 
-      // Reset form and close modal
       setShowAddIssueModal(false);
       setShowCustomType(false);
       setIssueFormData({
@@ -419,7 +405,6 @@ const ProjectOverview = () => {
     </div>
   );
 
-  // Sort collaborators: current user first, then managers, then developers
   const getSortedCollaborators = () => {
     if (!project?.collaborators) {
       console.log('No collaborators data available');
@@ -435,15 +420,12 @@ const ProjectOverview = () => {
     console.log('All collaborators:', project.collaborators);
     
     const sorted = [...project.collaborators].sort((a, b) => {
-      // Current user always comes first
       if (a.userId._id.toString() === user._id.toString()) return -1;
       if (b.userId._id.toString() === user._id.toString()) return 1;
       
-      // Then sort by role (managers before developers)
       if (a.role === 'manager' && b.role !== 'manager') return -1;
       if (a.role !== 'manager' && b.role === 'manager') return 1;
       
-      // If both are managers or both are developers, sort by name
       return (a.userId.fullName || a.userId.username).localeCompare(b.userId.fullName || b.userId.username);
     });
     
@@ -451,20 +433,17 @@ const ProjectOverview = () => {
     return sorted;
   };
 
-  // Check if user can remove a collaborator
   const canRemoveCollaborator = (collaborator) => {
     if (!project?.collaborators || !user?._id) {
       console.log('No project or user data available');
       return false;
     }
     
-    // User cannot remove themselves
     if (collaborator.userId._id.toString() === user._id.toString()) {
       console.log('Cannot remove self');
       return false;
     }
     
-    // Check if current user is a manager
     const currentUserRole = project.collaborators.find(
       c => c.userId._id.toString() === user._id.toString()
     )?.role;
@@ -473,7 +452,6 @@ const ProjectOverview = () => {
     return currentUserRole === 'manager';
   };
 
-  // Add Error Modal Component
   const ErrorModal = () => (
     <div className="modal-overlay">
       <div className="modal-content error-modal">
@@ -504,14 +482,11 @@ const ProjectOverview = () => {
     </div>
   );
 
-  // Update error handling functions
   const handleEditClick = (action) => {
-    // Allow all actions for personal projects
     if (project.projectType === 'personal') {
       return true;
     }
     
-    // For collaborative projects, check manager role
     if (project.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can edit project details');
       setShowErrorModal(true);
@@ -521,13 +496,11 @@ const ProjectOverview = () => {
   };
 
   const handleDeleteClick = () => {
-    // Allow deletion for personal projects
     if (project.projectType === 'personal') {
       setShowDeleteConfirm(true);
       return;
     }
     
-    // For collaborative projects, check manager role
     if (project.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can delete the project');
       setShowErrorModal(true);
@@ -537,14 +510,12 @@ const ProjectOverview = () => {
   };
 
   const handleCollaboratorClick = () => {
-    // Only show collaborator management for collaborative projects
     if (project.projectType === 'personal') {
       setErrorMessage('Personal projects do not have collaborators');
       setShowErrorModal(true);
       return;
     }
     
-    // For collaborative projects, check manager role
     if (project.currentUserRole !== 'manager') {
       setErrorMessage('Only Project Managers can manage collaborators');
       setShowErrorModal(true);
@@ -553,20 +524,18 @@ const ProjectOverview = () => {
     setShowAddCollaborator(true);
   };
 
-  // Add leave project handler
   const handleLeaveProject = async () => {
     try {
       await leaveProject(id);
       navigate('/projects');
     } catch (err) {
       console.error('Error leaving project:', err);
-      setShowLeaveConfirm(false); // Close the leave confirmation modal first
+      setShowLeaveConfirm(false); 
       setErrorMessage(err.message || 'Failed to leave project');
       setShowErrorModal(true);
     }
   };
 
-  // Add Leave Confirmation Modal
   const LeaveConfirmationModal = () => (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -1176,14 +1145,12 @@ const ProjectOverview = () => {
               <button 
                 className="btn btn-danger"
                 onClick={() => {
-                  // Check if user is loaded
                   if (!user || !user._id) {
                     setErrorMessage('Please wait while we load your user information');
                     setShowErrorModal(true);
                     return;
                   }
 
-                  // Check if current user is the project creator or a manager
                   const isCreator = project.createdBy._id === user._id;
                   const isManager = project.currentUserRole === 'manager';
                   
@@ -1193,13 +1160,11 @@ const ProjectOverview = () => {
                     return;
                   }
 
-                  // Check if trying to remove self
                   if (removingCollaborator.userId._id === user._id) {
                     setShowSelfRemoveModal(true);
                     return;
                   }
 
-                  // Proceed with removal
                   handleRemoveCollaborator();
                 }}
               >
@@ -1261,14 +1226,12 @@ const ProjectOverview = () => {
                           <button
                             className="btn btn-danger"
                             onClick={() => {
-                              // Check if user is loaded
                               if (!user || !user._id) {
                                 setErrorMessage('Please wait while we load your user information');
                                 setShowErrorModal(true);
                                 return;
                               }
 
-                              // Check if current user is the project creator or a manager
                               const isCreator = project.createdBy._id === user._id;
                               const isManager = project.currentUserRole === 'manager';
                               
@@ -1278,13 +1241,11 @@ const ProjectOverview = () => {
                                 return;
                               }
 
-                              // Check if trying to remove self
                               if (collab.userId._id === user._id) {
                                 setShowSelfRemoveModal(true);
                                 return;
                               }
 
-                              // Proceed with removal
                               setRemovingCollaborator(collab);
                               setShowRemoveModal(true);
                             }}
@@ -1337,7 +1298,6 @@ const ProjectOverview = () => {
         </div>
       )}
 
-      {/* Role Selection Modal */}
       {showRoleModal && (
         <div className="modal-overlay nested">
           <div className="modal-content nested">

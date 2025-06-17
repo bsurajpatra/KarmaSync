@@ -7,7 +7,6 @@ import Footer from './Footer';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import '../styles/Profile.css';
 
-  // DeleteAccountModal Component
   const DeleteAccountModal = ({ isOpen, onClose, onConfirm }) => {
     const [deleteText, setDeleteText] = useState('');
     const [error, setError] = useState('');
@@ -134,7 +133,6 @@ import '../styles/Profile.css';
         ...prev,
         [name]: value
       }));
-      // Clear any previous errors when user starts typing
       setError('');
     };
 
@@ -144,7 +142,6 @@ import '../styles/Profile.css';
         ...prev,
         [name]: value
       }));
-      // Clear any previous errors when user starts typing
       setError('');
     };
 
@@ -156,15 +153,14 @@ import '../styles/Profile.css';
     };
 
     const handleUpdateProfile = async (e) => {
-    e.preventDefault(); // Prevent form submission
-    if (!editMode) return; // Only proceed if in edit mode
+    e.preventDefault(); 
+    if (!editMode) return; 
 
       console.log('Updating profile with data:', formData);
       setError('');
       setSuccess('');
       setIsUpdatingProfile(true);
 
-      // Validate form data
       if (!formData.fullName.trim()) {
         setError('Full name is required');
         setIsUpdatingProfile(false);
@@ -196,7 +192,7 @@ import '../styles/Profile.css';
 
         setSuccess('Profile updated successfully');
         setEditMode(false);
-        await fetchUserData(); // Refresh user data after successful update
+        await fetchUserData(); 
       } catch (error) {
         console.error('Profile update error:', error);
         console.error('Error details:', {
@@ -205,7 +201,6 @@ import '../styles/Profile.css';
           status: error.response?.status
         });
         
-        // Handle specific error cases
         if (error.response?.data?.message?.includes('username')) {
           setError('Username is already taken');
         } else if (error.response?.data?.message?.includes('email')) {
@@ -224,7 +219,6 @@ import '../styles/Profile.css';
       setSuccess('');
       setIsUpdatingPassword(true);
 
-      // Validate password data
       if (!passwordData.currentPassword) {
         setError('Current password is required');
         setIsUpdatingPassword(false);
@@ -281,7 +275,6 @@ import '../styles/Profile.css';
         setError('');
         await deleteAccount();
         
-        // Show success message in a custom popup
         const successModal = document.createElement('div');
         successModal.className = 'modal-overlay';
         successModal.innerHTML = `
@@ -296,7 +289,6 @@ import '../styles/Profile.css';
         `;
         document.body.appendChild(successModal);
         
-        // Wait for 2 seconds before redirecting
         setTimeout(() => {
           document.body.removeChild(successModal);
           logout();

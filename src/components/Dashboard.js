@@ -6,7 +6,6 @@ import LoadingAnimation from './LoadingAnimation';
 import '../styles/Dashboard.css';
 import Footer from './Footer';
 
-// Logout Confirmation Modal Component
 const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 

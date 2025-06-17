@@ -101,7 +101,6 @@ const TaskOverview = () => {
         assignee: formData.assignee || task.assignee?._id || task.assignee
       });
       
-      // Fetch the updated task with all populated fields
       const refreshedTask = await getTaskById(taskId);
       setTask(refreshedTask);
       setEditing(false);
@@ -141,7 +140,7 @@ const TaskOverview = () => {
     try {
       console.log('Starting status change to:', newStatus);
       setLoading(true);
-      setError(''); // Clear any previous errors
+      setError(''); 
       
       console.log('Calling updateTaskStatus API...');
       const updatedTask = await updateTaskStatus(taskId, newStatus);
@@ -151,7 +150,6 @@ const TaskOverview = () => {
         throw new Error('No response received from server');
       }
       
-      // Update the task state with the new data
       setTask(prevTask => ({
         ...prevTask,
         ...updatedTask
@@ -167,10 +165,8 @@ const TaskOverview = () => {
         status: err.response?.status
       });
       
-      // Set error message but don't clear the task
       setError(err.response?.data?.message || err.message || 'Failed to update status');
       
-      // Reset the status to previous value
       setNewStatus(task.status);
     } finally {
       setLoading(false);
@@ -480,7 +476,7 @@ const TaskOverview = () => {
                             onClick={() => {
                               setIsEditingStatus(false);
                               setNewStatus(task.status);
-                              setError(''); // Clear error when canceling
+                              setError('');
                             }}
                             disabled={loading}
                           >
@@ -498,7 +494,7 @@ const TaskOverview = () => {
                           onClick={() => {
                             setIsEditingStatus(true);
                             setNewStatus(task.status);
-                            setError(''); // Clear error when starting new edit
+                            setError(''); 
                           }}
                           disabled={loading}
                         >

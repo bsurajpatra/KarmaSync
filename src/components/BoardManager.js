@@ -18,7 +18,6 @@ const BoardManager = ({ boards, onBoardAdd, onBoardEdit, onBoardDelete }) => {
       return;
     }
 
-    // Generate a unique ID for new boards
     const boardId = formData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 
     if (boardId in boards) {
@@ -26,7 +25,6 @@ const BoardManager = ({ boards, onBoardAdd, onBoardEdit, onBoardDelete }) => {
       return;
     }
 
-    // Validate board name length
     if (formData.name.length < 3) {
       setError('Board name must be at least 3 characters long');
       return;

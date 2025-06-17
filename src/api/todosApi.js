@@ -2,14 +2,12 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:5000/api';
 
-// Get auth token from localStorage
 const getAuthToken = () => {
   const token = localStorage.getItem('token');
   console.log('Auth Token:', token ? 'Present' : 'Missing');
   return token;
 };
 
-// Create axios instance with auth header
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -17,7 +15,6 @@ const api = axios.create({
   }
 });
 
-// Add request interceptor to add auth token
 api.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
@@ -38,7 +35,6 @@ api.interceptors.request.use(
   }
 );
 
-// Add response interceptor for logging
 api.interceptors.response.use(
   (response) => {
     console.log('API Response:', {
@@ -59,7 +55,6 @@ api.interceptors.response.use(
   }
 );
 
-// Get all todos
 export const getTodos = async () => {
   try {
     const response = await api.get('/todos');
@@ -70,7 +65,6 @@ export const getTodos = async () => {
   }
 };
 
-// Create a new todo
 export const createTodo = async (todoData) => {
   try {
     console.log('Creating Todo:', todoData);
@@ -82,7 +76,6 @@ export const createTodo = async (todoData) => {
   }
 };
 
-// Update a todo
 export const updateTodo = async (todoId, todoData) => {
   try {
     console.log('Updating Todo:', { todoId, todoData });
@@ -94,7 +87,6 @@ export const updateTodo = async (todoId, todoData) => {
   }
 };
 
-// Delete a todo
 export const deleteTodo = async (todoId) => {
   try {
     console.log('Deleting Todo:', todoId);
@@ -106,7 +98,6 @@ export const deleteTodo = async (todoId) => {
   }
 };
 
-// Update todo status
 export const updateTodoStatus = async (todoId, status) => {
   try {
     console.log('Updating Todo Status:', { todoId, status });
@@ -118,7 +109,6 @@ export const updateTodoStatus = async (todoId, status) => {
   }
 };
 
-// Get todos by category
 export const getTodosByCategory = async (category) => {
   try {
     const response = await api.get(`/todos?category=${category}`);
@@ -129,7 +119,6 @@ export const getTodosByCategory = async (category) => {
   }
 };
 
-// Get todos by priority
 export const getTodosByPriority = async (priority) => {
   try {
     const response = await api.get(`/todos?priority=${priority}`);
@@ -140,7 +129,6 @@ export const getTodosByPriority = async (priority) => {
   }
 };
 
-// Get todos by status
 export const getTodosByStatus = async (status) => {
   try {
     const response = await api.get(`/todos?status=${status}`);

@@ -58,7 +58,6 @@ const Signup = () => {
     setError('');
     setFieldErrors({});
 
-    // Validate form data
     const errors = {};
     if (!formData.fullName.trim()) {
       errors.fullName = 'Full name is required';
@@ -90,7 +89,6 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      // Check username availability before proceeding with signup
       const usernameCheck = await checkUsername(formData.username);
       if (!usernameCheck.available) {
         setFieldErrors(prev => ({
@@ -111,7 +109,6 @@ const Signup = () => {
       const response = await signup(signupData);
       setSuccess(true);
 
-      // Navigate to OTP verification after a short delay
       setTimeout(() => {
         navigate('/verify-otp', {
           state: {

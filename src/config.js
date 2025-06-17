@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://karmasync-backend.vercel.app';
+const API_BASE_URL = process.env.REACT_APP_API_URL ;
 
 const config = {
     API_URL: API_BASE_URL,

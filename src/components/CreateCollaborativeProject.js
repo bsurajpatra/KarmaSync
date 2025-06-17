@@ -28,7 +28,6 @@ const CreateCollaborativeProject = () => {
     projectType: 'collaborative'
   });
 
-  // Debounced search function
   const debouncedSearch = useCallback(
     async (term) => {
       if (term.length < 2) {
@@ -63,11 +62,10 @@ const CreateCollaborativeProject = () => {
     [selectedCollaborators]
   );
 
-  // Effect for debounced search
   useEffect(() => {
     const timer = setTimeout(() => {
       debouncedSearch(searchTerm);
-    }, 300); // 300ms delay
+    }, 300); 
 
     return () => clearTimeout(timer);
   }, [searchTerm, debouncedSearch]);
@@ -261,7 +259,6 @@ const CreateCollaborativeProject = () => {
         </form>
       </div>
 
-      {/* Role Selection Modal */}
       {showRoleModal && (
         <div className="modal-overlay">
           <div className="role-selection-modal">

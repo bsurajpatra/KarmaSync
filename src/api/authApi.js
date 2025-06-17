@@ -1,10 +1,8 @@
 import axios from 'axios';
 import config from '../config';
 
-// Set up axios defaults
 axios.defaults.baseURL = config.API_URL;
 
-// Add token to requests if it exists
 const setAuthToken = (token) => {
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -15,18 +13,15 @@ const setAuthToken = (token) => {
   }
 };
 
-// Get token from localStorage
 const getStoredToken = () => {
   return localStorage.getItem('token');
 };
 
-// Initialize auth token if it exists
 const token = getStoredToken();
 if (token) {
   setAuthToken(token);
 }
 
-// Login user
 export const login = async (credentials) => {
   try {
     const response = await axios.post(
@@ -46,7 +41,6 @@ export const login = async (credentials) => {
   }
 };
 
-// Signup user
 export const signup = async (userData) => {
   try {
     const response = await axios.post('/api/auth/signup', userData);
@@ -58,7 +52,6 @@ export const signup = async (userData) => {
   }
 };
 
-// Verify OTP
 export const verifyOTP = async (verifyData) => {
   try {
     const response = await axios.post('/api/auth/verify-otp', verifyData);
@@ -68,7 +61,6 @@ export const verifyOTP = async (verifyData) => {
   }
 };
 
-// Resend OTP
 export const resendOTP = async (emailData) => {
   try {
     const response = await axios.post('/api/auth/resend-otp', emailData);
@@ -78,12 +70,10 @@ export const resendOTP = async (emailData) => {
   }
 };
 
-// Logout user
 export const logout = () => {
   setAuthToken(null);
 };
 
-// Get current user
 export const getCurrentUser = async () => {
   try {
     const token = localStorage.getItem('token');
@@ -91,7 +81,6 @@ export const getCurrentUser = async () => {
       throw new Error('No auth token found');
     }
 
-    // Set token in headers for this request
     const config = {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -99,15 +88,14 @@ export const getCurrentUser = async () => {
     };
 
     const response = await axios.get('/api/auth/me', config);
-    console.log('getCurrentUser response:', response.data); // Debug log
+    console.log('getCurrentUser response:', response.data); 
     return response.data;
   } catch (error) {
-    console.error('getCurrentUser error:', error); // Debug log
+    console.error('getCurrentUser error:', error); 
     throw error.response?.data || { message: 'Error fetching user data' };
   }
 };
 
-// Forgot password
 export const forgotPassword = async (email) => {
   try {
     const response = await axios.post('/api/auth/forgot-password', { email });
@@ -117,7 +105,6 @@ export const forgotPassword = async (email) => {
   }
 };
 
-// Reset password
 export const resetPassword = async (token, password) => {
   try {
     const response = await axios.post(`/api/auth/reset-password/${token}`, { password });
@@ -127,7 +114,6 @@ export const resetPassword = async (token, password) => {
   }
 };
 
-// Update user profile
 export const updateProfile = async (profileData) => {
   try {
     const token = localStorage.getItem('token');
@@ -148,7 +134,6 @@ export const updateProfile = async (profileData) => {
   }
 };
 
-// Delete user account
 export const deleteAccount = async () => {
   try {
     const token = localStorage.getItem('token');
@@ -163,14 +148,13 @@ export const deleteAccount = async () => {
     };
 
     const response = await axios.delete('/api/auth/delete-account', config);
-    setAuthToken(null); // Clear token after account deletion
+    setAuthToken(null); 
     return response.data;
   } catch (error) {
     throw error.response?.data || { message: 'Error deleting account' };
   }
 }; 
 
-// Check username availability
 export const checkUsername = async (username) => {
   try {
     const response = await axios.post('/api/auth/check-username', { username });
@@ -180,7 +164,6 @@ export const checkUsername = async (username) => {
   }
 };
 
-// Check email availability
 export const checkEmail = async (email) => {
   try {
     const response = await axios.post('/api/auth/check-email', { email });
@@ -190,7 +173,6 @@ export const checkEmail = async (email) => {
   }
 };
 
-// Check server connection status
 export const checkServerStatus = async () => {
   try {
     const response = await fetch(`${config.API_URL}/api/health`, {

@@ -55,7 +55,6 @@ const ResetPassword = () => {
       console.log('Reset password response:', response.data);
       setSuccess(true);
       
-      // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/login', { 
           state: { 

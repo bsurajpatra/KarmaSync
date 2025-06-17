@@ -10,11 +10,9 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       localStorage.setItem('token', token);
-      // Set the default authorization header for all axios requests
       axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
       localStorage.removeItem('token');
-      // Remove the authorization header when there's no token
       delete axios.defaults.headers.common['Authorization'];
     }
   }, [token]);

@@ -49,7 +49,6 @@ const OTPVerification = () => {
     newOtp[index] = element.value;
     setOtp(newOtp);
 
-    // Move to next input if current field is filled
     if (element.value && index < 5) {
       const nextInput = element.parentElement.nextElementSibling?.querySelector('input');
       if (nextInput) {
@@ -60,7 +59,6 @@ const OTPVerification = () => {
 
   const handleKeyDown = (e, index) => {
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      // Move to previous input on backspace
       const prevInput = e.target.parentElement.previousElementSibling?.querySelector('input');
       if (prevInput) {
         prevInput.focus();
