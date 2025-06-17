@@ -139,13 +139,42 @@ const TaskOverview = () => {
 
   const handleStatusChange = async (newStatus) => {
     try {
+      console.log('Starting status change to:', newStatus);
+      setLoading(true);
+      setError(''); // Clear any previous errors
+      
+      console.log('Calling updateTaskStatus API...');
       const updatedTask = await updateTaskStatus(taskId, newStatus);
-      setTask(updatedTask);
+      console.log('API Response:', updatedTask);
+      
+      if (!updatedTask) {
+        throw new Error('No response received from server');
+      }
+      
+      // Update the task state with the new data
+      setTask(prevTask => ({
+        ...prevTask,
+        ...updatedTask
+      }));
+      
       setIsEditingStatus(false);
-      setError('');
+      console.log('Status change completed successfully');
     } catch (err) {
       console.error('Error updating status:', err);
-      setError(err.message || 'Failed to update status');
+      console.error('Error details:', {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
+      
+      // Set error message but don't clear the task
+      setError(err.response?.data?.message || err.message || 'Failed to update status');
+      
+      // Reset the status to previous value
+      setNewStatus(task.status);
+    } finally {
+      setLoading(false);
+      console.log('Status change operation finished');
     }
   };
 
@@ -187,7 +216,7 @@ const TaskOverview = () => {
 
   const handleEditClick = () => {
     if (project?.currentUserRole !== 'manager') {
-      setErrorMessage('Only Project Managers can edit issues');
+      setErrorMessage('Only Project Managers can edit issue details');
       setShowErrorModal(true);
       return;
     }
@@ -423,6 +452,7 @@ const TaskOverview = () => {
                     <span className="task-meta-label">Status:</span>
                     {isEditingStatus ? (
                       <div className="status-edit-container">
+                        {error && <div className="signup-message error">{error}</div>}
                         <select
                           value={newStatus}
                           onChange={(e) => setNewStatus(e.target.value)}
@@ -441,12 +471,18 @@ const TaskOverview = () => {
                           <button 
                             className="btn btn-sm btn-primary"
                             onClick={() => handleStatusChange(newStatus)}
+                            disabled={loading}
                           >
-                            Set
+                            {loading ? 'Updating...' : 'Set'}
                           </button>
                           <button 
                             className="btn btn-sm btn-secondary"
-                            onClick={() => setIsEditingStatus(false)}
+                            onClick={() => {
+                              setIsEditingStatus(false);
+                              setNewStatus(task.status);
+                              setError(''); // Clear error when canceling
+                            }}
+                            disabled={loading}
                           >
                             Cancel
                           </button>
@@ -462,7 +498,9 @@ const TaskOverview = () => {
                           onClick={() => {
                             setIsEditingStatus(true);
                             setNewStatus(task.status);
+                            setError(''); // Clear error when starting new edit
                           }}
+                          disabled={loading}
                         >
                           Change
                         </button>

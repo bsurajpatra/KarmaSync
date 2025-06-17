@@ -72,8 +72,20 @@ export const updateTaskStatus = async (id, status) => {
     console.log('PATCH /api/tasks/' + id + ' response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error in updateTaskStatus:', error.response || error);
-    throw error;
+    console.error('Error in updateTaskStatus:', {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+      headers: error.response?.headers,
+      config: error.config
+    });
+    
+    // Throw a more detailed error
+    throw new Error(
+      error.response?.data?.message || 
+      error.message || 
+      'Failed to update task status'
+    );
   }
 };
 

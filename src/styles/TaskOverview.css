@@ -892,58 +892,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Status Styles */
-.status-display {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.task-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.4rem 1rem;
-  border-radius: 15px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #FFFFFF;
-  transition: all 0.2s ease;
-}
-
-.task-status.todo {
-  background: #ff9800;
-  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
-}
-
-.task-status.doing {
-  background: #2196F3;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
-}
-
-.task-status.done {
-  background: #4CAF50;
-  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
-}
-
-.btn-link {
-  background: none;
-  border: none;
-  color: #4a90e2;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 0.4rem 0.75rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-}
-
-.btn-link:hover {
-  color: #357abd;
-  text-decoration: underline;
-}
-
 /* Status Edit Styles */
 .status-edit-container {
   display: flex;
@@ -954,6 +902,8 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid #e0e0e0;
+  position: relative;
+  z-index: 10;
 }
 
 .status-select {
@@ -991,6 +941,13 @@
   min-width: auto;
   font-weight: 600;
   transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-sm:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .btn-sm.btn-primary {
@@ -999,7 +956,7 @@
   border: none;
 }
 
-.btn-sm.btn-primary:hover {
+.btn-sm.btn-primary:hover:not(:disabled) {
   background: #357abd;
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
@@ -1011,11 +968,71 @@
   border: 1.5px solid #e9ecef;
 }
 
-.btn-sm.btn-secondary:hover {
+.btn-sm.btn-secondary:hover:not(:disabled) {
   background: #e9ecef;
   color: #212529;
   border-color: #dee2e6;
   transform: translateY(-1px);
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #4a90e2;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-link:hover:not(:disabled) {
+  color: #357abd;
+  text-decoration: underline;
+}
+
+.btn-link:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  color: #6c757d;
+}
+
+/* Status Display Styles */
+.status-display {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 5;
+}
+
+.task-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.task-status.todo {
+  background: #ff9800;
+  box-shadow: 0 2px 8px rgba(255, 152, 0, 0.2);
+}
+
+.task-status.doing {
+  background: #2196F3;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.2);
+}
+
+.task-status.done {
+  background: #4CAF50;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.2);
 }
 
 /* Responsive styles for status editing */
