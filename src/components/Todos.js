@@ -14,6 +14,7 @@ const Todos = () => {
   const [editingTodo, setEditingTodo] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [customCategory, setCustomCategory] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     priority: 'Low',
@@ -52,6 +53,7 @@ const Todos = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     try {
       const todoData = {
         ...formData,
@@ -80,6 +82,8 @@ const Todos = () => {
     } catch (err) {
       console.error('Error saving todo:', err);
       setError(err.response?.data?.message || 'Failed to save todo');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -318,84 +322,90 @@ const Todos = () => {
               &times;
             </button>
             <h2>{editingTodo ? 'Edit Todo' : 'Add New Todo'}</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  required
-                  placeholder="Enter todo name"
-                />
+            {isSubmitting ? (
+              <div className="form-loading">
+                <LoadingAnimation message={editingTodo ? "Updating todo..." : "Creating todo..."} />
               </div>
-
-              <div className="form-group">
-                <label htmlFor="priority">Priority</label>
-                <select
-                  id="priority"
-                  name="priority"
-                  value={formData.priority}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                </select>
-              </div>
-
-              <div className="form-group">
-                <label htmlFor="category">Category</label>
-                <select
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  required
-                >
-                  <option value="General">General</option>
-                  <option value="Health">Health</option>
-                  <option value="Study">Study</option>
-                  <option value="Work">Work</option>
-                  <option value="Custom">Custom</option>
-                </select>
-              </div>
-
-              {formData.category === 'Custom' && (
+            ) : (
+              <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                  <label htmlFor="customCategory">Custom Category</label>
+                  <label htmlFor="name">Name</label>
                   <input
                     type="text"
-                    id="customCategory"
-                    value={customCategory}
-                    onChange={(e) => setCustomCategory(e.target.value)}
+                    id="name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
                     required
-                    placeholder="Enter custom category"
+                    placeholder="Enter todo name"
                   />
                 </div>
-              )}
 
-              <div className="form-group">
-                <label htmlFor="dueDate">Due Date</label>
-                <input
-                  type="date"
-                  id="dueDate"
-                  name="dueDate"
-                  value={formData.dueDate}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
+                <div className="form-group">
+                  <label htmlFor="priority">Priority</label>
+                  <select
+                    id="priority"
+                    name="priority"
+                    value={formData.priority}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
 
-              <div className="form-actions">
-                <button type="submit" className="submit-button">
-                  {editingTodo ? 'Update Todo' : 'Add Todo'}
-                </button>
-              </div>
-            </form>
+                <div className="form-group">
+                  <label htmlFor="category">Category</label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="General">General</option>
+                    <option value="Health">Health</option>
+                    <option value="Study">Study</option>
+                    <option value="Work">Work</option>
+                    <option value="Custom">Custom</option>
+                  </select>
+                </div>
+
+                {formData.category === 'Custom' && (
+                  <div className="form-group">
+                    <label htmlFor="customCategory">Custom Category</label>
+                    <input
+                      type="text"
+                      id="customCategory"
+                      value={customCategory}
+                      onChange={(e) => setCustomCategory(e.target.value)}
+                      required
+                      placeholder="Enter custom category"
+                    />
+                  </div>
+                )}
+
+                <div className="form-group">
+                  <label htmlFor="dueDate">Due Date</label>
+                  <input
+                    type="date"
+                    id="dueDate"
+                    name="dueDate"
+                    value={formData.dueDate}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+
+                <div className="form-actions">
+                  <button type="submit" className="submit-button">
+                    {editingTodo ? 'Update Todo' : 'Add Todo'}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
