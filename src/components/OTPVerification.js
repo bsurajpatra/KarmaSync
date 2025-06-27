@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { verifyOTP, resendOTP } from '../api/authApi';
+import { useAuth } from '../context/AuthContext';
 import LoadingAnimation from './LoadingAnimation';
 import Footer from './Footer';
 import '../styles/OTPVerfication.css';
@@ -17,6 +18,7 @@ const OTPVerification = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const userData = location.state?.userData;
+  const { login } = useAuth();
 
   console.log('Location state:', location.state);
   console.log('User data received:', userData);
@@ -94,10 +96,11 @@ const OTPVerification = () => {
       console.log('Setting success state to true');
 
       setTimeout(() => {
-        console.log('Navigating to login page');
-        navigate('/login', {
+        console.log('Navigating to dashboard');
+        login(response.user, response.token);
+        navigate('/dashboard', {
           state: {
-            message: 'Account verified successfully! Please login with your credentials.'
+            message: 'Account verified successfully! Welcome to KarmaSync.'
           }
         });
       }, 2000);
@@ -150,7 +153,7 @@ const OTPVerification = () => {
           {error && <div className="otp-message error">{error}</div>}
           {success && (
             <div className="otp-message success">
-              OTP Verified Successfully, redirecting to Login
+              OTP Verified Successfully, redirecting to Dashboard
             </div>
           )}
 

@@ -55,7 +55,11 @@ export const signup = async (userData) => {
 export const verifyOTP = async (verifyData) => {
   try {
     const response = await axios.post('/api/auth/verify-otp', verifyData);
-    return response.data;
+    const { token, user } = response.data;
+    if (token) {
+      setAuthToken(token);
+    }
+    return { user, token };
   } catch (error) {
     throw error.response?.data || { message: 'Error verifying OTP' };
   }
