@@ -141,60 +141,28 @@ const KanbanBoard = () => {
       dropIndex = taskElements.length;
     }
 
-    try {
-      if (sourceBoard === targetBoard) {
-        setBoards(prev => {
-          const newBoards = { ...prev };
-          const board = newBoards[targetBoard];
-          const taskIndex = board.items.findIndex(item => item._id === taskId);
-          
-          if (taskIndex === -1) return prev;
-          
-          const task = board.items[taskIndex];
-          const newItems = [...board.items];
-          
-          newItems.splice(taskIndex, 1);
-          
-          const adjustedDropIndex = taskIndex < dropIndex ? dropIndex - 1 : dropIndex;
-          
-          newItems.splice(adjustedDropIndex, 0, task);
-          
-          return {
-            ...prev,
-            [targetBoard]: {
-              ...board,
-              items: newItems
-            }
-          };
-        });
-      } else {
-        await updateTaskStatus(taskId, targetBoard);
+    // Optimistic UI update: move the card immediately
+    setBoards(prev => {
+      const newBoards = { ...prev };
+      // Remove from source
+      const sourceItems = [...newBoards[sourceBoard].items];
+      const taskIndex = sourceItems.findIndex(item => item._id === taskId);
+      if (taskIndex === -1) return prev;
+      const [task] = sourceItems.splice(taskIndex, 1);
+      // Add to target
+      const targetItems = [...newBoards[targetBoard].items];
+      targetItems.splice(dropIndex, 0, { ...task, status: targetBoard });
+      newBoards[sourceBoard].items = sourceItems;
+      newBoards[targetBoard].items = targetItems;
+      return newBoards;
+    });
 
-        setBoards(prev => {
-          const newBoards = { ...prev };
-          const task = newBoards[sourceBoard].items.find(item => item._id === taskId);
-          
-          if (task) {
-            newBoards[sourceBoard].items = newBoards[sourceBoard].items.filter(
-              item => item._id !== taskId
-            );
-            
-            const newItems = [...newBoards[targetBoard].items];
-            newItems.splice(dropIndex, 0, {
-              ...task,
-              status: targetBoard
-            });
-            
-            newBoards[targetBoard].items = newItems;
-          }
-          
-          return newBoards;
-        });
-      }
-    } catch (err) {
-      console.error('Error updating task:', err);
-      setError('Failed to update task');
-    }
+    // Async backend update
+    updateTaskStatus(taskId, targetBoard)
+      .catch(err => {
+        setError('Failed to update task status. Reverting change.');
+        fetchProjectAndTasks(); // Revert UI to server state
+      });
   };
 
   const handleIssueClick = (issue) => {
