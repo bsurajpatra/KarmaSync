@@ -145,15 +145,13 @@
 
 .contact-form {
   flex: 1;
-  background: rgba(255, 255, 255, 0.95);
+  background: white !important;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 20px;
   margin-bottom: 0;
   padding: 3rem;
   min-width: 500px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  background: transparent !important;
-  background-color: transparent !important;
 }
 
 .form-group {
