@@ -291,6 +291,18 @@
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 59, 48, 0.2);
 }
+
+.success-message {
+  background: #28a745 !important;
+  color: #fff !important;
+  padding: 1rem 2rem;
+  border-radius: 10px;
+  margin: 1rem 6rem;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.15);
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

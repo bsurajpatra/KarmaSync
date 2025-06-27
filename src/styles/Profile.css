@@ -132,9 +132,19 @@
 }
 
 .success-message {
-  background: #e5f9e0;
-  color: #00b894;
-  border: 1px solid #55efc4;
+  background: #28a745 !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 0.5rem 1.5rem !important;
+  border-radius: 8px !important;
+  margin: 0.5rem auto !important;
+  text-align: center;
+  font-weight: 600;
+  min-height: unset !important;
+  max-width: 400px;
+  font-size: 1rem;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.10);
+  animation: fadeInOut 4s forwards;
 }
 
 .profile-info .info-group {
@@ -498,11 +508,25 @@
   text-align: center;
 }
 
+.modal-content .delete-button,
+.modal-content .cancel-button {
+  width: 48%;
+  min-width: 120px;
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  border-radius: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0;
+  display: inline-block;
+  box-sizing: border-box;
+}
+
 .modal-actions {
   display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 1.5rem;
+  gap: 4%;
+  justify-content: center;
 }
 
 .modal-content .form-group {
