@@ -246,6 +246,7 @@
   transition: all 0.2s ease;
   user-select: none;
   position: relative;
+  z-index: 2;
 }
 
 .issue-card:hover {
@@ -257,14 +258,27 @@
 .issue-card.dragging {
   cursor: grabbing;
   opacity: 0.8;
-  transform: scale(1.02);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02) rotate(2deg);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   background: #f8f9fa;
+  border: 2px solid #4a90e2;
+  pointer-events: none;
 }
 
 .issue-card.dragging * {
   pointer-events: none;
+}
+
+/* Prevent dragging when another drag is in progress */
+.issue-card:not(.dragging) {
+  pointer-events: auto;
+}
+
+/* Disable dragging on other cards when one is being dragged */
+.kanban-container.dragging .issue-card:not(.dragging) {
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 .issue-card__row {

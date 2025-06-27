@@ -34,6 +34,7 @@ const KanbanBoard = () => {
   const [newBoardName, setNewBoardName] = useState('');
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     fetchProjectAndTasks();
@@ -95,16 +96,19 @@ const KanbanBoard = () => {
     e.dataTransfer.setData('taskId', taskId);
     e.dataTransfer.setData('sourceBoard', sourceBoard);
     e.target.classList.add('dragging');
+    setIsDragging(true);
   };
 
   const handleDragEnd = (e) => {
     e.stopPropagation();
     e.target.classList.remove('dragging');
+    setIsDragging(false);
   };
 
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation(); 
+    if (!isDragging) return;
     e.currentTarget.classList.add('dragging-over');
   };
 
@@ -119,50 +123,92 @@ const KanbanBoard = () => {
     e.stopPropagation();
     e.currentTarget.classList.remove('dragging-over');
     
+    if (!isDragging) return;
+    setIsDragging(false);
+    
     const taskId = e.dataTransfer.getData('taskId');
     const sourceBoard = e.dataTransfer.getData('sourceBoard');
     
+    // Capture the necessary values from the event before state update
     const dropY = e.clientY;
-    const taskList = e.currentTarget;
-    const taskElements = Array.from(taskList.children);
+    const taskListRect = e.currentTarget.getBoundingClientRect();
+    const relativeY = dropY - taskListRect.top;
     
-    let dropIndex = -1;
-    for (let i = 0; i < taskElements.length; i++) {
-      const rect = taskElements[i].getBoundingClientRect();
-      const cardMiddle = rect.top + rect.height / 2;
-      
-      if (dropY < cardMiddle) {
-        dropIndex = i;
-        break;
-      }
-    }
+    // Store original state for potential rollback
+    const originalBoards = boards;
     
-    if (dropIndex === -1) {
-      dropIndex = taskElements.length;
-    }
-
-    // Optimistic UI update: move the card immediately
-    setBoards(prev => {
-      const newBoards = { ...prev };
-      // Remove from source
-      const sourceItems = [...newBoards[sourceBoard].items];
-      const taskIndex = sourceItems.findIndex(item => item._id === taskId);
-      if (taskIndex === -1) return prev;
-      const [task] = sourceItems.splice(taskIndex, 1);
-      // Add to target
-      const targetItems = [...newBoards[targetBoard].items];
-      targetItems.splice(dropIndex, 0, { ...task, status: targetBoard });
-      newBoards[sourceBoard].items = sourceItems;
-      newBoards[targetBoard].items = targetItems;
-      return newBoards;
-    });
-
-    // Async backend update
-    updateTaskStatus(taskId, targetBoard)
-      .catch(err => {
-        setError('Failed to update task status. Reverting change.');
-        fetchProjectAndTasks(); // Revert UI to server state
+    // Optimistic UI update - update frontend immediately
+    const optimisticUpdate = () => {
+      setBoards(prevBoards => {
+        // Deep clone to avoid mutation issues
+        const newBoards = JSON.parse(JSON.stringify(prevBoards));
+        
+        // Get current items
+        const sourceItems = newBoards[sourceBoard]?.items || [];
+        const targetItems = newBoards[targetBoard]?.items || [];
+        
+        // Find the task
+        const taskIndex = sourceItems.findIndex(item => item._id === taskId);
+        if (taskIndex === -1) {
+          return prevBoards; // Task not found, return unchanged state
+        }
+        
+        const task = sourceItems[taskIndex];
+        
+        // Remove from source
+        sourceItems.splice(taskIndex, 1);
+        
+        // Calculate drop position using captured values
+        const cardHeight = 120;
+        const cardGap = 16;
+        const totalCardHeight = cardHeight + cardGap;
+        
+        let dropIndex = Math.floor(relativeY / totalCardHeight);
+        dropIndex = Math.max(0, Math.min(dropIndex, targetItems.length));
+        
+        // If same board, adjust for removed item
+        if (sourceBoard === targetBoard && taskIndex < dropIndex) {
+          dropIndex--;
+        }
+        
+        // Add to target
+        targetItems.splice(dropIndex, 0, { ...task, status: targetBoard });
+        
+        // Update boards
+        newBoards[sourceBoard] = {
+          ...newBoards[sourceBoard],
+          items: sourceItems
+        };
+        newBoards[targetBoard] = {
+          ...newBoards[targetBoard],
+          items: targetItems
+        };
+        
+        return newBoards;
       });
+    };
+    
+    // Execute optimistic update
+    optimisticUpdate();
+    
+    // Asynchronous backend update
+    setTimeout(async () => {
+      try {
+        await updateTaskStatus(taskId, targetBoard);
+        // Success - no need to do anything, optimistic update was correct
+      } catch (err) {
+        console.error('Failed to update task status:', err);
+        setError('Failed to update task status. Reverting change.');
+        
+        // Rollback to original state on failure
+        setBoards(originalBoards);
+        
+        // Optionally refresh from server to ensure consistency
+        setTimeout(() => {
+          fetchProjectAndTasks();
+        }, 1000);
+      }
+    }, 0);
   };
 
   const handleIssueClick = (issue) => {
@@ -435,7 +481,7 @@ const KanbanBoard = () => {
   );
 
   return (
-    <div className="kanban-container">
+    <div className={`kanban-container ${isDragging ? 'dragging' : ''}`}>
       {showErrorModal && <ErrorModal />}
       <div className="kanban-header">
         <div className="kanban-header-content">
