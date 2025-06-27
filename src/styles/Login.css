@@ -4,7 +4,8 @@
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-between;
-  background: linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
+  background: transparent !important;
+  background-color: transparent !important;
   padding: 2rem 8rem;
   position: relative;
   overflow: hidden;
@@ -255,4 +256,10 @@
   .auth-logo-text {
     font-size: 2.8rem;
   }
+}
+
+/* Remove or set to transparent any background/background-color on main/root containers */
+.login-container, .login-form, .modal-content, .modal-overlay {
+  background: transparent !important;
+  background-color: transparent !important;
 }

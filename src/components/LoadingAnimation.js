@@ -11,7 +11,7 @@ const LoadingAnimation = ({ message = 'Loading...' }) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      background: 'linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef)',
+      background: 'var(--primary-gradient)',
       zIndex: 1000
     },
     container: {

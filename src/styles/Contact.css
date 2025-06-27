@@ -87,6 +87,8 @@
   align-items: stretch;
   justify-content: space-between;
   margin-top: -2rem;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .contact-info {
@@ -150,6 +152,8 @@
   padding: 3rem;
   min-width: 500px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .form-group {
@@ -234,6 +238,8 @@
   color: #2c3e50;
   min-width: 500px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .success-message i {
@@ -271,6 +277,8 @@
   color: #34495e !important;
   width: 100%;
   justify-content: center;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .spam-notice i {

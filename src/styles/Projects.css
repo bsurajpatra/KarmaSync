@@ -304,6 +304,11 @@
   z-index: 999; /* lower than modal's 1000 but still high */
 }
 
+/* Remove or set to transparent any background/background-color on main/root containers */
+.projects-container, .projects-list, .modal-content, .modal-overlay {
+  background: transparent !important;
+  background-color: transparent !important;
+}
 
 /* Responsive Styles */
 @media (max-width: 1200px) {

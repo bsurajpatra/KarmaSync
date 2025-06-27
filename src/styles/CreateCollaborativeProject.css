@@ -280,3 +280,9 @@
 .close-modal:hover {
   background: #e0e0e0;
 }
+
+/* Remove or set to transparent any background/background-color on main/root containers */
+.create-collaborative-project-container, .create-collaborative-project-form, .modal-content, .modal-overlay {
+  background: transparent !important;
+  background-color: transparent !important;
+}

@@ -208,3 +208,9 @@
     width: 100%;
   }
 }
+
+/* Remove or set to transparent any background/background-color on main/root containers */
+.create-personal-project-container, .create-personal-project-form, .modal-content, .modal-overlay {
+  background: transparent !important;
+  background-color: transparent !important;
+}

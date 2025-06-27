@@ -3,7 +3,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
+  background: transparent !important;
+  background-color: transparent !important;
   color: white;
   position: relative;
 }
@@ -210,12 +211,12 @@
 }
 
 .modal-content {
-  background: white;
+  background: #ffffff;
+  color: #ffffff;
   border-radius: 20px;
   padding: 1.5rem;
   width: 90%;
   max-width: 500px;
-  color: #1a1a1a;
 }
 
 .modal-header {
@@ -389,5 +390,16 @@
   .logout-confirm-button {
     width: 100%;
   }
+}
+
+/* Remove or set to transparent any background/background-color on main/root containers */
+.dashboard-container, .dashboard-main, .modal-content, .modal-overlay {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.modal-overlay .modal-content {
+  background: #fff !important;
+  color: #1a1a1a !important;
 }
 

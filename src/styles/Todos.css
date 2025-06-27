@@ -6,6 +6,8 @@
   background: linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
   color: white;
   position: relative;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 /* Header Styles */
@@ -111,6 +113,8 @@
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 /* Search Bar */
@@ -458,6 +462,8 @@
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .todo-form-modal {
@@ -468,6 +474,8 @@
   max-width: 500px;
   position: relative;
   color: #000000;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .modal-close {
@@ -569,6 +577,8 @@
   background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   backdrop-filter: blur(10px);
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .no-todos h3 {
@@ -593,6 +603,8 @@
   text-align: center;
   backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 59, 48, 0.2);
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 /* Responsive Styles */

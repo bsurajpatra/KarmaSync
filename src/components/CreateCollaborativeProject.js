@@ -186,11 +186,6 @@ const CreateCollaborativeProject = () => {
                 onChange={handleSearch}
                 className="collaborator-search-input"
               />
-              {searchLoading && (
-                <div className="search-loading">
-                  <LoadingAnimation message="Searching..." />
-                </div>
-              )}
               {searchResults.length > 0 && (
                 <div className="search-results">
                   {searchResults.map(user => (

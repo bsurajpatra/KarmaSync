@@ -7,6 +7,8 @@
   color: white;
   position: relative;
   padding-bottom: 8rem;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 /* Header Styles */
@@ -189,7 +191,7 @@
 
 .task-date,
 .task-deadline {
-  color: #ffffff;
+  color: #fff !important;
   font-size: 0.9rem;
   font-weight: 700;
 }
@@ -490,6 +492,8 @@
   backdrop-filter: blur(8px);
   animation: fadeIn 0.3s ease;
   padding: 1rem;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .edit-modal-container {
@@ -503,6 +507,8 @@
   animation: modalSlideIn 0.3s ease;
   display: flex;
   flex-direction: column;
+  background: transparent !important;
+  background-color: transparent !important;
 }
 
 .edit-modal-form {

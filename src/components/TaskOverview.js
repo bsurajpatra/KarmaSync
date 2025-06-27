@@ -245,7 +245,7 @@ const TaskOverview = () => {
                   textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'
                 }}>#{task.serialNumber}</span>
                 <span className="task-date" style={{ 
-                  color: '#FFFFFF', 
+                  color: 'var(--text-color)', 
                   fontWeight: '800',
                   fontSize: '1.2rem',
                   textShadow: '0 2px 4px rgba(0, 0, 0, 0.2)'

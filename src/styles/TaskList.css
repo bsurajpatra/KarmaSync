@@ -3,7 +3,8 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(to right, #fdb99b, #cf8bf3, #a770ef);
+  background: transparent !important;
+  background-color: transparent !important;
   color: white;
   position: relative;
 }
@@ -548,4 +549,10 @@
 
 .modal-body::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
+}
+
+/* Remove or set to transparent any background/background-color on main/root containers */
+.task-list-container, .task-list, .modal-content, .modal-overlay {
+  background: transparent !important;
+  background-color: transparent !important;
 }

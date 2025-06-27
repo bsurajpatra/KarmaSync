@@ -327,84 +327,84 @@ const Todos = () => {
                 <LoadingAnimation message={editingTodo ? "Updating todo..." : "Creating todo..."} />
               </div>
             ) : (
-              <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Enter todo name"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="priority">Priority</label>
+                <select
+                  id="priority"
+                  name="priority"
+                  value={formData.priority}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="category">Category</label>
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="General">General</option>
+                  <option value="Health">Health</option>
+                  <option value="Study">Study</option>
+                  <option value="Work">Work</option>
+                  <option value="Custom">Custom</option>
+                </select>
+              </div>
+
+              {formData.category === 'Custom' && (
                 <div className="form-group">
-                  <label htmlFor="name">Name</label>
+                  <label htmlFor="customCategory">Custom Category</label>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
+                    id="customCategory"
+                    value={customCategory}
+                    onChange={(e) => setCustomCategory(e.target.value)}
                     required
-                    placeholder="Enter todo name"
+                    placeholder="Enter custom category"
                   />
                 </div>
+              )}
 
-                <div className="form-group">
-                  <label htmlFor="priority">Priority</label>
-                  <select
-                    id="priority"
-                    name="priority"
-                    value={formData.priority}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                  </select>
-                </div>
+              <div className="form-group">
+                <label htmlFor="dueDate">Due Date</label>
+                <input
+                  type="date"
+                  id="dueDate"
+                  name="dueDate"
+                  value={formData.dueDate}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
 
-                <div className="form-group">
-                  <label htmlFor="category">Category</label>
-                  <select
-                    id="category"
-                    name="category"
-                    value={formData.category}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="General">General</option>
-                    <option value="Health">Health</option>
-                    <option value="Study">Study</option>
-                    <option value="Work">Work</option>
-                    <option value="Custom">Custom</option>
-                  </select>
-                </div>
-
-                {formData.category === 'Custom' && (
-                  <div className="form-group">
-                    <label htmlFor="customCategory">Custom Category</label>
-                    <input
-                      type="text"
-                      id="customCategory"
-                      value={customCategory}
-                      onChange={(e) => setCustomCategory(e.target.value)}
-                      required
-                      placeholder="Enter custom category"
-                    />
-                  </div>
-                )}
-
-                <div className="form-group">
-                  <label htmlFor="dueDate">Due Date</label>
-                  <input
-                    type="date"
-                    id="dueDate"
-                    name="dueDate"
-                    value={formData.dueDate}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-
-                <div className="form-actions">
-                  <button type="submit" className="submit-button">
-                    {editingTodo ? 'Update Todo' : 'Add Todo'}
-                  </button>
-                </div>
-              </form>
+              <div className="form-actions">
+                <button type="submit" className="submit-button">
+                  {editingTodo ? 'Update Todo' : 'Add Todo'}
+                </button>
+              </div>
+            </form>
             )}
           </div>
         </div>
