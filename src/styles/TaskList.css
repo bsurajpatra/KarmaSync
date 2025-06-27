@@ -175,7 +175,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #000000 !important;
+  color: #000 !important;
   padding: 0.4rem 0.8rem;
   border-radius: 8px;
   font-weight: 800 !important;
@@ -555,4 +555,9 @@
 .task-list-container, .task-list, .modal-content, .modal-overlay {
   background: transparent !important;
   background-color: transparent !important;
+}
+
+.tasks-list .task-item .task-meta .task-date,
+.tasks-list .task-item .task-meta .task-deadline {
+  color: #000 !important;
 }
