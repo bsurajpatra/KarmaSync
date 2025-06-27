@@ -467,15 +467,13 @@
 }
 
 .todo-form-modal {
-  background: white;
+  background: white !important;
   border-radius: 20px;
   padding: 2rem;
   width: 90%;
   max-width: 500px;
   position: relative;
   color: #000000;
-  background: transparent !important;
-  background-color: transparent !important;
 }
 
 .modal-close {
