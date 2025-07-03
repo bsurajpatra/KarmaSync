@@ -2,7 +2,7 @@ import axios from 'axios';
 import config from '../config';
 import { API_BASE_URL } from '../config';
 
-const API_URL = config.API_URL || API_BASE_URL;
+const BASE_URL = `${config.API_URL}/api/todos`;
 
 const getAuthToken = () => {
   const token = localStorage.getItem('token');
@@ -10,56 +10,16 @@ const getAuthToken = () => {
   return token;
 };
 
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
-api.interceptors.request.use(
-  (config) => {
-    const token = getAuthToken();
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    console.log('API Request:', {
-      url: config.url,
-      method: config.method,
-      headers: config.headers,
-      data: config.data
-    });
-    return config;
-  },
-  (error) => {
-    console.error('API Request Error:', error);
-    return Promise.reject(error);
-  }
-);
-
-api.interceptors.response.use(
-  (response) => {
-    console.log('API Response:', {
-      url: response.config.url,
-      status: response.status,
-      data: response.data
-    });
-    return response;
-  },
-  (error) => {
-    console.error('API Error:', {
-      url: error.config?.url,
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message
-    });
-    return Promise.reject(error);
-  }
-);
+const getAuthHeader = () => {
+  const token = getAuthToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 export const getTodos = async () => {
   try {
-    const response = await api.get('/todos');
+    const response = await axios.get(BASE_URL, {
+      headers: getAuthHeader()
+    });
     return response.data;
   } catch (error) {
     console.error('Get Todos Error:', error);
@@ -70,7 +30,12 @@ export const getTodos = async () => {
 export const createTodo = async (todoData) => {
   try {
     console.log('Creating Todo:', todoData);
-    const response = await api.post('/todos', todoData);
+    const response = await axios.post(BASE_URL, todoData, {
+      headers: {
+        ...getAuthHeader(),
+        'Content-Type': 'application/json'
+      }
+    });
     return response.data;
   } catch (error) {
     console.error('Create Todo Error:', error);
@@ -81,7 +46,9 @@ export const createTodo = async (todoData) => {
 export const updateTodo = async (todoId, todoData) => {
   try {
     console.log('Updating Todo:', { todoId, todoData });
-    const response = await api.put(`/todos/${todoId}`, todoData);
+    const response = await axios.put(`${BASE_URL}/${todoId}`, todoData, {
+      headers: getAuthHeader()
+    });
     return response.data;
   } catch (error) {
     console.error('Update Todo Error:', error);
@@ -92,7 +59,9 @@ export const updateTodo = async (todoId, todoData) => {
 export const deleteTodo = async (todoId) => {
   try {
     console.log('Deleting Todo:', todoId);
-    const response = await api.delete(`/todos/${todoId}`);
+    const response = await axios.delete(`${BASE_URL}/${todoId}`, {
+      headers: getAuthHeader()
+    });
     return response.data;
   } catch (error) {
     console.error('Delete Todo Error:', error);
@@ -103,7 +72,9 @@ export const deleteTodo = async (todoId) => {
 export const updateTodoStatus = async (todoId, status) => {
   try {
     console.log('Updating Todo Status:', { todoId, status });
-    const response = await api.put(`/todos/${todoId}`, { status });
+    const response = await axios.put(`${BASE_URL}/${todoId}`, { status }, {
+      headers: getAuthHeader()
+    });
     return response.data;
   } catch (error) {
     console.error('Update Todo Status Error:', error);
@@ -113,7 +84,9 @@ export const updateTodoStatus = async (todoId, status) => {
 
 export const getTodosByCategory = async (category) => {
   try {
-    const response = await api.get(`/todos?category=${category}`);
+    const response = await axios.get(`${BASE_URL}?category=${category}`, {
+      headers: getAuthHeader()
+    });
     return response.data;
   } catch (error) {
     console.error('Error fetching todos by category:', error);
@@ -123,7 +96,9 @@ export const getTodosByCategory = async (category) => {
 
 export const getTodosByPriority = async (priority) => {
   try {
-    const response = await api.get(`/todos?priority=${priority}`);
+    const response = await axios.get(`${BASE_URL}?priority=${priority}`, {
+      headers: getAuthHeader()
+    });
     return response.data;
   } catch (error) {
     console.error('Error fetching todos by priority:', error);
@@ -133,7 +108,9 @@ export const getTodosByPriority = async (priority) => {
 
 export const getTodosByStatus = async (status) => {
   try {
-    const response = await api.get(`/todos?status=${status}`);
+    const response = await axios.get(`${BASE_URL}?status=${status}`, {
+      headers: getAuthHeader()
+    });
     return response.data;
   } catch (error) {
     console.error('Error fetching todos by status:', error);
