@@ -236,32 +236,212 @@
 
 @media (max-width: 768px) {
   .auth-container {
-    padding: 2rem;
+    padding: 1rem;
     flex-direction: column;
+    min-height: 100vh;
+    justify-content: center;
+    align-items: center;
   }
 
   .auth-card {
     max-width: 100%;
     padding: 1.5rem;
+    margin: 0 1rem 5rem 1rem;
+    border-radius: 15px;
   }
 
   .auth-logo-section {
     padding-right: 0;
     height: auto;
     min-height: auto;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    flex: none;
   }
 
   .auth-content {
     height: auto;
+    flex: 1;
+    justify-content: flex-start;
+    padding-top: 1rem;
   }
 
   .auth-logo {
-    width: 220px;
+    width: 180px;
+    margin-bottom: 0.5rem;
   }
 
   .auth-logo-text {
-    font-size: 2.8rem;
+    font-size: 2.2rem;
+    margin-top: 0.25rem;
+  }
+
+  .auth-header h2 {
+    font-size: 1.75rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.85rem;
+  }
+
+  .auth-form {
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .auth-input {
+    padding: 0.7rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  .auth-button {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+  }
+
+  .auth-footer {
+    margin-top: 4rem;
+    padding-top: 2rem;
+  }
+
+  .auth-footer p {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .auth-link {
+    font-size: 0.8rem;
+    margin-right: 1rem;
+  }
+
+  .back-link {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  .signup-message {
+    padding: 0.75rem;
+    font-size: 0.85rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .password-toggle {
+    right: 8px;
+    padding: 0.2rem;
+  }
+
+  .password-toggle svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 0.5rem;
+  }
+
+  .auth-card {
+    padding: 1.25rem;
+    margin: 0 0.5rem 4rem 0.5rem;
+    border-radius: 12px;
+  }
+
+  .auth-logo {
+    width: 150px;
+  }
+
+  .auth-logo-text {
+    font-size: 1.8rem;
+  }
+
+  .auth-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .auth-subtitle {
+    font-size: 0.8rem;
+  }
+
+  .auth-input {
+    padding: 0.65rem 0.8rem;
+    font-size: 0.8rem;
+  }
+
+  .auth-button {
+    padding: 0.7rem 1rem;
+    font-size: 0.8rem;
+  }
+
+  .auth-footer {
+    margin-top: 3.5rem;
+    padding-top: 1.75rem;
+  }
+
+  .auth-footer p {
+    font-size: 0.75rem;
+  }
+
+  .auth-link {
+    font-size: 0.75rem;
+    margin-right: 0.75rem;
+  }
+
+  .back-link {
+    font-size: 0.7rem;
+  }
+
+  .signup-message {
+    padding: 0.6rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .auth-container {
+    padding: 0.25rem;
+  }
+
+  .auth-card {
+    padding: 1rem;
+    margin: 0 0.25rem 3rem 0.25rem;
+  }
+
+  .auth-logo {
+    width: 120px;
+  }
+
+  .auth-logo-text {
+    font-size: 1.5rem;
+  }
+
+  .auth-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .auth-input {
+    padding: 0.6rem 0.7rem;
+    font-size: 0.75rem;
+  }
+
+  .auth-button {
+    padding: 0.65rem 0.9rem;
+    font-size: 0.75rem;
+  }
+
+  .auth-footer {
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .auth-footer p {
+    font-size: 0.7rem;
+  }
+
+  .auth-link {
+    font-size: 0.7rem;
+    margin-right: 0.5rem;
   }
 }
 

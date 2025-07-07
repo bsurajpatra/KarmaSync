@@ -4,23 +4,13 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer
-      style={{
-        backgroundColor: "transparent",
-        color: "white",
-        textAlign: "center",
-        padding: "1rem",
-        fontSize: "0.9rem",
-        borderTop: "1px solid white",
-        fontWeight: 500,
-      }}
-    >
+    <footer className="dashboard-footer">
       &copy; {year} KarmaSync. Licensed under{" "}
-      <a    
+      <a
         href="https://github.com/bsurajpatra/KarmaSync_Info/blob/main/LICENSE"
         target="_blank"
         rel="noopener noreferrer"
-        style={{ color: "white", textDecoration: "underline" }}
+        className="footer-link"
       >
         MIT License
       </a>.
