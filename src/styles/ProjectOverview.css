@@ -2057,3 +2057,546 @@
   font-size: 0.875rem;
   margin: 0;
 }
+
+/* --- MOBILE REFINEMENTS FOR PROJECT OVERVIEW --- */
+
+@media (max-width: 768px) {
+  .projects-header { padding: 1rem 0.5rem; }
+  .projects-header-content { flex-direction: column; gap: 1rem; align-items: stretch; }
+  .projects-header-left { width: 100%; }
+  .title-display h1 { font-size: 1.5rem; gap: 0.5rem; }
+  .edit-title-btn { font-size: 0.8rem; padding: 0.3rem 0.7rem; border-radius: 6px; }
+  .project-meta { flex-direction: column; gap: 0.3rem; font-size: 0.95rem; }
+  .projects-header-actions { flex-direction: row; gap: 0.5rem; width: 100%; justify-content: flex-start; }
+  .btn { padding: 0.5rem 1rem; font-size: 0.95rem; border-radius: 10px; min-width: 80px; }
+  .project-overview-container { width: 100%; padding: 1rem 0.5rem 2.5rem 0.5rem; gap: 1.2rem; }
+  .project-overview-section { padding: 1rem 0.5rem; border-radius: 12px; }
+  .section-header h2 { font-size: 1.1rem; }
+  .section-header button { font-size: 0.8rem; padding: 0.2rem 0.5rem; min-width: 60px; }
+  .project-type-status { flex-direction: column; gap: 1rem; padding: 0.5rem 0; }
+  .project-type-badge, .status-badge, .role-badge { font-size: 0.9rem; padding: 0.3rem 0.7rem; border-radius: 10px; }
+  .your-role-section h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .collaborators-table th, .collaborators-table td { font-size: 0.85rem; padding: 0.5rem; }
+  .collaborators-table { font-size: 0.85rem; min-width: 400px; }
+  .collaborators-list { overflow-x: auto; }
+  .tasks-header h2 { font-size: 1.1rem; }
+  .tasks-actions .btn { min-width: 80px; font-size: 0.9rem; padding: 0.4rem 0.7rem; }
+  .issues-overview { flex-direction: column; gap: 1rem; margin-bottom: 1rem; }
+  .total-issues { padding: 1rem 1.5rem; min-width: 120px; }
+  .issues-count { font-size: 2rem; }
+  .issues-label { font-size: 0.95rem; }
+  .chart-container { height: 180px; min-width: 0; padding: 0.5rem; }
+  .no-data-chart { width: 120px; height: 120px; font-size: 0.95rem; }
+  .project-danger-section { padding: 1rem 0.5rem; border-radius: 10px; margin-top: 1rem; }
+  .project-danger-action { flex-direction: column; align-items: stretch; padding: 1rem 0.5rem; gap: 0.5rem; }
+  .project-danger-action-info h3 { font-size: 1rem; }
+  .project-danger-action-info p { font-size: 0.8rem; }
+  .btn-danger, .btn-warning { min-width: 80px; padding: 0.5rem 1rem; font-size: 0.95rem; border-radius: 10px; }
+  .edit-form, .github-form { gap: 0.5rem; }
+  .edit-input, .edit-textarea, .github-input { padding: 0.5rem; font-size: 0.95rem; border-radius: 10px; }
+  .edit-textarea { min-height: 60px; }
+  .form-actions, .github-form-actions { gap: 0.5rem; margin-top: 0.5rem; }
+  .form-actions .btn, .github-form-actions .btn { min-width: 80px; font-size: 0.9rem; padding: 0.4rem 0.7rem; }
+  .modal-content, .modal-content.nested, .issue-modal { max-width: 98vw; width: 98vw; padding: 0.5rem; border-radius: 10px; }
+  .modal-header, .issue-modal .modal-header { padding: 0.5rem 0.5rem; }
+  .modal-header h2, .issue-modal .modal-header h2 { font-size: 1rem; }
+  .modal-close, .collab-modal-close { width: 2rem; height: 2rem; font-size: 1.1rem; border-radius: 6px; padding: 0; }
+  .modal-body, .issue-modal .modal-body { padding: 0.5rem; }
+  .modal-actions, .issue-modal .modal-actions { gap: 0.5rem; padding: 0.5rem 0 0 0; margin-top: 0.5rem; }
+  .issue-form { gap: 0.5rem; }
+  .form-row { grid-template-columns: 1fr; gap: 0.5rem; }
+  .form-group label { font-size: 0.8rem; }
+  .form-group .form-control { font-size: 0.9rem; padding: 0.4rem 0.6rem; border-radius: 6px; }
+  .form-group textarea.form-control { min-height: 40px; max-height: 70px; }
+  .collab-modal { max-width: 99vw; width: 99vw; border-radius: 10px; padding: 0; }
+  .collab-modal-header { padding: 0.7rem 0.7rem; }
+  .collab-modal-header h3 { font-size: 1.1rem; }
+  .collab-modal-content { padding: 0.7rem; }
+  .collab-tabs { gap: 0.5rem; padding-bottom: 0.5rem; margin-bottom: 0.7rem; }
+  .collab-tab { padding: 0.4rem 0.7rem; font-size: 0.85rem; border-radius: 6px; }
+  .collab-search-field { padding: 0.6rem; font-size: 0.95rem; border-radius: 6px; }
+  .collab-search-item { padding: 0.6rem; font-size: 0.95rem; }
+  .collab-user-info { gap: 0.1rem; }
+  .collab-name { font-size: 1rem; }
+  .collab-username, .collab-email { font-size: 0.8rem; }
+  .collab-role { font-size: 0.8rem; padding: 0.2rem 0.5rem; border-radius: 6px; }
+  .collab-actions .btn-danger { padding: 0.3rem 0.7rem; font-size: 0.85rem; border-radius: 6px; }
+  .collab-manage-item { padding: 0.6rem; border-radius: 6px; margin-bottom: 0.5rem; }
+  .collab-list { gap: 0.5rem; }
+  .collab-manage-wrapper { padding: 0.5rem; border-radius: 6px; max-height: 220px; }
+  .role-options { gap: 0.7rem; margin-top: 0.5rem; grid-template-columns: 1fr; }
+  .role-option { padding: 0.7rem; font-size: 0.95rem; border-radius: 8px; }
+  .role-option h4 { font-size: 1rem; }
+  .role-option p { font-size: 0.85rem; }
+  .role-option ul { font-size: 0.8rem; padding-left: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .projects-header { padding: 0.5rem 0.2rem; }
+  .title-display h1 { font-size: 1.1rem; gap: 0.3rem; }
+  .edit-title-btn { font-size: 0.7rem; padding: 0.2rem 0.5rem; }
+  .project-meta { font-size: 0.8rem; }
+  .project-overview-section { padding: 0.5rem 0.2rem; border-radius: 7px; }
+  .section-header h2 { font-size: 0.9rem; }
+  .section-header button { font-size: 0.7rem; padding: 0.2rem 0.5rem; min-width: 60px; }
+  .project-type-badge, .status-badge, .role-badge { font-size: 0.7rem; padding: 0.15rem 0.4rem; border-radius: 6px; }
+  .your-role-section h3 { font-size: 0.9rem; }
+  .collaborators-table th, .collaborators-table td { font-size: 0.7rem; padding: 0.3rem; }
+  .collaborators-table { min-width: 320px; }
+  .tasks-header h2 { font-size: 0.9rem; }
+  .tasks-actions .btn { font-size: 0.7rem; padding: 0.2rem 0.5rem; min-width: 60px; }
+  .total-issues { padding: 0.5rem 0.7rem; min-width: 70px; }
+  .issues-count { font-size: 1.2rem; }
+  .issues-label { font-size: 0.7rem; }
+  .chart-container { height: 100px; padding: 0.2rem; }
+  .no-data-chart { width: 70px; height: 70px; font-size: 0.7rem; }
+  .project-danger-section { padding: 0.5rem 0.2rem; border-radius: 6px; margin-top: 0.5rem; }
+  .project-danger-action { padding: 0.5rem 0.2rem; border-radius: 6px; }
+  .btn-danger, .btn-warning { font-size: 0.7rem; padding: 0.2rem 0.5rem; min-width: 60px; border-radius: 6px; }
+  .edit-input, .edit-textarea, .github-input { font-size: 0.8rem; padding: 0.3rem; border-radius: 6px; }
+  .edit-textarea { min-height: 30px; }
+  .form-actions .btn, .github-form-actions .btn { font-size: 0.7rem; padding: 0.2rem 0.5rem; min-width: 60px; border-radius: 6px; }
+  .modal-content, .modal-content.nested, .issue-modal, .collab-modal { max-width: 100vw; width: 100vw; padding: 0.2rem; border-radius: 6px; }
+  .modal-header, .issue-modal .modal-header, .collab-modal-header { padding: 0.2rem 0.2rem; }
+  .modal-header h2, .issue-modal .modal-header h2, .collab-modal-header h3 { font-size: 0.8rem; }
+  .modal-close, .collab-modal-close { width: 1.3rem; height: 1.3rem; font-size: 0.8rem; border-radius: 4px; }
+  .modal-body, .issue-modal .modal-body, .collab-modal-content { padding: 0.05rem; }
+  .modal-actions, .issue-modal .modal-actions { gap: 0.05rem; padding: 0.05rem 0 0 0; margin-top: 0.05rem; }
+  .form-group label, .form-group .form-control, .role-option, .role-option h4, .role-option p, .role-option ul { font-size: 0.5rem; }
+  .form-group .form-control { padding: 0.05rem 0.1rem; border-radius: 2px; }
+  .collab-search-field, .collab-search-item, .collab-name, .collab-username, .collab-email, .collab-role, .collab-actions .btn-danger, .collab-manage-item { font-size: 0.5rem; padding: 0.05rem; border-radius: 2px; }
+  .collab-manage-wrapper { padding: 0.05rem; border-radius: 2px; max-height: 50px; }
+  .role-options { gap: 0.05rem; margin-top: 0.05rem; }
+}
+
+@media (max-width: 360px) {
+  .projects-header, .project-overview-section, .project-danger-section { padding: 0.1rem 0.05rem; }
+  .title-display h1 { font-size: 0.9rem; }
+  .edit-title-btn, .section-header button, .btn, .btn-danger, .btn-warning { font-size: 0.6rem; padding: 0.1rem 0.2rem; min-width: 40px; border-radius: 3px; }
+  .project-type-badge, .status-badge, .role-badge { font-size: 0.5rem; padding: 0.05rem 0.2rem; border-radius: 3px; }
+  .collaborators-table th, .collaborators-table td { font-size: 0.5rem; padding: 0.1rem; }
+  .total-issues { padding: 0.2rem 0.3rem; min-width: 30px; }
+  .issues-count { font-size: 0.7rem; }
+  .issues-label { font-size: 0.5rem; }
+  .chart-container { height: 40px; padding: 0.05rem; }
+  .no-data-chart { width: 30px; height: 30px; font-size: 0.5rem; }
+  .modal-content, .modal-content.nested, .issue-modal, .collab-modal { max-width: 100vw; width: 100vw; padding: 0.05rem; border-radius: 3px; }
+  .modal-header, .issue-modal .modal-header, .collab-modal-header { padding: 0.05rem 0.05rem; }
+  .modal-header h2, .issue-modal .modal-header h2, .collab-modal-header h3 { font-size: 0.5rem; }
+  .modal-close, .collab-modal-close { width: 0.7rem; height: 0.7rem; font-size: 0.5rem; border-radius: 2px; }
+  .modal-body, .issue-modal .modal-body, .collab-modal-content { padding: 0.05rem; }
+  .modal-actions, .issue-modal .modal-actions { gap: 0.05rem; padding: 0.05rem 0 0 0; margin-top: 0.05rem; }
+  .form-group label, .form-group .form-control, .role-option, .role-option h4, .role-option p, .role-option ul { font-size: 0.5rem; }
+  .form-group .form-control { padding: 0.05rem 0.1rem; border-radius: 2px; }
+  .collab-search-field, .collab-search-item, .collab-name, .collab-username, .collab-email, .collab-role, .collab-actions .btn-danger, .collab-manage-item { font-size: 0.5rem; padding: 0.05rem; border-radius: 2px; }
+  .collab-manage-wrapper { padding: 0.05rem; border-radius: 2px; max-height: 50px; }
+  .role-options { gap: 0.05rem; margin-top: 0.05rem; }
+}
+
+@media (max-width: 768px) {
+  /* Header action buttons: smaller, equal, row, spacing */
+  .projects-header-actions {
+    flex-direction: row;
+    gap: 0.5rem;
+    width: 100%;
+    justify-content: center;
+  }
+  .projects-header-actions .btn {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 180px;
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    height: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  /* Description and GitHub containers: add inner padding */
+  .project-overview-section {
+    padding: 1rem 0.7rem !important;
+  }
+  /* Edit button in Description and GitHub: compact, text-sized */
+  .section-header button.section-edit-btn {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    height: 1.7rem;
+    min-width: unset;
+    line-height: 1.1;
+  }
+}
+
+@media (max-width: 480px) {
+  .projects-header-actions .btn {
+    font-size: 0.7rem;
+    height: 1.7rem;
+    border-radius: 6px;
+    padding: 0.2rem 0.3rem;
+    max-width: 120px;
+  }
+  .project-overview-section {
+    padding: 0.5rem 0.3rem !important;
+  }
+  .section-header button.section-edit-btn {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+    height: 1.2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .collab-modal {
+    max-width: 100vw;
+    width: 100vw;
+    border-radius: 8px;
+    padding: 0;
+    min-height: 60vh;
+  }
+  .collab-modal-header {
+    padding: 0.7rem 0.7rem;
+    border-radius: 8px 8px 0 0;
+  }
+  .collab-modal-header h3 {
+    font-size: 1.1rem;
+  }
+  .collab-modal-close {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    padding: 0;
+  }
+  .collab-modal-content {
+    padding: 0.7rem;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .collab-tabs {
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+  .collab-tab {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+  .collab-search-field {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+    border-radius: 6px;
+  }
+  .collab-search-results {
+    max-height: 180px;
+    overflow-y: auto;
+  }
+  .collab-search-item {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+  }
+  .collab-no-results {
+    font-size: 0.9rem;
+    padding: 0.7rem 0;
+  }
+  .collab-list {
+    gap: 0.5rem;
+    max-height: 180px;
+    overflow-y: auto;
+  }
+  .collab-manage-item {
+    padding: 0.6rem;
+    border-radius: 6px;
+    margin-bottom: 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .collab-user-info {
+    gap: 0.1rem;
+    font-size: 0.95rem;
+  }
+  .collab-name {
+    font-size: 1rem;
+  }
+  .collab-username, .collab-email {
+    font-size: 0.8rem;
+  }
+  .collab-role {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+  }
+  .collab-actions {
+    margin-left: 0;
+    width: 100%;
+  }
+  .collab-actions .btn-danger {
+    width: 100%;
+    justify-content: center;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .collab-modal {
+    border-radius: 4px;
+    min-height: 70vh;
+  }
+  .collab-modal-header {
+    padding: 0.3rem 0.3rem;
+    border-radius: 4px 4px 0 0;
+  }
+  .collab-modal-header h3 {
+    font-size: 0.8rem;
+  }
+  .collab-modal-close {
+    width: 1.3rem;
+    height: 1.3rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+  .collab-modal-content {
+    padding: 0.3rem;
+    max-height: 50vh;
+  }
+  .collab-tabs {
+    gap: 0.2rem;
+    padding-bottom: 0.2rem;
+    margin-bottom: 0.3rem;
+  }
+  .collab-tab {
+    padding: 0.2rem 0.3rem;
+    font-size: 0.7rem;
+    border-radius: 4px;
+  }
+  .collab-search-field {
+    padding: 0.3rem;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+  .collab-search-results {
+    max-height: 100px;
+  }
+  .collab-search-item {
+    padding: 0.3rem;
+    font-size: 0.8rem;
+  }
+  .collab-no-results {
+    font-size: 0.7rem;
+    padding: 0.3rem 0;
+  }
+  .collab-list {
+    gap: 0.2rem;
+    max-height: 100px;
+  }
+  .collab-manage-item {
+    padding: 0.3rem;
+    border-radius: 4px;
+    margin-bottom: 0.2rem;
+    gap: 0.2rem;
+  }
+  .collab-user-info {
+    font-size: 0.8rem;
+  }
+  .collab-name {
+    font-size: 0.8rem;
+  }
+  .collab-username, .collab-email {
+    font-size: 0.7rem;
+  }
+  .collab-role {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.3rem;
+    border-radius: 4px;
+  }
+  .collab-actions .btn-danger {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.3rem;
+    border-radius: 4px;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Add/Remove Collaborators section layout */
+  .collab-tabs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+    border-bottom: 1px solid #e0e0e0;
+    background: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+    padding: 0.3rem 0.2rem 0.2rem 0.2rem;
+  }
+  .collab-tab {
+    flex: 1 1 0;
+    text-align: center;
+    background: #f5f5f5;
+    border-radius: 6px 6px 0 0;
+    font-size: 0.9rem;
+    padding: 0.4rem 0.2rem;
+    margin: 0;
+    border: none;
+    min-width: 0;
+    transition: background 0.2s;
+  }
+  .collab-tab.active {
+    background: #e0e7ef;
+    font-weight: 600;
+    color: #333;
+  }
+  /* Remove Collaborators section */
+  .collab-manage-wrapper {
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+    padding: 0.5rem 0.2rem;
+    /* REMOVE max-height and overflow-y for full list display */
+    max-height: none;
+    overflow-y: visible;
+    margin-bottom: 0.5rem;
+  }
+  .collab-list {
+    gap: 0.4rem;
+    /* REMOVE max-height and overflow-y for full list display */
+    max-height: none;
+    overflow-y: visible;
+  }
+  .collab-manage-item {
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    padding: 0.5rem 0.6rem;
+    margin-bottom: 0.3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: flex-start;
+  }
+  .collab-user-info {
+    font-size: 0.95rem;
+    gap: 0.1rem;
+    width: 100%;
+    word-break: break-all;
+  }
+  .collab-actions {
+    width: 100%;
+    margin-left: 0;
+  }
+  .collab-actions .btn-danger {
+    width: 100%;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 6px;
+    margin-top: 0.2rem;
+  }
+  /* Add Collaborator section */
+  .collab-search-wrapper {
+    background: #f8f9fa;
+    border-radius: 0 0 8px 8px;
+    padding: 0.5rem 0.2rem;
+    margin-bottom: 0.5rem;
+  }
+  .collab-search-field {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    margin-bottom: 0.3rem;
+  }
+  .collab-search-results {
+    max-height: 120px;
+    overflow-y: auto;
+    border-radius: 6px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .collab-search-item {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .collab-search-item:last-child {
+    border-bottom: none;
+  }
+  .collab-search-item:hover {
+    background: #f0f4fa;
+  }
+  .collab-no-results {
+    font-size: 0.9rem;
+    padding: 0.7rem 0;
+    text-align: center;
+    color: #888;
+  }
+}
+
+@media (max-width: 480px) {
+  .collab-tabs {
+    border-radius: 4px 4px 0 0;
+    padding: 0.1rem 0.1rem 0.1rem 0.1rem;
+    gap: 0.2rem;
+  }
+  .collab-tab {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.1rem;
+    border-radius: 4px 4px 0 0;
+  }
+  .collab-manage-wrapper, .collab-search-wrapper {
+    border-radius: 0 0 4px 4px;
+    padding: 0.2rem 0.1rem;
+    /* REMOVE max-height and overflow-y for full list display */
+    max-height: none;
+    overflow-y: visible;
+    margin-bottom: 0.2rem;
+  }
+  .collab-list {
+    gap: 0.1rem;
+    /* REMOVE max-height and overflow-y for full list display */
+    max-height: none;
+    overflow-y: visible;
+  }
+  .collab-manage-item {
+    border-radius: 4px;
+    padding: 0.2rem 0.2rem;
+    margin-bottom: 0.1rem;
+    gap: 0.1rem;
+  }
+  .collab-user-info {
+    font-size: 0.8rem;
+  }
+  .collab-actions .btn-danger {
+    font-size: 0.7rem;
+    padding: 0.1rem 0.2rem;
+    border-radius: 4px;
+    margin-top: 0.1rem;
+  }
+  .collab-search-field {
+    font-size: 0.8rem;
+    padding: 0.3rem;
+    border-radius: 4px;
+    margin-bottom: 0.1rem;
+  }
+  .collab-search-results {
+    max-height: 50px;
+    border-radius: 4px;
+  }
+  .collab-search-item {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.2rem;
+  }
+  .collab-no-results {
+    font-size: 0.7rem;
+    padding: 0.3rem 0;
+  }
+}

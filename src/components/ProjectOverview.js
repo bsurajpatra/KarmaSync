@@ -345,12 +345,6 @@ const ProjectOverview = () => {
       <div className="modal-content">
         <div className="modal-header">
           <h2>Delete Project</h2>
-          <button 
-            className="modal-close"
-            onClick={() => setShowDeleteConfirm(false)}
-          >
-            ×
-          </button>
         </div>
         <div className="modal-body">
           <p>Are you sure you want to delete this project?</p>
@@ -541,12 +535,6 @@ const ProjectOverview = () => {
       <div className="modal-content">
         <div className="modal-header">
           <h2>Leave Project</h2>
-          <button 
-            className="modal-close"
-            onClick={() => setShowLeaveConfirm(false)}
-          >
-            ×
-          </button>
         </div>
         <div className="modal-body">
           <p>Are you sure you want to leave this project?</p>
@@ -936,24 +924,6 @@ const ProjectOverview = () => {
           <div className="modal-content issue-modal">
             <div className="modal-header">
               <h2>Add New Issue</h2>
-              <button 
-                className="modal-close"
-                onClick={() => {
-                  setShowAddIssueModal(false);
-                  setShowCustomType(false);
-                  setIssueFormData({
-                    title: '',
-                    description: '',
-                    type: 'tech',
-                    status: 'todo',
-                    deadline: '',
-                    customType: '',
-                    assignee: ''
-                  });
-                }}
-              >
-                &times;
-              </button>
             </div>
             <div className="modal-body">
               <form onSubmit={handleIssueFormSubmit} className="issue-form">
@@ -1266,11 +1236,6 @@ const ProjectOverview = () => {
                     onChange={handleSearch}
                     className="collab-search-field"
                   />
-                  {searchLoading && (
-                    <div className="collab-search-loading">
-                      <LoadingAnimation message="Searching..." />
-                    </div>
-                  )}
                   {searchResults.length > 0 && (
                     <div className="collab-search-results">
                       {searchResults.map(user => (
