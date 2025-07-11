@@ -287,12 +287,6 @@ const TaskOverview = () => {
               <form onSubmit={handleSubmit} className="edit-modal-form">
                 <div className="edit-modal-header">
                   <h2>Edit Issue</h2>
-                  <button 
-                    className="modal-close"
-                    onClick={() => setEditing(false)}
-                  >
-                    ×
-                  </button>
                 </div>
                 <div className="edit-modal-body">
             <div className="form-group">
