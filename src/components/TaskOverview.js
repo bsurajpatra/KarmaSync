@@ -572,12 +572,6 @@ const TaskOverview = () => {
           <div className="modal-content">
             <div className="modal-header">
               <h2>Delete Issue</h2>
-              <button 
-                className="modal-close"
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                ×
-              </button>
             </div>
             <div className="modal-body">
               <p>Are you sure you want to delete this issue?</p>
