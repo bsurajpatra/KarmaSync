@@ -14,7 +14,6 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
       <div className="modal-content">
         <div className="modal-header">
           <h2>Confirm Logout</h2>
-          <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
         <div className="modal-body">
           <p>Are you sure you want to log out?</p>
