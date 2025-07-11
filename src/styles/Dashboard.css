@@ -332,8 +332,8 @@
   }
   .top-bar {
     padding: 1.2rem 1rem;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
     gap: 1rem;
     height: auto;
   }
@@ -350,11 +350,11 @@
     font-size: 1rem;
   }
   .logout-button {
-    padding: 0.7rem 1.2rem;
-    font-size: 1rem;
-    border-radius: 10px;
-    margin-left: 0;
-    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    margin-left: auto;
+    width: auto;
     justify-content: center;
   }
   .content-container {
@@ -390,6 +390,24 @@
 }
 
 @media (max-width: 480px) {
+  .top-bar {
+    padding: 1rem 0.8rem;
+  }
+  
+  .header-content h1 {
+    font-size: 1.3rem;
+  }
+  
+  .dashboard-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .logout-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+  }
+  
   .feature-grid > .feature-card:last-child {
     margin-bottom: 3.5rem !important;
   }
@@ -402,6 +420,24 @@
 }
 
 @media (max-width: 360px) {
+  .top-bar {
+    padding: 0.8rem 0.6rem;
+  }
+  
+  .header-content h1 {
+    font-size: 1.1rem;
+  }
+  
+  .dashboard-subtitle {
+    font-size: 0.8rem;
+  }
+  
+  .logout-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.7rem;
+    border-radius: 5px;
+  }
+  
   .feature-grid > .feature-card:last-child {
     margin-bottom: 2.5rem !important;
   }

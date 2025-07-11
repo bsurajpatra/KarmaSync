@@ -133,6 +133,16 @@ const Signup = () => {
     }
   };
 
+  const isFormComplete = () => {
+    return (
+      formData.fullName.trim() !== '' &&
+      formData.username.trim() !== '' &&
+      formData.email.trim() !== '' &&
+      formData.password.trim() !== '' &&
+      formData.confirmPassword.trim() !== ''
+    );
+  };
+
   if (loading) {
     return (
       <LoadingAnimation 
@@ -261,8 +271,8 @@ const Signup = () => {
 
             <button 
               type="submit" 
-              className="auth-button"
-              disabled={loading || success}
+              className={`auth-button ${!isFormComplete() ? 'auth-button-disabled' : ''}`}
+              disabled={loading || success || !isFormComplete()}
             >
               {loading ? 'Creating Account...' : 'Sign Up'}
             </button>

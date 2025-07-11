@@ -132,6 +132,21 @@
   transform: none;
 }
 
+.auth-button-disabled {
+  opacity: 0.4 !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(117, 78, 167, 0.6) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.auth-button-disabled:hover {
+  transform: none !important;
+  box-shadow: none !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+}
+
 .auth-footer {
   text-align: center;
   margin-top: 1rem;

@@ -11,7 +11,7 @@ const getAuthToken = () => {
 };
 
 const getAuthHeader = () => {
-  const token = getAuthToken();
+    const token = getAuthToken();
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 

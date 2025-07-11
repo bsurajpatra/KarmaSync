@@ -6,7 +6,7 @@ const Footer = () => {
   return (
     <footer className="dashboard-footer">
       &copy; {year} KarmaSync. Licensed under{" "}
-      <a
+      <a    
         href="https://github.com/bsurajpatra/KarmaSync_Info/blob/main/LICENSE"
         target="_blank"
         rel="noopener noreferrer"

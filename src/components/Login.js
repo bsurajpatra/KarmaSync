@@ -64,6 +64,13 @@ const Login = () => {
     }
   };
 
+  const isFormComplete = () => {
+    return (
+      formData.identifier.trim() !== '' &&
+      formData.password.trim() !== ''
+    );
+  };
+
   if (loading) {
     return (
       <LoadingAnimation 
@@ -130,8 +137,8 @@ const Login = () => {
             
             <button 
               type="submit" 
-              className="auth-button"
-              disabled={loading}
+              className={`auth-button ${!isFormComplete() ? 'auth-button-disabled' : ''}`}
+              disabled={loading || !isFormComplete()}
             >
               {loading ? 'Signing In...' : 'Sign In'}
             </button>
