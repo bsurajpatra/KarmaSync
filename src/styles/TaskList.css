@@ -453,8 +453,34 @@
   }
 
   .tasks-header-actions {
+    flex-direction: row;
+    gap: 0.5rem;
     width: 100%;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    overflow-x: auto;
+    margin-top: 0.5rem;
+    /* Remove white-space: nowrap from container */
+  }
+  .tasks-header-actions .btn {
+    flex: 1 1 0;
+    min-width: 100px;
+    max-width: 150px;
+    padding: 0.5rem 0.5rem;
+    font-size: 0.78rem;
+    border-radius: 8px;
+    height: 2.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    /* Allow text to wrap to two lines */
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    text-align: center;
+    line-height: 1.15;
   }
 
   .btn {
@@ -464,17 +490,43 @@
 
   .tasks-list {
     padding: 1.5rem 2rem;
+    gap: 0.5rem;
   }
-
+  .task-item {
+    padding: 0.5rem 0.7rem;
+    border-radius: 8px;
+  }
   .task-item-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
+    margin-bottom: 0.2rem;
+    gap: 0.2rem;
   }
-
+  .task-item-header h3 {
+    font-size: 1rem;
+    gap: 0.15rem;
+    margin-bottom: 0.1rem;
+  }
+  .task-id {
+    font-size: 0.85rem;
+  }
   .task-badges {
-    width: 100%;
-    justify-content: flex-start;
+    gap: 0.15rem;
+  }
+  .task-status {
+    padding: 0.18rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.7rem;
+  }
+  .task-meta {
+    gap: 0.3rem;
+    font-size: 0.7rem;
+    margin-top: 0.1rem;
+  }
+  .task-date,
+  .task-deadline,
+  .task-assignee {
+    padding: 0.12rem 0.3rem;
+    border-radius: 4px;
+    font-size: 0.8rem !important;
   }
 }
 
@@ -489,12 +541,52 @@
   }
 
   .task-item {
-    padding: 1.25rem;
+    padding: 0.25rem 0.3rem;
+    border-radius: 5px;
   }
 
   .task-meta {
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .tasks-header-actions .btn {
+    font-size: 0.65rem;
+    height: 2.2rem;
+    border-radius: 6px;
+    padding: 0.2rem 0.2rem;
+    max-width: 90px;
+    min-width: 70px;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    text-align: center;
+    line-height: 1.12;
+  }
+  .task-item-header h3 {
+    font-size: 0.8rem;
+    gap: 0.08rem;
+    margin-bottom: 0.05rem;
+  }
+  .task-id {
+    font-size: 0.7rem;
+  }
+  .task-status {
+    padding: 0.08rem 0.2rem;
+    border-radius: 6px;
+    font-size: 0.55rem;
+  }
+  .task-meta {
+    gap: 0.1rem;
+    font-size: 0.6rem;
+    margin-top: 0.05rem;
+  }
+  .task-date,
+  .task-deadline,
+  .task-assignee {
+    padding: 0.05rem 0.1rem;
+    border-radius: 2px;
+    font-size: 0.6rem !important;
   }
 }
 

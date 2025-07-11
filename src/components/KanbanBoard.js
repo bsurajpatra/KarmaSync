@@ -35,6 +35,17 @@ const KanbanBoard = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isDragging, setIsDragging] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Detect mobile device by screen width
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     fetchProjectAndTasks();
@@ -410,6 +421,57 @@ const KanbanBoard = () => {
   if (error) return <div className="error-message">{error}</div>;
 
   if (!project) return <div className="error-message">Project not found</div>;
+
+  if (isMobile) {
+    return (
+      <div className="kanban-mobile-message" style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        background: '#f7f8fa',
+        color: '#222',
+        border: '1px solid #e0e0e0',
+        borderRadius: '12px',
+        padding: '1.2rem 1rem',
+        margin: '3rem auto',
+        maxWidth: '480px',
+        textAlign: 'center',
+        fontWeight: 500,
+        fontSize: '1.08rem',
+        boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
+      }}>
+        <i className="fas fa-ban" style={{fontSize: '2.1rem', marginBottom: '0.7rem', color: '#888'}}></i>
+        <div style={{fontSize: '1.08rem', fontWeight: 600, marginBottom: '0.4rem'}}>Kanban Board Unavailable on Mobile</div>
+        <div style={{color: '#444', fontWeight: 400, fontSize: '0.98rem', marginBottom: '1.2rem'}}>
+          Please use a desktop or tablet for full functionality.<br/>
+          For now, update issues manually in the project overview.
+        </div>
+        <button
+          style={{
+            background: '#4a90e2',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            padding: '0.7rem 1.5rem',
+            fontSize: '1rem',
+            fontWeight: 600,
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(74,144,226,0.10)',
+            marginTop: '0.5rem',
+            transition: 'background 0.2s',
+            outline: 'none',
+            display: 'inline-block'
+          }}
+          onClick={() => navigate(`/project/${projectId}/overview`)}
+        >
+          <i className="fas fa-arrow-left" style={{marginRight: '0.5rem'}}></i>
+          Back to Overview
+        </button>
+      </div>
+    );
+  }
 
   const renderBoard = (boardId, board) => (
     <div 
