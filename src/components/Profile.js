@@ -28,7 +28,7 @@ import '../styles/Profile.css';
         <div className="modal-content">
           <div className="modal-header">
             <h2>Delete Account</h2>
-            <button className="modal-close" onClick={onClose}>&times;</button>
+            {/* Removed close 'x' button */}
           </div>
           <div className="modal-body">
             <p className="modal-warning">
