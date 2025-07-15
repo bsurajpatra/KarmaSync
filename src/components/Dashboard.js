@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getCurrentUser } from '../api/authApi';
 import LoadingAnimation from './LoadingAnimation';
@@ -36,8 +36,29 @@ const LogoutModal = ({ isOpen, onClose, onConfirm }) => {
 const Dashboard = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [lockActive, setLockActive] = useState(true);
+
+  // Strong navigation lock logic
+  useEffect(() => {
+    // Push a new state so that back button stays on dashboard
+    window.history.pushState(null, '', window.location.pathname);
+
+    const handlePopState = (event) => {
+      if (lockActive) {
+        // Always push back to dashboard
+        window.history.pushState(null, '', window.location.pathname);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [lockActive]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -60,6 +81,7 @@ const Dashboard = () => {
 
   const handleLogoutConfirm = async () => {
     try {
+      setLockActive(false); // Release lock before logout
       await logout();
       navigate('/');
     } catch (error) {
